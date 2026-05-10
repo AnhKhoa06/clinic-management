@@ -1,0 +1,64 @@
+@model List<ClinicManagement.DTOs.Specialty.SpecialtyResponseDto>
+@{
+    ViewData["Title"] = "Chuyên khoa";
+}
+
+<div class="page-header">
+    <h1 data-vi="Quản lý chuyên khoa" data-en="Specialty Management">Quản lý chuyên khoa</h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="ti ti-plus"></i>
+        <span data-vi="Thêm chuyên khoa" data-en="Add Specialty">Thêm chuyên khoa</span>
+    </a>
+</div>
+
+<div class="card table-card">
+    <div class="table-header">
+        <span class="table-title" data-vi="Danh sách chuyên khoa" data-en="Specialty List">Danh sách chuyên khoa</span>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th data-vi="Tên chuyên khoa" data-en="Specialty Name">Tên chuyên khoa</th>
+                <th data-vi="Mô tả" data-en="Description">Mô tả</th>
+                <th data-vi="Ngày tạo" data-en="Created">Ngày tạo</th>
+                <th data-vi="Thao tác" data-en="Actions">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i class="ti ti-grid-dots"></i>
+                            <p data-vi="Chưa có chuyên khoa nào." data-en="No specialties found.">Chưa có chuyên khoa nào.</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="td-id">@item.Id</td>
+                    <td class="td-name">@item.Name</td>
+                    <td class="td-muted">@(item.Description ?? "—")</td>
+                    <td class="td-muted">@item.CreatedAt.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <div class="action-btns">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="icon-btn" title="Sửa">
+                                <i class="ti ti-pencil"></i>
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline"
+                                  onsubmit="return confirm('Xác nhận xoá chuyên khoa @item.Name?')">
+                                <button type="submit" class="icon-btn danger" title="Xoá">
+                                    <i class="ti ti-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

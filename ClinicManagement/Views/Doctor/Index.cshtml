@@ -1,0 +1,93 @@
+@model List<ClinicManagement.DTOs.Doctor.DoctorResponseDto>
+@{
+    ViewData["Title"] = "Bác sĩ";
+}
+
+<div class="page-header">
+    <h1 data-vi="Quản lý bác sĩ" data-en="Doctor Management">Quản lý bác sĩ</h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="ti ti-plus"></i>
+        <span data-vi="Thêm bác sĩ" data-en="Add Doctor">Thêm bác sĩ</span>
+    </a>
+</div>
+
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th data-vi="Bác sĩ" data-en="Doctor">Bác sĩ</th>
+                <th data-vi="Chuyên khoa" data-en="Specialty">Chuyên khoa</th>
+                <th data-vi="Giấy phép" data-en="License">Giấy phép</th>
+                <th data-vi="Đánh giá" data-en="Rating">Đánh giá</th>
+                <th data-vi="Trạng thái" data-en="Status">Trạng thái</th>
+                <th data-vi="Thao tác" data-en="Actions">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="6" class="table-empty"
+                        data-vi="Chưa có bác sĩ nào." data-en="No doctors found.">
+                        Chưa có bác sĩ nào.
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="table-user">
+                            <div class="table-avatar">@item.FullName[0]</div>
+                            <div>
+                                <div class="table-user-name">@item.FullName</div>
+                                <div class="table-user-email">@item.Email</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>@item.SpecialtyName</td>
+                    <td>@item.LicenseNumber</td>
+                    <td>
+                        @if (item.AverageRating > 0)
+                        {
+                            <span class="badge badge-blue">
+                                <i class="ti ti-star-filled"></i> @item.AverageRating
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.IsActive)
+                        {
+                            <span class="badge badge-green"
+                                  data-vi="Hoạt động" data-en="Active">Hoạt động</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-red"
+                                  data-vi="Vô hiệu" data-en="Inactive">Vô hiệu</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <a asp-action="Edit" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline"
+                               data-vi="Sửa" data-en="Edit">
+                                <i class="ti ti-pencil"></i>
+                            </a>
+                            <form asp-action="ToggleActive" asp-route-id="@item.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm @(item.IsActive ? "btn-outline-warning" : "btn-outline-success")"
+                                        title="@(item.IsActive ? "Vô hiệu hoá" : "Kích hoạt")">
+                                    <i class="ti @(item.IsActive ? "ti-toggle-right" : "ti-toggle-left")"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

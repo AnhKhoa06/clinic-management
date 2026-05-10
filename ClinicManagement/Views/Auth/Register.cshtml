@@ -1,0 +1,151 @@
+@model ClinicManagement.DTOs.Auth.RegisterDto
+@{
+    ViewData["Title"] = "Đăng ký";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng ký — Phòng Khám</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@@2.44.0/tabler-icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/auth.css" />
+</head>
+<body>
+
+<!-- LEFT -->
+<div class="auth-left">
+    <div class="brand">
+        <div class="brand-icon"><i class="ti ti-building-hospital"></i></div>
+        <div class="brand-name">
+            ClinicManagement
+            <span>Hệ thống quản lý phòng khám</span>
+        </div>
+    </div>
+
+    <h1 class="auth-left-title">Tạo tài khoản<br /><span>bệnh nhân mới</span></h1>
+    <p class="auth-left-desc">Đăng ký để đặt lịch khám, theo dõi hồ sơ bệnh án và nhận thông báo từ bác sĩ của bạn.</p>
+
+    <div class="auth-steps">
+        <div class="auth-step">
+            <div class="step-num">1</div>
+            <div class="step-text">
+                <strong>Điền thông tin cơ bản</strong>
+                Họ tên, email và số điện thoại
+            </div>
+        </div>
+        <div class="auth-step">
+            <div class="step-num">2</div>
+            <div class="step-text">
+                <strong>Đăng nhập ngay</strong>
+                Tài khoản được kích hoạt ngay lập tức
+            </div>
+        </div>
+        <div class="auth-step">
+            <div class="step-num">3</div>
+            <div class="step-text">
+                <strong>Đặt lịch khám</strong>
+                Chọn bác sĩ và thời gian phù hợp
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- RIGHT -->
+<div class="auth-right">
+    <div class="auth-form-wrap">
+        <div class="auth-form-header">
+            <h2>Tạo tài khoản</h2>
+            <p>Đã có tài khoản? <a asp-action="Login">Đăng nhập</a></p>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert-error">
+                <i class="ti ti-alert-circle"></i>
+                <div>
+                    @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <div>@err.ErrorMessage</div>
+                    }
+                </div>
+            </div>
+        }
+
+        <form asp-action="Register" method="post">
+            <div class="form-group">
+                <label class="form-label">Họ và tên</label>
+                <div class="input-wrap">
+                    <i class="ti ti-user input-icon"></i>
+                    <input asp-for="FullName" placeholder="" autocomplete="name" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <div class="input-wrap">
+                    <i class="ti ti-mail input-icon"></i>
+                    <input asp-for="Email" type="email" placeholder="" autocomplete="email" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Số điện thoại</label>
+                <div class="input-wrap">
+                    <i class="ti ti-phone input-icon"></i>
+                    <input name="Phone" id="Phone" type="tel"
+                        value="@(Model?.Phone ?? "+84")"
+                        autocomplete="tel" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Mật khẩu</label>
+                <div class="input-wrap">
+                    <i class="ti ti-lock input-icon"></i>
+                    <input asp-for="Password" type="password" id="passwordInput" placeholder="••••••••" autocomplete="new-password" />
+                    <i class="ti ti-eye input-icon-right" id="togglePassword" onclick="togglePwd()"></i>
+                </div>
+                <div class="password-hint">Tối thiểu 6 ký tự</div>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="ti ti-user-plus"></i> Tạo tài khoản
+            </button>
+        </form>
+
+        <div class="auth-login-link">
+            Đã có tài khoản? <a asp-action="Login">Đăng nhập ngay</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePwd() {
+        const input = document.getElementById('passwordInput');
+        const icon = document.getElementById('togglePassword');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'ti ti-eye-off input-icon-right';
+        } else {
+            input.type = 'password';
+            icon.className = 'ti ti-eye input-icon-right';
+        }
+    }
+
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', () => {
+            const bar = document.getElementById('nprogress-bar');
+            bar.style.width = '0%';
+            bar.style.opacity = '1';
+            setTimeout(() => bar.style.width = '70%', 50);
+            setTimeout(() => bar.style.width = '90%', 400);
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+@model ClinicManagement.DTOs.Auth.LoginDto
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập — Phòng Khám</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@@2.44.0/tabler-icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/auth.css" />
+
+</head>
+<body>
+
+<!-- LEFT -->
+<div class="auth-left">
+    <div class="brand">
+        <div class="brand-icon"><i class="ti ti-building-hospital"></i></div>
+        <div class="brand-name">
+            ClinicManagement
+            <span>Hệ thống quản lý phòng khám</span>
+        </div>
+    </div>
+
+    <h1 class="auth-left-title">Chào mừng trở lại<br /><span>hệ thống phòng khám</span></h1>
+    <p class="auth-left-desc">Nền tảng quản lý y tế toàn diện — theo dõi bệnh nhân, lịch hẹn và hồ sơ bệnh án một cách dễ dàng.</p>
+
+    <div class="auth-features">
+        <div class="auth-feature-item">
+            <div class="auth-feature-icon"><i class="ti ti-calendar-check"></i></div>
+            <div class="auth-feature-text">
+                <strong>Quản lý lịch hẹn</strong>
+                Đặt và theo dõi lịch khám nhanh chóng
+            </div>
+        </div>
+        <div class="auth-feature-item">
+            <div class="auth-feature-icon"><i class="ti ti-file-text"></i></div>
+            <div class="auth-feature-text">
+                <strong>Hồ sơ bệnh án</strong>
+                Lưu trữ và truy xuất thông tin bệnh nhân
+            </div>
+        </div>
+        <div class="auth-feature-item">
+            <div class="auth-feature-icon"><i class="ti ti-bell"></i></div>
+            <div class="auth-feature-text">
+                <strong>Nhắc nhở lịch khám</strong>
+                Không bỏ lỡ lịch hẹn với bác sĩ
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- RIGHT -->
+<div class="auth-right">
+    <div class="auth-form-wrap">
+        <div class="auth-form-header">
+            <h2>Đăng nhập</h2>
+            <p>Chưa có tài khoản? <a asp-action="Register">Đăng ký ngay</a></p>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert-error">
+                <i class="ti ti-alert-circle"></i>
+                <div>
+                    @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <div>@err.ErrorMessage</div>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (TempData["Success"] != null)
+        {
+            <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#166534;display:flex;align-items:center;gap:10px;">
+                <i class="ti ti-circle-check" style="font-size:16px;"></i>
+                @TempData["Success"]
+            </div>
+        }
+
+        <form asp-action="Login" method="post">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <div class="input-wrap">
+                    <i class="ti ti-mail input-icon"></i>
+                    <input asp-for="Email" type="email" placeholder="" autocomplete="email" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Mật khẩu</label>
+                <div class="input-wrap">
+                    <i class="ti ti-lock input-icon"></i>
+                    <input asp-for="Password" type="password" id="passwordInput" placeholder="••••••••" autocomplete="current-password" />
+                    <i class="ti ti-eye input-icon-right" id="togglePassword" onclick="togglePwd()"></i>
+                </div>
+            </div>
+
+            <div class="form-row-between">
+                <label class="checkbox-label">
+                    <input type="checkbox" /> Ghi nhớ đăng nhập
+                </label>
+                <a href="#" class="forgot-link">Quên mật khẩu?</a>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                Đăng nhập<i class="ti ti-logout"></i> 
+            </button>
+        </form>
+
+        <div class="auth-divider">hoặc</div>
+
+        <a href="/Auth/LoginWithGoogle" class="btn-google">
+            <svg width="18" height="18" viewBox="0 0 48 48">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                <path fill="none" d="M0 0h48v48H0z"/>
+            </svg>
+            Đăng nhập với Google
+        </a>
+
+        <div class="auth-register-link">
+            Chưa có tài khoản? <a asp-action="Register">Tạo tài khoản mới</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePwd() {
+        const input = document.getElementById('passwordInput');
+        const icon = document.getElementById('togglePassword');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'ti ti-eye-off input-icon-right';
+        } else {
+            input.type = 'password';
+            icon.className = 'ti ti-eye input-icon-right';
+        }
+    }
+    document.querySelectorAll('form').forEach(function (form) {
+        form.addEventListener('submit', function () {
+            const btn = form.querySelector('button[type="submit"]');
+            if (!btn) return;
+
+            btn.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    style="animation:btn-spin 0.7s linear infinite; flex-shrink:0;">
+                    <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" stroke-width="3"/>
+                    <path d="M12 2a10 10 0 0 1 10 10" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+                <span>Đang xử lý...</span>
+            `;
+            btn.style.opacity = '0.85';
+            btn.style.pointerEvents = 'none';
+        });
+    });
+</script>
+</body>
+</html>

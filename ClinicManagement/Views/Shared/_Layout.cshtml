@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Phòng Khám</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/app.css" />
+</head>
+<body>
+<div class="app-wrapper">
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-row">
+                <div class="logo-icon-wrap">
+                    <i class="ti ti-building-hospital"></i>
+                </div>
+                <div>
+                    <div class="logo-text" data-vi="Phòng Khám" data-en="Clinic">Phòng Khám</div>
+                    <div class="logo-sub" data-vi="Hệ thống quản lý" data-en="Management System">Hệ thống quản lý</div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- Tổng quan -->
+            <div class="nav-section">
+                <span class="nav-section-label" data-vi="Tổng quan" data-en="Overview">Tổng quan</span>
+                <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
+                   asp-controller="Home" asp-action="Index">
+                    <i class="ti ti-home"></i>
+                    <span data-vi="Trang chủ" data-en="Dashboard">Trang chủ</span>
+                </a>
+            </div>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <!-- Quản lý -->
+                <div class="nav-section">
+                    <span class="nav-section-label" data-vi="Quản lý" data-en="Management">Quản lý</span>
+                    <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Specialty" ? "active" : "")"
+                       asp-controller="Specialty" asp-action="Index">
+                        <i class="ti ti-grid-dots"></i>
+                        <span data-vi="Chuyên khoa" data-en="Specialties">Chuyên khoa</span>
+                    </a>
+                    <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Doctor" ? "active" : "")"
+                       asp-controller="Doctor" asp-action="Index">
+                        <i class="ti ti-stethoscope"></i>
+                        <span data-vi="Bác sĩ" data-en="Doctors">Bác sĩ</span>
+                    </a>
+                    <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Patient" ? "active" : "")"
+                       asp-controller="Patient" asp-action="Index">
+                        <i class="ti ti-users"></i>
+                        <span data-vi="Bệnh nhân" data-en="Patients">Bệnh nhân</span>
+                    </a>
+                    <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Medication" ? "active" : "")"
+                       asp-controller="Medication" asp-action="Index">
+                        <i class="ti ti-pill"></i>
+                        <span data-vi="Thuốc" data-en="Medications">Thuốc</span>
+                    </a>
+                </div>
+            }
+
+            @if (User.IsInRole("Admin") || User.IsInRole("Doctor"))
+            {
+                <!-- Lịch khám -->
+                <div class="nav-section">
+                    <span class="nav-section-label" data-vi="Lịch khám" data-en="Schedule">Lịch khám</span>
+                    <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Appointment" ? "active" : "")"
+                       asp-controller="Appointment" asp-action="Index">
+                        <i class="ti ti-calendar-check"></i>
+                        <span data-vi="Lịch hẹn" data-en="Appointments">Lịch hẹn</span>
+                    </a>
+                    <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "MedicalRecord" ? "active" : "")"
+                       asp-controller="MedicalRecord" asp-action="Index">
+                        <i class="ti ti-clipboard-text"></i>
+                        <span data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
+                    </a>
+                </div>
+            }
+
+            @if (User.IsInRole("Patient"))
+            {
+                <div class="nav-section">
+                    <span class="nav-section-label" data-vi="Của tôi" data-en="My Account">Của tôi</span>
+                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "MyAppointments" ? "active" : "")"
+                       asp-controller="Appointment" asp-action="MyAppointments">
+                        <i class="ti ti-calendar-check"></i>
+                        <span data-vi="Lịch hẹn của tôi" data-en="My Appointments">Lịch hẹn của tôi</span>
+                    </a>
+                    <a class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "MyRecords" ? "active" : "")"
+                       asp-controller="MedicalRecord" asp-action="MyRecords">
+                        <i class="ti ti-clipboard-text"></i>
+                        <span data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
+                    </a>
+                </div>
+            }
+
+            <!-- Cài đặt — luôn hiển thị -->
+            <div class="nav-section">
+                <span class="nav-section-label" data-vi="Hệ thống" data-en="System">Hệ thống</span>
+                <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Settings" ? "active" : "")"
+                   asp-controller="Settings" asp-action="Index">
+                    <i class="ti ti-settings"></i>
+                    <span data-vi="Cài đặt" data-en="Settings">Cài đặt</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- User + Logout -->
+        <div class="sidebar-footer">
+            <div class="user-card">
+                <div class="user-avatar">
+                    @(User.Identity?.Name?.Substring(0, Math.Min(2, User.Identity?.Name?.Length ?? 0)).ToUpper())
+                </div>
+                <div>
+                    <div class="user-name">@User.Identity?.Name</div>
+                    <div class="user-role">
+                        @if (User.IsInRole("Admin")) { <span data-vi="Quản trị viên" data-en="Administrator">Quản trị viên</span> }
+                        else if (User.IsInRole("Doctor")) { <span data-vi="Bác sĩ" data-en="Doctor">Bác sĩ</span> }
+                        else { <span data-vi="Bệnh nhân" data-en="Patient">Bệnh nhân</span> }
+                    </div>
+                </div>
+            </div>
+            <form asp-controller="Auth" asp-action="Logout" method="post">
+                <button class="btn-logout" type="button" onclick="showLogout()">
+                    <i class="ti ti-logout"></i>
+                    <span>Đăng xuất</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- ========== MAIN ========== -->
+    <div class="main-content">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <span class="topbar-title">@(ViewData["Title"] ?? "Trang chủ")</span>
+            </div>
+            <div class="topbar-right">
+                <!-- Role badge -->
+                <span class="badge-role">
+                    @if (User.IsInRole("Admin")) { <span data-vi="Quản trị viên" data-en="Admin">Quản trị viên</span> }
+                    else if (User.IsInRole("Doctor")) { <span data-vi="Bác sĩ" data-en="Doctor">Bác sĩ</span> }
+                    else { <span data-vi="Bệnh nhân" data-en="Patient">Bệnh nhân</span> }
+                </span>
+
+                <!-- Language toggle -->
+                <button class="lang-pill" id="langToggle" title="Switch language">
+                    <i class="ti ti-language lang-icon"></i>
+                    <span class="lang-code">VI</span>
+                </button>
+
+                <!-- Notification -->
+                <div class="notif-btn">
+                    <i class="ti ti-bell"></i>
+                    <span class="notif-dot"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Alerts -->
+        <div class="page-body">
+            <!-- Toast container -->
+                <div class="toast-container" id="toastContainer"></div>
+
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+<script>
+// ── LANGUAGE TOGGLE ──────────────────────────────────────────
+const LANG_KEY = 'clinic_lang';
+const langToggle = document.getElementById('langToggle');
+const langCode = langToggle.querySelector('.lang-code');
+
+function applyLang(lang) {
+    document.querySelectorAll('[data-vi]').forEach(el => {
+        el.textContent = lang === 'en' ? el.dataset.en : el.dataset.vi;
+    });
+    langCode.textContent = lang === 'en' ? 'EN' : 'VI';
+    langToggle.title = lang === 'en' ? 'Switch to Vietnamese' : 'Switch to English';
+    localStorage.setItem(LANG_KEY, lang);
+}
+
+langToggle.addEventListener('click', () => {
+    const current = localStorage.getItem(LANG_KEY) || 'vi';
+    applyLang(current === 'vi' ? 'en' : 'vi');
+});
+
+// Init lang on load
+applyLang(localStorage.getItem(LANG_KEY) || 'vi');
+
+// ── THEME ────────────────────────────────────────────────────
+const THEME_KEY = 'clinic_theme';
+
+function applyTheme(theme) {
+    const html = document.documentElement;
+    if (theme === 'system') {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        html.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    } else {
+        html.setAttribute('data-theme', theme);
+    }
+    localStorage.setItem(THEME_KEY, theme);
+    // sync theme cards nếu đang ở trang settings
+    document.querySelectorAll('.theme-card').forEach(c => {
+        c.classList.toggle('active', c.dataset.theme === theme);
+    });
+}
+
+// Init theme on load
+applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+
+// Lắng nghe system preference thay đổi
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if ((localStorage.getItem(THEME_KEY) || 'light') === 'system') applyTheme('system');
+});
+
+// Expose globally để Settings page dùng
+window.setTheme = applyTheme;
+
+// ── AUTO DISMISS ALERTS ──────────────────────────────────────
+['alert-success','alert-error'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) setTimeout(() => el.remove(), 4000);
+});
+</script>
+
+@await RenderSectionAsync("Scripts", required: false)
+
+<!-- Logout Dialog -->
+<div id="logoutOverlay" class="logout-overlay">
+    <div class="logout-dialog">
+        <div class="logout-icon">
+            <i class="ti ti-logout"></i>
+        </div>
+        <div class="logout-title">Xác nhận đăng xuất</div>
+        <div class="logout-desc">Bạn có chắc chắn muốn đăng xuất không?</div>
+        <div class="logout-actions">
+            <button class="logout-btn-cancel" onclick="closeLogout()">Huỷ</button>
+            <form asp-controller="Auth" asp-action="Logout" method="post">
+                <button type="submit" class="logout-btn-confirm">Đồng ý</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showLogout() {
+        const overlay = document.getElementById('logoutOverlay');
+        overlay.style.display = 'flex';
+    }
+    function closeLogout() {
+        document.getElementById('logoutOverlay').style.display = 'none';
+    }
+    // Click outside to close
+    document.getElementById('logoutOverlay').addEventListener('click', function(e) {
+        if (e.target === this) closeLogout();
+    });
+    
+
+    // ── TOAST ────────────────────────────────────────────
+    function showToast(type, title, msg) {
+        const container = document.getElementById('toastContainer');
+        const icon = type === 'success' ? 'ti-circle-check' : 'ti-alert-circle';
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `
+            <i class="ti ${icon} toast-icon"></i>
+            <div class="toast-body">
+                <div class="toast-title">${title}</div>
+                <div class="toast-msg">${msg}</div>
+            </div>
+            <button class="toast-close" onclick="removeToast(this.parentElement)">
+                <i class="ti ti-x"></i>
+            </button>
+        `;
+
+        container.appendChild(toast);
+        setTimeout(() => removeToast(toast), 2000);
+    }
+
+    function removeToast(toast) {
+        if (!toast) return;
+        toast.style.animation = 'toast-out 0.3s ease forwards';
+        setTimeout(() => toast.remove(), 300);
+    }
+
+    // Hiện toast từ TempData
+    @if (TempData["Success"] != null)
+    {
+        <text>showToast('success', 'Thành công', '@TempData["Success"]');</text>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <text>showToast('error', 'Lỗi', '@TempData["Error"]');</text>
+    }
+</script>
+</body>
+</html>

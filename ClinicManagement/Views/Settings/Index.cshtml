@@ -1,0 +1,73 @@
+@{
+    ViewData["Title"] = "Cài đặt";
+}
+
+<div class="page-header">
+    <h1 data-vi="Cài đặt" data-en="Settings">Cài đặt</h1>
+</div>
+
+<div class="card" style="max-width: 640px; padding: 28px;">
+
+    <!-- ── Giao diện ── -->
+    <div class="settings-section">
+        <div class="settings-section-title">
+            <i class="ti ti-palette"></i>
+            <span data-vi="Giao diện" data-en="Appearance">Giao diện</span>
+        </div>
+
+        <p class="text-secondary mb-16" style="font-size:13px"
+           data-vi="Chọn chủ đề hiển thị cho ứng dụng."
+           data-en="Choose the display theme for the application.">
+            Chọn chủ đề hiển thị cho ứng dụng.
+        </p>
+
+        <div class="theme-grid">
+            <!-- Sáng -->
+            <div class="theme-card" data-theme="light" onclick="window.setTheme('light')">
+                <i class="ti ti-sun"></i>
+                <div class="theme-card-name" data-vi="Sáng" data-en="Light">Sáng</div>
+                <div class="theme-card-desc" data-vi="Sáng và sạch sẽ" data-en="Bright and clean">Sáng và sạch sẽ</div>
+                <div class="theme-check"><i class="ti ti-check"></i></div>
+            </div>
+
+            <!-- Tối -->
+            <div class="theme-card" data-theme="dark" onclick="window.setTheme('dark')">
+                <i class="ti ti-moon"></i>
+                <div class="theme-card-name" data-vi="Tối" data-en="Dark">Tối</div>
+                <div class="theme-card-desc" data-vi="Dễ chịu cho mắt" data-en="Easy on the eyes">Dễ chịu cho mắt</div>
+                <div class="theme-check"><i class="ti ti-check"></i></div>
+            </div>
+
+            <!-- Hệ thống -->
+            <div class="theme-card" data-theme="system" onclick="window.setTheme('system')">
+                <i class="ti ti-device-desktop"></i>
+                <div class="theme-card-name" data-vi="Hệ thống" data-en="System">Hệ thống</div>
+                <div class="theme-card-desc" data-vi="Theo cài đặt thiết bị" data-en="Follow device setting">Theo cài đặt thiết bị</div>
+                <div class="theme-check"><i class="ti ti-check"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Tài khoản ── -->
+    <div class="settings-section" style="border-top: 0.5px solid var(--card-border); padding-top: 24px;">
+        <div class="settings-section-title">
+            <i class="ti ti-user-circle"></i>
+            <span data-vi="Tài khoản" data-en="Account">Tài khoản</span>
+        </div>
+
+        <a asp-controller="Auth" asp-action="ChangePassword" class="btn btn-outline">
+            <i class="ti ti-key"></i>
+            <span data-vi="Đổi mật khẩu" data-en="Change Password">Đổi mật khẩu</span>
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // Sync theme cards với theme đang active khi trang load
+    const current = localStorage.getItem('clinic_theme') || 'light';
+    document.querySelectorAll('.theme-card').forEach(c => {
+        c.classList.toggle('active', c.dataset.theme === current);
+    });
+</script>
+}

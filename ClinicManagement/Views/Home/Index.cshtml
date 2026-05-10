@@ -1,0 +1,107 @@
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+@if (User.IsInRole("Admin"))
+{
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+        <div class="card stat-card">
+            <div class="stat-icon blue"><i class="ti ti-stethoscope"></i></div>
+            <div class="stat-value">@ViewBag.DoctorCount</div>
+            <div class="stat-label" data-vi="Bác sĩ" data-en="Doctors">Bác sĩ</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-icon teal"><i class="ti ti-users"></i></div>
+            <div class="stat-value">@ViewBag.PatientCount</div>
+            <div class="stat-label" data-vi="Bệnh nhân" data-en="Patients">Bệnh nhân</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-icon amber"><i class="ti ti-calendar-check"></i></div>
+            <div class="stat-value">@ViewBag.AppointmentToday</div>
+            <div class="stat-label" data-vi="Lịch hẹn hôm nay" data-en="Today's Appointments">Lịch hẹn hôm nay</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-icon red"><i class="ti ti-pill"></i></div>
+            <div class="stat-value">@ViewBag.MedicationCount</div>
+            <div class="stat-label" data-vi="Loại thuốc" data-en="Medications">Loại thuốc</div>
+        </div>
+    </div>
+
+    <!-- Quick Access -->
+    <span class="section-label" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
+    <div class="quick-grid-4">
+        <a asp-controller="Doctor" asp-action="Index" class="card quick-card">
+            <div class="stat-icon blue"><i class="ti ti-stethoscope"></i></div>
+            <span class="quick-card-label" data-vi="Bác sĩ" data-en="Doctors">Bác sĩ</span>
+        </a>
+        <a asp-controller="Patient" asp-action="Index" class="card quick-card teal-hover">
+            <div class="stat-icon teal"><i class="ti ti-users"></i></div>
+            <span class="quick-card-label" data-vi="Bệnh nhân" data-en="Patients">Bệnh nhân</span>
+        </a>
+        <a asp-controller="Appointment" asp-action="Index" class="card quick-card amber-hover">
+            <div class="stat-icon amber"><i class="ti ti-calendar-check"></i></div>
+            <span class="quick-card-label" data-vi="Lịch hẹn" data-en="Appointments">Lịch hẹn</span>
+        </a>
+        <a asp-controller="Medication" asp-action="Index" class="card quick-card red-hover">
+            <div class="stat-icon red"><i class="ti ti-pill"></i></div>
+            <span class="quick-card-label" data-vi="Thuốc" data-en="Medications">Thuốc</span>
+        </a>
+    </div>
+}
+
+@if (User.IsInRole("Doctor"))
+{
+    <div class="stats-grid">
+        <div class="card stat-card">
+            <div class="stat-icon amber"><i class="ti ti-calendar-check"></i></div>
+            <div class="stat-value">—</div>
+            <div class="stat-label" data-vi="Lịch hẹn hôm nay" data-en="Today's Appointments">Lịch hẹn hôm nay</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-icon blue"><i class="ti ti-clipboard-text"></i></div>
+            <div class="stat-value">—</div>
+            <div class="stat-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</div>
+        </div>
+    </div>
+
+    <span class="section-label" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
+    <div class="quick-grid-2">
+        <a asp-controller="Appointment" asp-action="Index" class="card quick-card amber-hover">
+            <div class="stat-icon amber"><i class="ti ti-calendar-check"></i></div>
+            <span class="quick-card-label" data-vi="Lịch hẹn" data-en="Appointments">Lịch hẹn</span>
+        </a>
+        <a asp-controller="MedicalRecord" asp-action="Index" class="card quick-card">
+            <div class="stat-icon blue"><i class="ti ti-clipboard-text"></i></div>
+            <span class="quick-card-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
+        </a>
+    </div>
+}
+
+@if (User.IsInRole("Patient"))
+{
+    <p class="welcome-title">
+        <span data-vi="Xin chào" data-en="Hello">Xin chào</span>,
+        <span>@User.Identity?.Name</span> 👋
+    </p>
+    <p class="welcome-sub"
+       data-vi="Chào mừng bạn quay trở lại hệ thống phòng khám."
+       data-en="Welcome back to the clinic system.">
+        Chào mừng bạn quay trở lại hệ thống phòng khám.
+    </p>
+
+    <div class="quick-grid-3">
+        <a asp-controller="Appointment" asp-action="Create" class="card quick-card">
+            <div class="stat-icon blue"><i class="ti ti-calendar-plus"></i></div>
+            <span class="quick-card-label" data-vi="Đặt lịch khám" data-en="Book Appointment">Đặt lịch khám</span>
+        </a>
+        <a asp-controller="Appointment" asp-action="MyAppointments" class="card quick-card teal-hover">
+            <div class="stat-icon teal"><i class="ti ti-calendar-check"></i></div>
+            <span class="quick-card-label" data-vi="Lịch hẹn của tôi" data-en="My Appointments">Lịch hẹn của tôi</span>
+        </a>
+        <a asp-controller="MedicalRecord" asp-action="MyRecords" class="card quick-card amber-hover">
+            <div class="stat-icon amber"><i class="ti ti-clipboard-text"></i></div>
+            <span class="quick-card-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
+        </a>
+    </div>
+}

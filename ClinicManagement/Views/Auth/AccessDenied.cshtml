@@ -1,0 +1,25 @@
+@{
+    ViewData["Title"] = "Không có quyền truy cập";
+}
+
+<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; text-align:center; gap:12px;">
+    <div style="width:72px; height:72px; border-radius:18px; background:var(--stat-red-bg); display:flex; align-items:center; justify-content:center; margin-bottom:8px;">
+        <i class="ti ti-lock" style="font-size:36px; color:var(--stat-red-text);"></i>
+    </div>
+
+    <h2 style="font-size:22px; font-weight:600; color:var(--text-primary);"
+        data-vi="Không có quyền truy cập" data-en="Access Denied">
+        Không có quyền truy cập
+    </h2>
+
+    <p style="font-size:14px; color:var(--text-secondary); max-width:360px;"
+       data-vi="Bạn không có quyền xem trang này. Vui lòng liên hệ quản trị viên nếu cần hỗ trợ."
+       data-en="You don't have permission to view this page. Please contact the administrator if you need help.">
+        Bạn không có quyền xem trang này. Vui lòng liên hệ quản trị viên nếu cần hỗ trợ.
+    </p>
+
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary" style="margin-top:8px;">
+        <i class="ti ti-home"></i>
+        <span data-vi="Về trang chủ" data-en="Back to Home">Về trang chủ</span>
+    </a>
+</div>

@@ -1,0 +1,50 @@
+@model ClinicManagement.DTOs.Specialty.SpecialtyUpdateDto
+@{
+    ViewData["Title"] = "Sửa chuyên khoa";
+}
+
+<div class="page-header">
+    <div class="d-flex align-center gap-8">
+        <a asp-action="Index" class="btn btn-outline" style="padding:8px 10px">
+            <i class="ti ti-arrow-left"></i>
+        </a>
+        <h1 data-vi="Sửa chuyên khoa" data-en="Edit Specialty">Sửa chuyên khoa</h1>
+    </div>
+</div>
+
+<div class="card form-card">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <i class="ti ti-alert-circle"></i>
+            <div>
+                @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                { <div>@err.ErrorMessage</div> }
+            </div>
+        </div>
+    }
+
+    <form asp-action="Edit" asp-route-id="@ViewBag.Id" method="post">
+        <div class="form-group">
+            <label class="form-label">
+                <span data-vi="Tên chuyên khoa" data-en="Specialty Name">Tên chuyên khoa</span>
+                <span class="required">*</span>
+            </label>
+            <input asp-for="Name" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label class="form-label"
+                   data-vi="Mô tả" data-en="Description">Mô tả</label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="ti ti-check"></i>
+                <span data-vi="Cập nhật" data-en="Update">Cập nhật</span>
+            </button>
+            <a asp-action="Index" class="btn btn-outline">
+                <span data-vi="Huỷ" data-en="Cancel">Huỷ</span>
+            </a>
+        </div>
+    </form>
+</div>

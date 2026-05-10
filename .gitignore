@@ -1,0 +1,22 @@
+# Build output
+ClinicManagement/bin/
+ClinicManagement/obj/
+ClinicManagement/appsettings.json
+
+# User secrets & sensitive config
+ClinicManagement/appsettings.Development.json
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
