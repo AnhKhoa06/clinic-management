@@ -59,4 +59,24 @@ public class MedicalRecordRepository
         _context.MedicalRecords.Update(record);
         await _context.SaveChangesAsync();
     }
+
+    public async Task DeleteAsync(MedicalRecord record)
+    {
+        _context.MedicalRecords.Remove(record);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<MedicalRecord>> GetByDoctorIdAsync(int doctorId)
+    {
+        return await BaseQuery()
+            .Where(mr => mr.DoctorId == doctorId)
+            .OrderByDescending(mr => mr.CreatedAt)
+            .ToListAsync();
+    }
+
+    public async Task<MedicalRecord?> GetByAppointmentIdAsync(int appointmentId)
+    {
+        return await BaseQuery()
+            .FirstOrDefaultAsync(mr => mr.AppointmentId == appointmentId);
+    }
 }

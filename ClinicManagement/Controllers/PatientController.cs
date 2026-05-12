@@ -1,17 +1,12 @@
 using System.Security.Claims;
 using ClinicManagement.DTOs.Patient;
-using ClinicManagement.Helpers;
 using ClinicManagement.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ClinicManagement.DTOs.Appointment;
 
 namespace ClinicManagement.Controllers;
 
-[ApiController]
-[Route("api/patients")]
-// [Authorize]
-public class PatientController : ControllerBase
+public class PatientController : Controller
 {
     private readonly PatientService _service;
 
@@ -20,55 +15,91 @@ public class PatientController : ControllerBase
         _service = service;
     }
 
+    // GET /Patient — Admin + Doctor xem ds, search bệnh nhân
     [Authorize(Roles = "Admin,Doctor")]
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> Index(string? search)
     {
         var result = await _service.GetAllAsync();
-        return Ok(ApiResponse<List<PatientResponseDto>>.Ok(result));
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            search = search.Trim().ToLower();
+            result = result.Where(p =>
+                p.FullName.ToLower().Contains(search) ||
+                p.Email.ToLower().Contains(search) ||
+                (p.Phone != null && p.Phone.Contains(search))
+            ).ToList();
+        }
+
+        ViewBag.Search = search;
+        return View(result);
     }
 
+    // GET /Patient/Detail/5
     [Authorize(Roles = "Admin,Doctor,Patient")]
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> Detail(int id)
     {
-        var (success, message, data) = await _service.GetByIdAsync(id);
-        if (!success)
-            return NotFound(ApiResponse<object>.Fail(message));
-
-        return Ok(ApiResponse<PatientResponseDto>.Ok(data!));
+        var (success, _, data) = await _service.GetByIdAsync(id);
+        if (!success) return NotFound();
+        return View(data);
     }
 
+    // GET /Patient/Edit/5
     [Authorize(Roles = "Admin,Patient")]
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] PatientUpdateDto dto)
+    public async Task<IActionResult> Edit(int id)
+    {
+        var (success, _, data) = await _service.GetByIdAsync(id);
+        if (!success) return NotFound();
+
+        var dto = new PatientUpdateDto
+        {
+            Gender = data!.Gender,
+            DateOfBirth = data.DateOfBirth,
+            Address = data.Address,
+            BloodType = data.BloodType,
+            EmergencyContact = data.EmergencyContact
+        };
+
+        ViewBag.Id = id;
+        ViewBag.FullName = data.FullName;
+        return View(dto);
+    }
+
+    // POST /Patient/Edit/5
+    [Authorize(Roles = "Admin,Patient")]
+    [HttpPost]
+    public async Task<IActionResult> Edit(int id, PatientUpdateDto dto)
     {
         if (!ModelState.IsValid)
-            return BadRequest(ApiResponse<object>.Fail("Dữ liệu không hợp lệ."));
+        {
+            ViewBag.Id = id;
+            return View(dto);
+        }
 
-        var (success, message, data) = await _service.UpdateAsync(id, dto);
+        var (success, message, _) = await _service.UpdateAsync(id, dto);
         if (!success)
-            return BadRequest(ApiResponse<object>.Fail(message));
+        {
+            ModelState.AddModelError("", message);
+            ViewBag.Id = id;
+            return View(dto);
+        }
 
-        return Ok(ApiResponse<PatientResponseDto>.Ok(data!, message));
+        TempData["Success"] = message;
+
+        // Nếu là Patient thì redirect về profile, Admin thì về danh sách
+        if (User.IsInRole("Admin"))
+            return RedirectToAction(nameof(Index));
+
+        return RedirectToAction(nameof(Detail), new { id });
     }
 
-    [Authorize(Roles = "Admin,Doctor,Patient")]
-    [HttpGet("{id}/appointments")]
-    public async Task<IActionResult> GetAppointments(int id)
+    // GET /Patient/MyProfile — Patient xem profile của mình
+    [Authorize(Roles = "Patient")]
+    public async Task<IActionResult> MyProfile()
     {
-        var appointments = await _service.GetAppointmentsByPatientIdAsync(id);
-        return Ok(ApiResponse<List<AppointmentResponseDto>>.Ok(appointments));
-    }
-
-    [Authorize(Roles = "Admin,Doctor,Patient")]
-    [HttpGet("{id}/medical-records")]
-    public async Task<IActionResult> GetMedicalRecords(int id)
-    {
-        var (success, message, _) = await _service.GetByIdAsync(id);
-        if (!success)
-            return NotFound(ApiResponse<object>.Fail(message));
-
-        return Ok(ApiResponse<object>.Ok(new { message = "Sẽ implement sau khi có MedicalRecord module" }));
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var (success, _, data) = await _service.GetByUserIdAsync(userId);
+        if (!success) return NotFound();
+        return View(data);
     }
 }

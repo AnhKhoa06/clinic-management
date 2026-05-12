@@ -1,0 +1,60 @@
+@model ClinicManagement.DTOs.Appointment.AppointmentResponseDto
+@{
+    ViewData["Title"] = "Huỷ lịch hẹn";
+}
+
+<div class="page-header">
+    <div class="d-flex align-center gap-8">
+        <a onclick="history.back()" class="btn btn-outline" style="padding:8px 10px; cursor:pointer">
+            <i class="ti ti-arrow-left"></i>
+        </a>
+        <h1 data-vi="Huỷ lịch hẹn" data-en="Cancel Appointment">Huỷ lịch hẹn</h1>
+    </div>
+</div>
+
+<div class="card form-card">
+    <!-- Thông tin lịch hẹn -->
+    <div class="settings-section" style="margin-bottom:20px; padding-bottom:20px; border-bottom:0.5px solid var(--card-border);">
+        <div class="settings-section-title">
+            <i class="ti ti-calendar"></i>
+            <span data-vi="Thông tin lịch hẹn" data-en="Appointment Info">Thông tin lịch hẹn</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:13px;">
+            <div>
+                <span style="color:var(--text-secondary);" data-vi="Bác sĩ" data-en="Doctor">Bác sĩ:</span>
+                <span class="fw-500"> @Model.DoctorName</span>
+            </div>
+            <div>
+                <span style="color:var(--text-secondary);" data-vi="Chuyên khoa" data-en="Specialty">Chuyên khoa:</span>
+                <span class="fw-500"> @Model.SpecialtyName</span>
+            </div>
+            <div>
+                <span style="color:var(--text-secondary);" data-vi="Ngày khám" data-en="Date">Ngày khám:</span>
+                <span class="fw-500"> @Model.SlotDate.ToString("dd/MM/yyyy")</span>
+            </div>
+            <div>
+                <span style="color:var(--text-secondary);" data-vi="Giờ khám" data-en="Time">Giờ khám:</span>
+                <span class="fw-500"> @Model.SlotTime.ToString("HH:mm")</span>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="CancelConfirm" asp-route-id="@Model.Id" method="post">
+        <div class="form-group">
+            <label class="form-label">
+                <span data-vi="Lý do huỷ" data-en="Cancel Reason">Lý do huỷ</span>
+                <span class="required">*</span>
+            </label>
+            <textarea name="CancelReason" class="form-control" rows="3"
+                      placeholder="Nhập lý do huỷ lịch hẹn..." required></textarea>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger">
+                <i class="ti ti-x"></i>
+                <span data-vi="Xác nhận huỷ" data-en="Confirm Cancel">Xác nhận huỷ</span>
+            </button>
+            <a onclick="history.back()" class="btn btn-outline" style="cursor:pointer"
+               data-vi="Quay lại" data-en="Go Back">Quay lại</a>
+        </div>
+    </form>
+</div>

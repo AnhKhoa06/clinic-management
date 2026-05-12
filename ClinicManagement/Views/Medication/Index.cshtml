@@ -1,0 +1,195 @@
+@model List<ClinicManagement.DTOs.Medication.MedicationResponseDto>
+@{
+    ViewData["Title"] = "Danh mục thuốc";
+    var units = ViewBag.Units as List<string> ?? new List<string>();
+}
+
+<div class="page-header">
+    <h1 data-vi="Danh mục thuốc" data-en="Medications">Danh mục thuốc</h1>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="ti ti-plus"></i>
+            <span data-vi="Thêm thuốc" data-en="Add Medication">Thêm thuốc</span>
+        </a>
+    }
+</div>
+
+<!-- Search + Filter -->
+<form method="get" asp-action="Index" style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+    <div style="position:relative; flex:1; min-width:200px;">
+        <i class="ti ti-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:16px;"></i>
+        <input type="text" name="search" value="@ViewBag.Search"
+               class="form-control" style="padding-left:38px;"
+               placeholder="Tìm tên thuốc..." />
+    </div>
+    @if (units.Any())
+    {
+        <select name="unit" class="form-control" style="width:160px;">
+            <option value="">Tất cả đơn vị</option>
+            @foreach (var u in units)
+            {
+                <option value="@u" selected="@(ViewBag.Unit == u)">@u</option>
+            }
+        </select>
+    }
+    <button type="submit" class="btn btn-primary">
+        <i class="ti ti-search"></i>
+    </button>
+    @if (!string.IsNullOrEmpty(ViewBag.Search as string) || !string.IsNullOrEmpty(ViewBag.Unit as string))
+    {
+        <a asp-action="Index" class="btn btn-outline">
+            <i class="ti ti-x"></i>
+        </a>
+    }
+</form>
+
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th data-vi="Tên thuốc" data-en="Medication Name">Tên thuốc</th>
+                <th data-vi="Đơn vị" data-en="Unit">Đơn vị</th>
+                <th data-vi="Mô tả" data-en="Description">Mô tả</th>
+                <th data-vi="Trạng thái" data-en="Status">Trạng thái</th>
+                @if (User.IsInRole("Admin"))
+                {
+                    <th data-vi="Thao tác" data-en="Actions">Thao tác</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="5" style="text-align:center; color:var(--text-muted); padding:40px;">
+                        @if (!string.IsNullOrEmpty(ViewBag.Search as string))
+                        {
+                            <span>Không tìm thấy thuốc nào.</span>
+                        }
+                        else
+                        {
+                            <div>
+                                <i class="ti ti-pill" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+                                <span data-vi="Chưa có thuốc nào trong danh mục." data-en="No medications found.">Chưa có thuốc nào trong danh mục.</span>
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div class="stat-icon red" style="width:32px; height:32px; flex-shrink:0;">
+                                <i class="ti ti-pill" style="font-size:15px;"></i>
+                            </div>
+                            <span class="fw-500">@item.Name</span>
+                        </div>
+                    </td>
+                    <td>
+                        @if (item.Unit != null)
+                        {
+                            <span class="badge badge-blue">@item.Unit</span>
+                        }
+                        else
+                        {
+                            <span class="td-muted">—</span>
+                        }
+                    </td>
+                    <td class="td-muted" style="max-width:300px;">
+                        @(item.Description ?? "—")
+                    </td>
+                    <td>
+                        @if (item.IsActive)
+                        {
+                            <span class="badge badge-green" data-vi="Đang dùng" data-en="Active">Đang dùng</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-red" data-vi="Ngừng dùng" data-en="Inactive">Ngừng dùng</span>
+                        }
+                    </td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <td>
+                            <div class="action-btns">
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="icon-btn" title="Chỉnh sửa">
+                                    <i class="ti ti-pencil"></i>
+                                </a>
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline"
+                                      onsubmit="return confirm('Xác nhận ngừng sử dụng thuốc @item.Name?')">
+                                    <button type="submit" class="icon-btn danger" title="Ngừng sử dụng">
+                                        <i class="ti ti-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@{
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+}
+
+@if (totalPages > 1)
+{
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:17px; padding:12px 16px; background:var(--bg-card); border-radius:var(--radius); border:1px solid var(--border);">
+        <span style="font-size:13px; color:var(--text-muted);">
+            Trang @currentPage / @totalPages
+        </span>
+        <div style="display:flex; gap:6px; align-items:center;">
+            @if (currentPage > 1)
+            {
+                <a asp-action="Index"
+                   asp-route-page="@(currentPage - 1)"
+                   asp-route-search="@ViewBag.Search"
+                   asp-route-unit="@ViewBag.Unit"
+                   style="display:flex; align-items:center; gap:4px; padding:6px 12px; border-radius:8px; border:1px solid var(--border); font-size:13px; color:var(--text-primary); text-decoration:none; background:var(--bg-card);">
+                    <i class="ti ti-chevron-left" style="font-size:14px;"></i> Previous
+                </a>
+            }
+            else
+            {
+                <span style="display:flex; align-items:center; gap:4px; padding:6px 12px; border-radius:8px; border:1px solid var(--border); font-size:13px; color:var(--text-muted); background:var(--bg-card); opacity:0.5;">
+                    <i class="ti ti-chevron-left" style="font-size:14px;"></i> Previous
+                </span>
+            }
+
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <a asp-action="Index"
+                asp-route-page="@i"
+                asp-route-search="@ViewBag.Search"
+                asp-route-unit="@ViewBag.Unit"
+                class="page-btn @(i == currentPage ? "active" : "")">
+                    @i
+                </a>
+            }
+
+            @if (currentPage < totalPages)
+            {
+                <a asp-action="Index"
+                   asp-route-page="@(currentPage + 1)"
+                   asp-route-search="@ViewBag.Search"
+                   asp-route-unit="@ViewBag.Unit"
+                   style="display:flex; align-items:center; gap:4px; padding:6px 12px; border-radius:8px; border:1px solid var(--border); font-size:13px; color:var(--text-primary); text-decoration:none; background:var(--bg-card);">
+                    Next <i class="ti ti-chevron-right" style="font-size:14px;"></i>
+                </a>
+            }
+            else
+            {
+                <span style="display:flex; align-items:center; gap:4px; padding:6px 12px; border-radius:8px; border:1px solid var(--border); font-size:13px; color:var(--text-muted); background:var(--bg-card); opacity:0.5;">
+                    Next <i class="ti ti-chevron-right" style="font-size:14px;"></i>
+                </span>
+            }
+        </div>
+    </div>
+}

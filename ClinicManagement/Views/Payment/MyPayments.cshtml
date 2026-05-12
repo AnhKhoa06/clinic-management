@@ -1,0 +1,82 @@
+@model List<ClinicManagement.DTOs.Payment.PaymentResponseDto>
+@{
+    ViewData["Title"] = "Hóa đơn của tôi";
+}
+
+<div class="page-header">
+    <h1 data-vi="Hóa đơn của tôi" data-en="My Invoices">Hóa đơn của tôi</h1>
+</div>
+
+<div class="card table-card">
+    <table>
+        <thead>
+            <tr>
+                <th data-vi="Mã hóa đơn" data-en="Invoice">Mã hóa đơn</th>
+                <th data-vi="Bác sĩ" data-en="Doctor">Bác sĩ</th>
+                <th data-vi="Ngày khám" data-en="Date">Ngày khám</th>
+                <th data-vi="Số tiền" data-en="Amount">Số tiền</th>
+                <th data-vi="Phương thức" data-en="Method">Phương thức</th>
+                <th data-vi="Trạng thái" data-en="Status">Trạng thái</th>
+                <th data-vi="Thao tác" data-en="Actions">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <i class="ti ti-receipt-off"></i>
+                            <p data-vi="Bạn chưa có hóa đơn nào." data-en="No invoices yet.">Bạn chưa có hóa đơn nào.</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="td-name">@item.InvoiceCode</td>
+                    <td>@item.DoctorName</td>
+                    <td>@item.SlotDate.ToString("dd/MM/yyyy")</td>
+                    <td class="fw-500">@item.Amount.ToString("N0") ₫</td>
+                    <td class="td-muted">@item.Method</td>
+                    <td>
+                        @if (item.Status == "Paid")
+                        {
+                            <span class="status status-active">
+                                <span class="status-dot"></span>
+                                <span data-vi="Đã thanh toán" data-en="Paid">Đã thanh toán</span>
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="status status-pending">
+                                <span class="status-dot"></span>
+                                <span data-vi="Chưa thanh toán" data-en="Unpaid">Chưa thanh toán</span>
+                            </span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Detail" asp-route-id="@item.Id" class="icon-btn" title="Xem chi tiết">
+                            <i class="ti ti-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+<script>
+    setTimeout(function() {
+        const params = new URLSearchParams(window.location.search);
+        const toast = params.get('toast');
+        const msg = params.get('msg');
+        if (toast && msg) {
+            showToast(toast, toast === 'success' ? 'Thành công' : 'Lỗi', msg);
+            window.history.replaceState({}, '', '/Payment/MyPayments');
+        }
+    }, 100);
+</script>
+}

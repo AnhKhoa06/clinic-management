@@ -1,0 +1,83 @@
+@model List<ClinicManagement.DTOs.Doctor.DoctorResponseDto>
+@{
+    ViewData["Title"] = "Tìm bác sĩ";
+    var specialties = ViewBag.Specialties as List<ClinicManagement.DTOs.Specialty.SpecialtyResponseDto> ?? new();
+    int? selectedId = ViewBag.SelectedSpecialtyId;
+}
+
+<div class="page-header">
+    <h1 data-vi="Tìm bác sĩ" data-en="Find a Doctor">Tìm bác sĩ</h1>
+</div>
+
+<!-- Chuyên khoa filter -->
+<div class="specialty-filter">
+    <a asp-action="Browse" class="specialty-chip @(selectedId == null ? "active" : "")">
+        <i class="ti ti-grid-dots"></i>
+        <span data-vi="Tất cả" data-en="All">Tất cả</span>
+    </a>
+    @foreach (var s in specialties)
+    {
+        <a asp-action="Browse" asp-route-specialtyId="@s.Id"
+           class="specialty-chip @(selectedId == s.Id ? "active" : "")">
+            @s.Name
+        </a>
+    }
+</div>
+
+<!-- Doctor cards -->
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <i class="ti ti-stethoscope"></i>
+        <p data-vi="Không có bác sĩ nào trong chuyên khoa này."
+           data-en="No doctors found in this specialty.">
+            Không có bác sĩ nào trong chuyên khoa này.
+        </p>
+    </div>
+}
+else
+{
+    <div class="doctor-grid">
+        @foreach (var d in Model)
+        {
+            <div class="doctor-card">
+                <div class="doctor-card-avatar">
+                    @if (!string.IsNullOrEmpty(d.AvatarUrl))
+                    {
+                        <img src="@d.AvatarUrl" alt="@d.FullName" />
+                    }
+                    else
+                    {
+                        <span>@d.FullName[0]</span>
+                    }
+                </div>
+                <div class="doctor-card-body">
+                    <div class="doctor-card-name">@d.FullName</div>
+                    <div class="doctor-card-specialty">@d.SpecialtyName</div>
+                    @if (d.AverageRating > 0)
+                    {
+                        <div class="doctor-card-rating">
+                            <i class="ti ti-star-filled" style="color:#f59e0b; font-size:14px;"></i>
+                            <span>@d.AverageRating</span>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(d.Bio))
+                    {
+                        <div class="doctor-card-bio">@d.Bio</div>
+                    }
+                </div>
+                <div class="doctor-card-footer">
+                    <a asp-action="PublicProfile" asp-route-id="@d.Id" class="btn btn-outline" style="flex:1; justify-content:center;">
+                        <i class="ti ti-eye"></i>
+                        <span data-vi="Xem chi tiết" data-en="View Profile">Xem chi tiết</span>
+                    </a>
+                    <a asp-controller="Appointment" asp-action="Create" asp-route-doctorId="@d.Id"
+                       class="btn btn-primary" style="flex:1; justify-content:center;">
+                        <i class="ti ti-calendar-plus"></i>
+                        <span data-vi="Đặt lịch" data-en="Book">Đặt lịch</span>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+}

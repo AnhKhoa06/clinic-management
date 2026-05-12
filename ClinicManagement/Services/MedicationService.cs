@@ -29,6 +29,7 @@ public class MedicationService
             Name = dto.Name.Trim(),
             Unit = dto.Unit?.Trim(),
             Description = dto.Description?.Trim(),
+            Price = dto.Price,
             IsActive = true
         };
 
@@ -48,6 +49,7 @@ public class MedicationService
         medication.Name = dto.Name.Trim();
         medication.Unit = dto.Unit?.Trim();
         medication.Description = dto.Description?.Trim();
+        medication.Price = dto.Price;
         medication.IsActive = dto.IsActive;
 
         await _repo.UpdateAsync(medication);
@@ -70,6 +72,16 @@ public class MedicationService
         Name = m.Name,
         Unit = m.Unit,
         Description = m.Description,
+        Price = m.Price,
         IsActive = m.IsActive
     };
+
+    public async Task<(bool Success, string Message, MedicationResponseDto? Data)> GetByIdAsync(int id)
+    {
+        var medication = await _repo.GetByIdAsync(id);
+        if (medication == null)
+            return (false, "Không tìm thấy thuốc.", null);
+
+        return (true, "OK", MapToDto(medication));
+    }
 }

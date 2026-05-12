@@ -1,0 +1,161 @@
+@model ClinicManagement.DTOs.MedicalRecord.MedicalRecordResponseDto
+@{
+    ViewData["Title"] = "Chi tiết hồ sơ bệnh án";
+}
+
+<div class="page-header">
+    <div class="d-flex align-center gap-8">
+        <a asp-action="Index" class="btn btn-outline" style="padding:8px 10px">
+            <i class="ti ti-arrow-left"></i>
+        </a>
+        <h1>Hồ sơ bệnh án #@Model.Id</h1>
+    </div>
+    <div class="d-flex align-center gap-8">
+        @if (User.IsInRole("Doctor"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline"
+               style="height:38px; display:flex; align-items:center; gap:6px;">
+                <i class="ti ti-edit"></i> Chỉnh sửa
+            </a>
+        }
+        @if (User.IsInRole("Admin") || User.IsInRole("Doctor"))
+        {
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
+                  onsubmit="return confirm('Bạn có chắc muốn xóa hồ sơ này không?')">
+                <button type="submit" class="btn" style="height:38px; background:#fee2e2; color:#ef4444; border:none; display:flex; align-items:center; gap:6px;">
+                    <i class="ti ti-trash"></i> Xóa
+                </button>
+            </form>
+        }
+    </div>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+    <!-- Thông tin bệnh nhân -->
+    <div class="card" style="padding:20px;">
+        <div class="settings-section-title" style="margin-bottom:16px;">
+            <i class="ti ti-user"></i>
+            <span>Thông tin bệnh nhân</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--text-secondary);">Họ tên</span>
+                <span class="fw-500">@Model.PatientName</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--text-secondary);">Mã bệnh nhân</span>
+                <span class="fw-500">#@Model.PatientId</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thông tin khám -->
+    <div class="card" style="padding:20px;">
+        <div class="settings-section-title" style="margin-bottom:16px;">
+            <i class="ti ti-calendar"></i>
+            <span>Thông tin khám</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--text-secondary);">Bác sĩ</span>
+                <span class="fw-500">@Model.DoctorName</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--text-secondary);">Ngày khám</span>
+                <span class="fw-500">@Model.SlotDate.ToString("dd/MM/yyyy")</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--text-secondary);">Giờ khám</span>
+                <span class="fw-500">@Model.SlotTime.ToString("HH:mm")</span>
+            </div>
+            @if (Model.FollowUpDate != null)
+            {
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="color:var(--text-secondary);">Ngày tái khám</span>
+                    <span class="fw-500" style="color:#f59e0b;">
+                        @Model.FollowUpDate.Value.ToString("dd/MM/yyyy")
+                    </span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Kết quả khám -->
+    <div class="card" style="padding:20px; grid-column:1 / -1;">
+        <div class="settings-section-title" style="margin-bottom:16px;">
+            <i class="ti ti-stethoscope"></i>
+            <span>Kết quả khám</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; font-size:13px;">
+            <div>
+                <span style="color:var(--text-secondary);">Triệu chứng</span>
+                <p style="margin:6px 0 0; font-weight:500;">
+                    @(string.IsNullOrEmpty(Model.Symptoms) ? "—" : Model.Symptoms)
+                </p>
+            </div>
+            <div>
+                <span style="color:var(--text-secondary);">Chẩn đoán</span>
+                <p style="margin:6px 0 0; font-weight:500;">
+                    @(string.IsNullOrEmpty(Model.Diagnosis) ? "—" : Model.Diagnosis)
+                </p>
+            </div>
+            <div>
+                <span style="color:var(--text-secondary);">Ghi chú điều trị</span>
+                <p style="margin:6px 0 0; font-weight:500;">
+                    @(string.IsNullOrEmpty(Model.TreatmentNotes) ? "—" : Model.TreatmentNotes)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Đơn thuốc -->
+    <div class="card" style="padding:20px; grid-column:1 / -1;">
+        <div class="settings-section-title" style="margin-bottom:16px;">
+            <i class="ti ti-pill"></i>
+            <span>Đơn thuốc</span>
+        </div>
+        @if (Model.Prescriptions.Any())
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tên thuốc</th>
+                        <th>Đơn vị</th>
+                        <th>Số viên/lần</th>
+                        <th>Số lần/ngày</th>
+                        <th>Số ngày</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>Thành tiền</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model.Prescriptions)
+                    {
+                        <tr>
+                            <td class="td-name">@p.MedicationName</td>
+                            <td class="td-muted">@p.Unit</td>
+                            <td>@p.DosagePerTime.ToString("G29") viên</td>
+                            <td>@p.TimesPerDay lần</td>
+                            <td>@p.DurationDays ngày</td>
+                            <td>@p.Quantity</td>
+                            <td>@p.UnitPrice.ToString("N0") ₫</td>
+                            <td style="font-weight:600; color:var(--accent);">@p.TotalPrice.ToString("N0") ₫</td>
+                            <td class="td-muted">@(p.Notes ?? "—")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="ti ti-pill-off"></i>
+                <p>Không có đơn thuốc.</p>
+            </div>
+        }
+    </div>
+
+</div>

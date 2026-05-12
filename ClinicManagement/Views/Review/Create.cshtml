@@ -1,0 +1,86 @@
+@model ClinicManagement.DTOs.Review.ReviewCreateDto
+@{
+    ViewData["Title"] = "Đánh giá bác sĩ";
+    string doctorName = ViewBag.DoctorName ?? "Bác sĩ";
+}
+
+<div class="page-header">
+    <div class="d-flex align-center gap-8">
+        <a asp-controller="Appointment" asp-action="MyAppointments" class="btn btn-outline" style="padding:8px 10px">
+            <i class="ti ti-arrow-left"></i>
+        </a>
+        <h1 data-vi="Đánh giá bác sĩ" data-en="Rate Doctor">Đánh giá bác sĩ</h1>
+    </div>
+</div>
+
+<div class="card" style="max-width:520px; padding:28px;">
+    <div style="text-align:center; margin-bottom:24px;">
+        <div style="font-size:15px; color:var(--text-secondary);" data-vi="Đánh giá cho" data-en="Rating for">Đánh giá cho</div>
+        <div style="font-size:20px; font-weight:600; color:var(--text-primary); margin-top:4px;">@doctorName</div>
+    </div>
+
+    <form asp-action="Create" method="post">
+        <input type="hidden" asp-for="AppointmentId" />
+        <input type="hidden" asp-for="DoctorId" />
+        <input type="hidden" name="doctorName" value="@doctorName" />
+
+        <!-- Star rating -->
+        <div style="margin-bottom:20px;">
+            <label class="form-label" data-vi="Số sao" data-en="Rating">Số sao <span style="color:red">*</span></label>
+            <div class="star-rating-js">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <i class="ti ti-star star-btn" data-value="@i"></i>
+                }
+            </div>
+            <input type="hidden" asp-for="Rating" id="ratingInput" />
+            <span asp-validation-for="Rating" class="text-danger" style="font-size:12px;"></span>
+        </div>
+
+        <!-- Comment -->
+        <div style="margin-bottom:24px;">
+            <label class="form-label" data-vi="Nhận xét" data-en="Comment">Nhận xét</label>
+            <textarea asp-for="Comment" class="form-control" rows="4"
+                      placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
+            <span asp-validation-for="Comment" class="text-danger" style="font-size:12px;"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
+            <i class="ti ti-send"></i>
+            <span data-vi="Gửi đánh giá" data-en="Submit">Gửi đánh giá</span>
+        </button>
+    </form>
+
+    <script>
+        const stars = document.querySelectorAll('.star-btn');
+        const ratingInput = document.getElementById('ratingInput');
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const val = parseInt(star.dataset.value);
+                ratingInput.value = val;
+                stars.forEach(s => {
+                    const v = parseInt(s.dataset.value);
+                    s.classList.toggle('active', v <= val);
+                    s.classList.toggle('ti-star-filled', v <= val);
+                    s.classList.toggle('ti-star', v > val);
+                });
+            });
+
+            star.addEventListener('mouseover', () => {
+                const val = parseInt(star.dataset.value);
+                stars.forEach(s => {
+                    s.classList.toggle('active', parseInt(s.dataset.value) <= val);
+                });
+            });
+
+            star.addEventListener('mouseout', () => {
+                const val = parseInt(ratingInput.value) || 0;
+                stars.forEach(s => {
+                    s.classList.toggle('active', parseInt(s.dataset.value) <= val);
+                });
+            });
+        });
+    </script>
+
+</div>

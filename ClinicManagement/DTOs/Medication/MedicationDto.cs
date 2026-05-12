@@ -11,6 +11,9 @@ public class MedicationCreateDto
     public string? Unit { get; set; }
 
     public string? Description { get; set; }
+
+    [Range(0, 100000000)]
+    public decimal Price { get; set; } = 0;
 }
 
 public class MedicationUpdateDto
@@ -23,6 +26,9 @@ public class MedicationUpdateDto
 
     public string? Description { get; set; }
 
+    [Range(0, 100000000)]
+    public decimal Price { get; set; } = 0;
+
     public bool IsActive { get; set; } = true;
 }
 
@@ -32,5 +38,6 @@ public class MedicationResponseDto
     public string Name { get; set; } = string.Empty;
     public string? Unit { get; set; }
     public string? Description { get; set; }
+    public decimal Price { get; set; }
     public bool IsActive { get; set; }
 }

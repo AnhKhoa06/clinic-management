@@ -85,8 +85,8 @@ public class AppDbContext : DbContext
                 .HasForeignKey(a => a.DoctorId)
                 .OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(a => a.AppointmentSlot)
-                .WithOne(s => s.Appointment)
-                .HasForeignKey<Appointment>(a => a.SlotId)
+                .WithMany()
+                .HasForeignKey(a => a.SlotId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 

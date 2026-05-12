@@ -61,8 +61,7 @@ namespace backend.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.HasIndex("SlotId")
-                        .IsUnique();
+                    b.HasIndex("SlotId");
 
                     b.ToTable("Appointments");
                 });
@@ -114,6 +113,9 @@ namespace backend.Migrations
 
                     b.Property<string>("Bio")
                         .HasColumnType("longtext");
+
+                    b.Property<decimal>("ExaminationFee")
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
@@ -205,6 +207,9 @@ namespace backend.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(65,30)");
+
                     b.Property<string>("Unit")
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
@@ -260,15 +265,23 @@ namespace backend.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<int>("AppointmentId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<decimal>("ExaminationFee")
+                        .HasColumnType("decimal(65,30)");
+
                     b.Property<string>("InvoiceCode")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<decimal>("MedicationFee")
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<string>("Method")
                         .IsRequired()
@@ -303,16 +316,11 @@ namespace backend.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Dosage")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                    b.Property<decimal>("DosagePerTime")
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<int>("DurationDays")
                         .HasColumnType("int");
-
-                    b.Property<string>("Frequency")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("MedicalRecordId")
                         .HasColumnType("int");
@@ -322,6 +330,15 @@ namespace backend.Migrations
 
                     b.Property<string>("Notes")
                         .HasColumnType("longtext");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimesPerDay")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
 
@@ -525,8 +542,8 @@ namespace backend.Migrations
                         .IsRequired();
 
                     b.HasOne("ClinicManagement.Models.AppointmentSlot", "AppointmentSlot")
-                        .WithOne("Appointment")
-                        .HasForeignKey("ClinicManagement.Models.Appointment", "SlotId")
+                        .WithMany()
+                        .HasForeignKey("SlotId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -699,11 +716,6 @@ namespace backend.Migrations
                     b.Navigation("Payment");
 
                     b.Navigation("Review");
-                });
-
-            modelBuilder.Entity("ClinicManagement.Models.AppointmentSlot", b =>
-                {
-                    b.Navigation("Appointment");
                 });
 
             modelBuilder.Entity("ClinicManagement.Models.Doctor", b =>

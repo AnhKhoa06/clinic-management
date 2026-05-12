@@ -11,21 +11,17 @@ public class Payment
     [ForeignKey("Appointment")]
     public int AppointmentId { get; set; }
 
-    [Required, MaxLength(50)]
     public string InvoiceCode { get; set; } = string.Empty;
 
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal Amount { get; set; }
+    public decimal ExaminationFee { get; set; } = 0;
+    public decimal MedicationFee { get; set; } = 0;
+    public decimal Amount { get; set; } // = ExaminationFee + MedicationFee
 
-    [Required]
     public string Status { get; set; } = "Unpaid";
-
-    [Required]
     public string Method { get; set; } = "Cash";
-
     public string? Notes { get; set; }
-
     public DateTime? PaidAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public Appointment Appointment { get; set; } = null!;
 }

@@ -123,6 +123,11 @@ public class AppointmentService
         if (appointment.Status != "Confirmed")
             return (false, "Chỉ có thể hoàn thành lịch hẹn đã xác nhận.", null);
 
+        // Kiểm tra ngày khám đã tới chưa
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        if (appointment.AppointmentSlot.SlotDate > today)
+            return (false, "Chưa tới ngày khám, không thể đánh dấu hoàn thành.", null);
+
         appointment.Status = "Completed";
         await _appointmentRepo.UpdateAsync(appointment);
         return (true, "Đánh dấu khám xong thành công.", MapToDto(appointment));
@@ -143,6 +148,30 @@ public class AppointmentService
         Reason = a.Reason,
         CancelReason = a.CancelReason,
         Notes = a.Notes,
-        CreatedAt = a.CreatedAt
+        CreatedAt = a.CreatedAt,
+        HasReview = a.Review != null,
+        HasPayment = a.Payment != null
     };
+
+    public async Task<(bool, string)> DeleteAsync(int id)
+    {
+        var appointment = await _appointmentRepo.GetByIdAsync(id);
+        if (appointment == null)
+            return (false, "Không tìm thấy lịch hẹn.");
+
+        if (appointment.Status != "Cancelled" && appointment.Status != "Completed")
+            return (false, "Chỉ có thể xóa lịch hẹn đã huỷ hoặc hoàn thành.");
+
+        if (appointment.MedicalRecord != null)
+            return (false, "Không thể xóa vì lịch hẹn đã có hồ sơ bệnh án.");
+
+        if (appointment.Payment != null)
+            return (false, "Không thể xóa vì lịch hẹn đã có hóa đơn.");
+
+        if (appointment.Review != null)
+            return (false, "Không thể xóa vì lịch hẹn đã có đánh giá.");
+
+        await _appointmentRepo.DeleteAsync(appointment);
+        return (true, "Xóa lịch hẹn thành công.");
+    }
 }

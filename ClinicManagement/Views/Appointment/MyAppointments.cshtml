@@ -1,0 +1,110 @@
+@model List<ClinicManagement.DTOs.Appointment.AppointmentResponseDto>
+@{
+    ViewData["Title"] = "Lịch hẹn của tôi";
+}
+
+<div class="page-header">
+    <h1 data-vi="Lịch hẹn của tôi" data-en="My Appointments">Lịch hẹn của tôi</h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="ti ti-calendar-plus"></i>
+        <span data-vi="Đặt lịch mới" data-en="Book Appointment">Đặt lịch mới</span>
+    </a>
+</div>
+
+<div class="card table-card">
+    <table>
+        <thead>
+            <tr>
+                <th data-vi="Bác sĩ" data-en="Doctor">Bác sĩ</th>
+                <th data-vi="Chuyên khoa" data-en="Specialty">Chuyên khoa</th>
+                <th data-vi="Ngày khám" data-en="Date">Ngày khám</th>
+                <th data-vi="Giờ khám" data-en="Time">Giờ khám</th>
+                <th data-vi="Lý do" data-en="Reason">Lý do</th>
+                <th data-vi="Trạng thái" data-en="Status">Trạng thái</th>
+                <th data-vi="Thao tác" data-en="Actions">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <i class="ti ti-calendar-off"></i>
+                            <p data-vi="Bạn chưa có lịch hẹn nào." data-en="You have no appointments yet.">Bạn chưa có lịch hẹn nào.</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="td-name">@item.DoctorName</td>
+                    <td class="td-muted">@item.SpecialtyName</td>
+                    <td>@item.SlotDate.ToString("dd/MM/yyyy")</td>
+                    <td>@item.SlotTime.ToString("HH:mm")</td>
+                    <td class="td-muted">@(item.Reason ?? "—")</td>
+                    <td>
+                        @switch (item.Status)
+                        {
+                            case "Pending":
+                                <span class="status status-pending">
+                                    <span class="status-dot"></span>
+                                    <span data-vi="Chờ xác nhận" data-en="Pending">Chờ xác nhận</span>
+                                </span>
+                                break;
+                            case "Confirmed":
+                                <span class="status status-done">
+                                    <span class="status-dot"></span>
+                                    <span data-vi="Đã xác nhận" data-en="Confirmed">Đã xác nhận</span>
+                                </span>
+                                break;
+                            case "Completed":
+                                <span class="status status-active">
+                                    <span class="status-dot"></span>
+                                    <span data-vi="Hoàn thành" data-en="Completed">Hoàn thành</span>
+                                </span>
+                                break;
+                            case "Cancelled":
+                                <span class="status status-cancel">
+                                    <span class="status-dot"></span>
+                                    <span data-vi="Đã huỷ" data-en="Cancelled">Đã huỷ</span>
+                                </span>
+                                break;
+                        }
+                    </td>
+                        <td>
+                            <div class="action-btns">
+                                <a asp-action="MyDetail" asp-route-id="@item.Id" class="icon-btn" title="Xem chi tiết">
+                                    <i class="ti ti-eye"></i>
+                                </a>
+                                @if (item.Status == "Pending" || item.Status == "Confirmed")
+                                {
+                                    <a asp-action="Cancel" asp-route-id="@item.Id" class="icon-btn danger" title="Huỷ lịch">
+                                        <i class="ti ti-x"></i>
+                                    </a>
+                                }
+
+                                @if (item.Status == "Completed" && !item.HasReview)
+                                {
+                                    <a asp-controller="Review" asp-action="Create"
+                                    asp-route-appointmentId="@item.Id"
+                                    asp-route-doctorId="@item.DoctorId"
+                                    asp-route-doctorName="@item.DoctorName"
+                                    class="icon-btn" title="Đánh giá" style="color:#f59e0b;">
+                                        <i class="ti ti-star"></i>
+                                    </a>
+                                }
+                                @if (item.HasReview)
+                                {
+                                    <span class="icon-btn" title="Đã đánh giá" style="color:#f59e0b; cursor:default;">
+                                        <i class="ti ti-star-filled"></i>
+                                    </span>
+                                }
+                            </div>
+                        </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

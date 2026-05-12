@@ -1,0 +1,63 @@
+@model ClinicManagement.DTOs.MedicalRecord.MedicalRecordUpdateDto
+@{
+    ViewData["Title"] = "Chỉnh sửa hồ sơ bệnh án";
+}
+
+<div class="page-header">
+    <div class="d-flex align-center gap-8">
+        <a onclick="history.back()" class="btn btn-outline" style="padding:8px 10px; cursor:pointer">
+            <i class="ti ti-arrow-left"></i>
+        </a>
+        <h1>Chỉnh sửa hồ sơ bệnh án #@ViewBag.Id</h1>
+    </div>
+</div>
+
+<div class="card form-card" style="max-width:640px;">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <i class="ti ti-alert-circle"></i>
+            <div>
+                @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div>@err.ErrorMessage</div>
+                }
+            </div>
+        </div>
+    }
+
+    <form asp-action="Edit" asp-route-id="@ViewBag.Id" method="post">
+
+        <div class="form-group">
+            <label class="form-label">Triệu chứng</label>
+            <textarea asp-for="Symptoms" class="form-control" rows="3"
+                      placeholder="Mô tả triệu chứng của bệnh nhân..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Chẩn đoán</label>
+            <textarea asp-for="Diagnosis" class="form-control" rows="3"
+                      placeholder="Chẩn đoán bệnh..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Ghi chú điều trị</label>
+            <textarea asp-for="TreatmentNotes" class="form-control" rows="3"
+                      placeholder="Hướng dẫn điều trị, lưu ý..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Ngày tái khám</label>
+            <input asp-for="FollowUpDate" type="date" class="form-control"
+                   style="max-width:250px;"
+                   min="@DateOnly.FromDateTime(DateTime.Today.AddDays(1)).ToString("yyyy-MM-dd")" />
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="ti ti-check"></i> Lưu thay đổi
+            </button>
+            <a onclick="history.back()" class="btn btn-outline" style="cursor:pointer">Huỷ</a>
+        </div>
+    </form>
+</div>

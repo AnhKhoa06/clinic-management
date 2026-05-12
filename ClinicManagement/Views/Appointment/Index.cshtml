@@ -1,0 +1,180 @@
+@model List<ClinicManagement.DTOs.Appointment.AppointmentResponseDto>
+@{
+    ViewData["Title"] = "Lịch hẹn";
+    var statusList = ViewBag.StatusList as List<string> ?? new();
+}
+
+<div class="page-header">
+    <h1 data-vi="Quản lý lịch hẹn" data-en="Appointment Management">Quản lý lịch hẹn</h1>
+</div>
+
+<!-- Filter status -->
+<div class="search-bar" style="margin-bottom:16px;">
+    @foreach (var s in statusList)
+    {
+        var isActive = ViewBag.Status == s;
+        var label = s switch {
+            "Pending"   => "Chờ xác nhận",
+            "Confirmed" => "Đã xác nhận",
+            "Completed" => "Hoàn thành",
+            "Cancelled" => "Đã huỷ",
+            _ => s
+        };
+        <a asp-action="Index" asp-route-status="@s"
+           class="btn @(isActive ? "btn-primary" : "btn-outline")">
+            @label
+        </a>
+    }
+    @if (!string.IsNullOrEmpty(ViewBag.Status as string))
+    {
+        <a asp-action="Index" class="btn btn-outline">
+            <i class="ti ti-x"></i>
+            <span data-vi="Tất cả" data-en="All">Tất cả</span>
+        </a>
+    }
+</div>
+
+<form asp-action="Index" method="get" style="margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+    <input type="hidden" name="status" value="@ViewBag.Status" />
+    <input type="date" name="date" class="form-control" style="max-width:200px;"
+           value="@ViewBag.Date" />
+    <button type="submit" class="btn btn-primary">
+        <i class="ti ti-search"></i>
+        <span data-vi="Tìm" data-en="Search">Tìm</span>
+    </button>
+    @if (!string.IsNullOrEmpty(ViewBag.Date as string))
+    {
+        <a asp-action="Index" asp-route-status="@ViewBag.Status" class="btn btn-outline">
+            <i class="ti ti-x"></i>
+            <span data-vi="Xóa ngày" data-en="Clear">Xóa ngày</span>
+        </a>
+    }
+</form>
+
+<div class="card table-card">
+    <div class="table-header">
+        <span class="table-title">
+            @Model.Count
+            <span data-vi="lịch hẹn" data-en="appointments">lịch hẹn</span>
+        </span>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th data-vi="Bệnh nhân" data-en="Patient">Bệnh nhân</th>
+                <th data-vi="Bác sĩ" data-en="Doctor">Bác sĩ</th>
+                <th data-vi="Ngày khám" data-en="Date">Ngày khám</th>
+                <th data-vi="Giờ khám" data-en="Time">Giờ khám</th>
+                <th data-vi="Trạng thái" data-en="Status">Trạng thái</th>
+                <th data-vi="Thao tác" data-en="Actions">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <i class="ti ti-calendar-off"></i>
+                            <p data-vi="Không có lịch hẹn nào." data-en="No appointments found.">Không có lịch hẹn nào.</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="table-user">
+                            <div class="table-avatar">@item.PatientName[0]</div>
+                            <div>
+                                <div class="table-user-name">@item.PatientName</div>
+                                <div class="table-user-email">@item.SpecialtyName</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="td-name">@item.DoctorName</td>
+                    <td>@item.SlotDate.ToString("dd/MM/yyyy")</td>
+                    <td>@item.SlotTime.ToString("HH:mm")</td>
+                    <td>
+                        @switch (item.Status)
+                        {
+                            case "Pending":
+                                <span class="status status-pending">
+                                    <span class="status-dot"></span>
+                                    <span data-vi="Chờ xác nhận" data-en="Pending">Chờ xác nhận</span>
+                                </span>
+                                break;
+                            case "Confirmed":
+                                <span class="status status-done">
+                                    <span class="status-dot"></span>
+                                    <span data-vi="Đã xác nhận" data-en="Confirmed">Đã xác nhận</span>
+                                </span>
+                                break;
+                            case "Completed":
+                                <span class="status status-active">
+                                    <span class="status-dot"></span>
+                                    <span data-vi="Hoàn thành" data-en="Completed">Hoàn thành</span>
+                                </span>
+                                break;
+                            case "Cancelled":
+                                <span class="status status-cancel">
+                                    <span class="status-dot"></span>
+                                    <span data-vi="Đã huỷ" data-en="Cancelled">Đã huỷ</span>
+                                </span>
+                                break;
+                        }
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            @if (item.Status == "Pending")
+                            {
+                                <form asp-action="Confirm" asp-route-id="@item.Id" method="post">
+                                    <button type="submit" class="icon-btn" title="Xác nhận">
+                                        <i class="ti ti-check"></i>
+                                    </button>
+                                </form>
+                            }
+                            @if (item.Status == "Confirmed")
+                            {
+                                <form asp-action="Complete" asp-route-id="@item.Id" method="post">
+                                    <button type="submit" class="icon-btn" title="Hoàn thành">
+                                        <i class="ti ti-circle-check"></i>
+                                    </button>
+                                </form>
+                            }
+                            @if (item.Status != "Cancelled" && item.Status != "Completed")
+                            {
+                                <a asp-action="Cancel" asp-route-id="@item.Id" class="icon-btn danger" title="Huỷ">
+                                    <i class="ti ti-x"></i>
+                                </a>
+                            }
+
+                            <a asp-action="Detail" asp-route-id="@item.Id" class="icon-btn" title="Xem chi tiết">
+                                <i class="ti ti-eye"></i>
+                            </a>
+
+                            @if (item.Status == "Completed" && !item.HasPayment)
+                            {
+                                <a asp-controller="Payment" asp-action="Create"
+                                asp-route-appointmentId="@item.Id"
+                                class="icon-btn" title="Tạo hóa đơn" style="color:var(--accent);">
+                                    <i class="ti ti-receipt"></i>
+                                </a>
+                            }
+                            @if (User.IsInRole("Admin") && (item.Status == "Cancelled" || item.Status == "Completed"))
+                            {
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post"
+                                    onsubmit="return confirm('Bạn có chắc muốn xóa lịch hẹn này không?')">
+                                    <button type="submit" class="icon-btn danger" title="Xóa">
+                                        <i class="ti ti-trash"></i>
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

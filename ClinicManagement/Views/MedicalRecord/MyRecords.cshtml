@@ -1,0 +1,59 @@
+@model List<ClinicManagement.DTOs.MedicalRecord.MedicalRecordResponseDto>
+@{
+    ViewData["Title"] = "Hồ sơ bệnh án";
+}
+
+<div class="page-header">
+    <h1><i class="ti ti-clipboard-text"></i> Hồ sơ bệnh án của tôi</h1>
+</div>
+
+<div class="card table-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Ngày khám</th>
+                <th>Bác sĩ</th>
+                <th>Triệu chứng</th>
+                <th>Chẩn đoán</th>
+                <th>Tái khám</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <i class="ti ti-clipboard-off"></i>
+                            <p>Bạn chưa có hồ sơ bệnh án nào.</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.SlotDate.ToString("dd/MM/yyyy")</td>
+                    <td class="td-name">@item.DoctorName</td>
+                    <td class="td-muted">@(item.Symptoms ?? "—")</td>
+                    <td class="td-muted">@(item.Diagnosis ?? "—")</td>
+                    <td>
+                        @if (item.FollowUpDate != null)
+                        {
+                            <span style="color:#f59e0b; font-weight:500;">
+                                @item.FollowUpDate.Value.ToString("dd/MM/yyyy")
+                            </span>
+                        }
+                        else { <span>—</span> }
+                    </td>
+                    <td>
+                        <a asp-action="MyDetail" asp-route-id="@item.Id" class="icon-btn" title="Xem chi tiết">
+                            <i class="ti ti-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

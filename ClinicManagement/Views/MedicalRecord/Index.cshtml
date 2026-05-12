@@ -1,0 +1,74 @@
+@model List<ClinicManagement.DTOs.MedicalRecord.MedicalRecordResponseDto>
+@{
+    ViewData["Title"] = "Hồ sơ bệnh án";
+}
+
+<div class="page-header">
+    <h1><i class="ti ti-clipboard-text"></i> <span data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span></h1>
+</div>
+
+<div class="card table-card">
+    <table>
+        <thead>
+            <tr>
+                <th data-vi="Bệnh nhân" data-en="Patient">Bệnh nhân</th>
+                <th data-vi="Bác sĩ" data-en="Doctor">Bác sĩ</th>
+                <th data-vi="Ngày khám" data-en="Exam Date">Ngày khám</th>
+                <th data-vi="Triệu chứng" data-en="Symptoms">Triệu chứng</th>
+                <th data-vi="Chẩn đoán" data-en="Diagnosis">Chẩn đoán</th>
+                <th data-vi="Tái khám" data-en="Follow-up">Tái khám</th>
+                <th data-vi="Thao tác" data-en="Actions">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <i class="ti ti-clipboard-off"></i>
+                            <p data-vi="Chưa có hồ sơ bệnh án nào." data-en="No medical records found.">Chưa có hồ sơ bệnh án nào.</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="table-user">
+                            <div class="table-avatar">@item.PatientName[0]</div>
+                            <span class="table-user-name">@item.PatientName</span>
+                        </div>
+                    </td>
+                    <td class="td-name">@item.DoctorName</td>
+                    <td>@item.SlotDate.ToString("dd/MM/yyyy")</td>
+                    <td class="td-muted">@(item.Symptoms ?? "—")</td>
+                    <td class="td-muted">@(item.Diagnosis ?? "—")</td>
+                    <td>
+                        @if (item.FollowUpDate != null)
+                        {
+                            <span style="color:#f59e0b; font-weight:500;">
+                                @item.FollowUpDate.Value.ToString("dd/MM/yyyy")
+                            </span>
+                        }
+                        else { <span>—</span> }
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <a asp-action="Detail" asp-route-id="@item.Id" class="icon-btn" title="Xem chi tiết">
+                                <i class="ti ti-eye"></i>
+                            </a>
+                            @if (User.IsInRole("Doctor"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="icon-btn" title="Chỉnh sửa">
+                                    <i class="ti ti-edit"></i>
+                                </a>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

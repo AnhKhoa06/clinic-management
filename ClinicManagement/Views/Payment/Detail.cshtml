@@ -1,0 +1,108 @@
+@model ClinicManagement.DTOs.Payment.PaymentResponseDto
+@{
+    ViewData["Title"] = "Chi tiết hóa đơn";
+}
+
+<div class="page-header">
+    <div class="d-flex align-center gap-8">
+        @if (User.IsInRole("Admin") || User.IsInRole("Doctor"))
+        {
+            <a asp-action="Index" class="btn btn-outline" style="padding:8px 10px">
+                <i class="ti ti-arrow-left"></i>
+            </a>
+        }
+        else
+        {
+            <a asp-action="MyPayments" class="btn btn-outline" style="padding:8px 10px">
+                <i class="ti ti-arrow-left"></i>
+            </a>
+        }
+        <h1 data-vi="Chi tiết hóa đơn" data-en="Invoice Detail">Chi tiết hóa đơn</h1>
+    </div>
+</div>
+
+<div class="card" style="max-width:520px; padding:28px;">
+    <!-- Header -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+        <div>
+            <div style="font-size:20px; font-weight:600; color:var(--text-primary);">@Model.InvoiceCode</div>
+            <div style="font-size:13px; color:var(--text-secondary); margin-top:2px;">
+                @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </div>
+        @if (Model.Status == "Paid")
+        {
+            <span class="status status-active">
+                <span class="status-dot"></span>
+                <span data-vi="Đã thanh toán" data-en="Paid">Đã thanh toán</span>
+            </span>
+        }
+        else
+        {
+            <span class="status status-pending">
+                <span class="status-dot"></span>
+                <span data-vi="Chưa thanh toán" data-en="Unpaid">Chưa thanh toán</span>
+            </span>
+        }
+    </div>
+
+    <!-- Thông tin -->
+    <div style="display:flex; flex-direction:column; gap:12px; font-size:13px; border-top:0.5px solid var(--card-border); padding-top:20px;">
+        <div class="d-flex align-center gap-8">
+            <span style="color:var(--text-secondary); min-width:140px;" data-vi="Bệnh nhân" data-en="Patient">Bệnh nhân:</span>
+            <span class="fw-500">@Model.PatientName</span>
+        </div>
+        <div class="d-flex align-center gap-8">
+            <span style="color:var(--text-secondary); min-width:140px;" data-vi="Bác sĩ" data-en="Doctor">Bác sĩ:</span>
+            <span class="fw-500">@Model.DoctorName</span>
+        </div>
+        <div class="d-flex align-center gap-8">
+            <span style="color:var(--text-secondary); min-width:140px;" data-vi="Ngày khám" data-en="Date">Ngày khám:</span>
+            <span class="fw-500">@Model.SlotDate.ToString("dd/MM/yyyy")</span>
+        </div>
+        <div class="d-flex align-center gap-8">
+            <span style="color:var(--text-secondary); min-width:140px;" data-vi="Phương thức" data-en="Method">Phương thức:</span>
+            <span class="fw-500">@Model.Method</span>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Notes))
+        {
+            <div class="d-flex align-center gap-8">
+                <span style="color:var(--text-secondary); min-width:140px;" data-vi="Ghi chú" data-en="Notes">Ghi chú:</span>
+                <span class="fw-500">@Model.Notes</span>
+            </div>
+        }
+        @if (Model.PaidAt.HasValue)
+        {
+            <div class="d-flex align-center gap-8">
+                <span style="color:var(--text-secondary); min-width:140px;" data-vi="Thanh toán lúc" data-en="Paid at">Thanh toán lúc:</span>
+                <span class="fw-500">@Model.PaidAt.Value.ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+        }
+    </div>
+
+    <!-- Breakdown chi tiết -->
+    <div style="margin-top:24px; border-top:0.5px solid var(--card-border); padding-top:20px; display:flex; flex-direction:column; gap:10px; font-size:13px;">
+        <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-secondary);" data-vi="Phí khám" data-en="Examination Fee">Phí khám</span>
+            <span class="fw-500">@Model.ExaminationFee.ToString("N0") ₫</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-secondary);" data-vi="Phí thuốc" data-en="Medication Fee">Phí thuốc</span>
+            <span class="fw-500">@Model.MedicationFee.ToString("N0") ₫</span>
+        </div>
+    </div>
+
+    <!-- Tổng tiền -->
+    <div style="margin-top:16px; padding:16px; background:var(--accent-light); border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:14px; font-weight:500; color:var(--text-secondary);" data-vi="Tổng tiền" data-en="Total">Tổng tiền</span>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <span style="font-size:22px; font-weight:700; color:var(--accent);">@Model.Amount.ToString("N0") ₫</span>
+            @if (Model.Status == "Unpaid" && Model.Method == "BankTransfer" && User.IsInRole("Patient"))
+            {
+                <a asp-action="PayOnline" asp-route-id="@Model.Id" class="btn btn-primary" style="white-space:nowrap;">
+                    <span data-vi="Thanh toán ngay" data-en="Pay Now">Thanh toán ngay</span>
+                </a>
+            }
+        </div>
+    </div>
+</div>

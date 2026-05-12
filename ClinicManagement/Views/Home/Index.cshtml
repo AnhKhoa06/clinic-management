@@ -22,14 +22,137 @@
             <div class="stat-label" data-vi="Lịch hẹn hôm nay" data-en="Today's Appointments">Lịch hẹn hôm nay</div>
         </div>
         <div class="card stat-card">
+            <div class="stat-icon red"><i class="ti ti-clock"></i></div>
+            <div class="stat-value">@ViewBag.AppointmentPending</div>
+            <div class="stat-label" data-vi="Chờ xác nhận" data-en="Pending">Chờ xác nhận</div>
+        </div>
+    </div>
+
+    <!-- Doanh thu -->
+    <div class="stats-grid" style="margin-top:0;">
+        <div class="card stat-card">
+            <div class="stat-icon teal"><i class="ti ti-cash"></i></div>
+            <div class="stat-value" style="font-size:18px;">@(((decimal)ViewBag.RevenueToday).ToString("N0")) ₫</div>
+            <div class="stat-label" data-vi="Doanh thu hôm nay" data-en="Today's Revenue">Doanh thu hôm nay</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-icon blue"><i class="ti ti-report-money"></i></div>
+            <div class="stat-value" style="font-size:18px;">@(((decimal)ViewBag.RevenueTotal).ToString("N0")) ₫</div>
+            <div class="stat-label" data-vi="Tổng doanh thu" data-en="Total Revenue">Tổng doanh thu</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-icon red"><i class="ti ti-receipt-off"></i></div>
+            <div class="stat-value" style="font-size:18px;">@(((decimal)ViewBag.RevenueUnpaid).ToString("N0")) ₫</div>
+            <div class="stat-label" data-vi="Chưa thanh toán" data-en="Unpaid">Chưa thanh toán</div>
+        </div>
+        <div class="card stat-card">
             <div class="stat-icon red"><i class="ti ti-pill"></i></div>
             <div class="stat-value">@ViewBag.MedicationCount</div>
             <div class="stat-label" data-vi="Loại thuốc" data-en="Medications">Loại thuốc</div>
         </div>
     </div>
 
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+        <!-- Lịch hẹn hôm nay -->
+        <div class="card" style="padding:20px;">
+            <div class="settings-section-title" style="margin-bottom:16px;">
+                <i class="ti ti-calendar-check"></i>
+                <span data-vi="Lịch hẹn hôm nay" data-en="Today's Appointments">Lịch hẹn hôm nay</span>
+            </div>
+            @{
+                var todayApts = ViewBag.TodayAppointments as List<ClinicManagement.DTOs.Appointment.AppointmentResponseDto> ?? new();
+            }
+            @if (!todayApts.Any())
+            {
+                <div class="empty-state" style="padding:20px 0;">
+                    <i class="ti ti-calendar-off"></i>
+                    <p data-vi="Không có lịch hẹn hôm nay." data-en="No appointments today.">Không có lịch hẹn hôm nay.</p>
+                </div>
+            }
+            else
+            {
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    @foreach (var apt in todayApts)
+                    {
+                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-secondary); border-radius:8px;">
+                            <div style="font-size:13px; font-weight:600; color:var(--accent); min-width:45px;">
+                                @apt.SlotTime.ToString("HH:mm")
+                            </div>
+                            <div style="flex:1;">
+                                <div style="font-size:13px; font-weight:500;">@apt.PatientName</div>
+                                <div style="font-size:12px; color:var(--text-secondary);">@apt.DoctorName</div>
+                            </div>
+                            @switch (apt.Status)
+                            {
+                                case "Pending":
+                                    <span class="status status-pending" style="font-size:11px;">
+                                        <span class="status-dot"></span>Chờ
+                                    </span>
+                                    break;
+                                case "Confirmed":
+                                    <span class="status status-done" style="font-size:11px;">
+                                        <span class="status-dot"></span>Xác nhận
+                                    </span>
+                                    break;
+                                case "Completed":
+                                    <span class="status status-active" style="font-size:11px;">
+                                        <span class="status-dot"></span>Xong
+                                    </span>
+                                    break;
+                            }
+                        </div>
+                    }
+                </div>
+                <a asp-controller="Appointment" asp-action="Index"
+                style="display:block; text-align:center; font-size:13px; color:var(--accent); margin-top:12px;"
+                data-vi="Xem tất cả →" data-en="View all →">
+                    Xem tất cả →
+                </a>
+            }
+        </div>
+
+        <!-- Top bác sĩ -->
+        <div class="card" style="padding:20px;">
+            <div class="settings-section-title" style="margin-bottom:16px;">
+                <i class="ti ti-star-filled" style="color:#f59e0b;"></i>
+                <span data-vi="Bác sĩ được đánh giá cao" data-en="Top Rated Doctors">Bác sĩ được đánh giá cao</span>
+            </div>
+            @{
+                var topDoctors = ViewBag.TopDoctors as List<ClinicManagement.DTOs.Doctor.DoctorResponseDto> ?? new();
+            }
+            @if (!topDoctors.Any())
+            {
+                <div class="empty-state" style="padding:20px 0;">
+                    <i class="ti ti-star-off"></i>
+                    <p data-vi="Chưa có đánh giá nào." data-en="No reviews yet.">Chưa có đánh giá nào.</p>
+                </div>
+            }
+            else
+            {
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    @foreach (var doc in topDoctors)
+                    {
+                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-secondary); border-radius:8px;">
+                            <div style="width:36px; height:36px; border-radius:50%; background:var(--accent-light); display:flex; align-items:center; justify-content:center; font-weight:600; color:var(--accent); flex-shrink:0;">
+                                @doc.FullName[0]
+                            </div>
+                            <div style="flex:1;">
+                                <div style="font-size:13px; font-weight:500;">@doc.FullName</div>
+                                <div style="font-size:12px; color:var(--text-secondary);">@doc.SpecialtyName</div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:4px; font-size:13px; font-weight:600; color:#f59e0b;">
+                                <i class="ti ti-star-filled" style="font-size:12px;"></i>
+                                @doc.AverageRating
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
     <!-- Quick Access -->
-    <span class="section-label" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
+    <span class="section-label" style="margin-top:16px;" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
     <div class="quick-grid-4">
         <a asp-controller="Doctor" asp-action="Index" class="card quick-card">
             <div class="stat-icon blue"><i class="ti ti-stethoscope"></i></div>
@@ -43,9 +166,9 @@
             <div class="stat-icon amber"><i class="ti ti-calendar-check"></i></div>
             <span class="quick-card-label" data-vi="Lịch hẹn" data-en="Appointments">Lịch hẹn</span>
         </a>
-        <a asp-controller="Medication" asp-action="Index" class="card quick-card red-hover">
-            <div class="stat-icon red"><i class="ti ti-pill"></i></div>
-            <span class="quick-card-label" data-vi="Thuốc" data-en="Medications">Thuốc</span>
+        <a asp-controller="Payment" asp-action="Index" class="card quick-card">
+            <div class="stat-icon teal"><i class="ti ti-receipt"></i></div>
+            <span class="quick-card-label" data-vi="Hóa đơn" data-en="Invoices">Hóa đơn</span>
         </a>
     </div>
 }
@@ -55,13 +178,13 @@
     <div class="stats-grid">
         <div class="card stat-card">
             <div class="stat-icon amber"><i class="ti ti-calendar-check"></i></div>
-            <div class="stat-value">—</div>
-            <div class="stat-label" data-vi="Lịch hẹn hôm nay" data-en="Today's Appointments">Lịch hẹn hôm nay</div>
+            <div class="stat-value">@(ViewBag.DoctorAppointmentToday ?? 0)</div>
+            <div class="stat-label">Lịch hẹn hôm nay</div>
         </div>
         <div class="card stat-card">
             <div class="stat-icon blue"><i class="ti ti-clipboard-text"></i></div>
-            <div class="stat-value">—</div>
-            <div class="stat-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</div>
+            <div class="stat-value">@(ViewBag.DoctorMedicalRecordCount ?? 0)</div>
+            <div class="stat-label">Hồ sơ bệnh án</div>
         </div>
     </div>
 
@@ -90,7 +213,7 @@
         Chào mừng bạn quay trở lại hệ thống phòng khám.
     </p>
 
-    <div class="quick-grid-3">
+    <div class="quick-grid-4">
         <a asp-controller="Appointment" asp-action="Create" class="card quick-card">
             <div class="stat-icon blue"><i class="ti ti-calendar-plus"></i></div>
             <span class="quick-card-label" data-vi="Đặt lịch khám" data-en="Book Appointment">Đặt lịch khám</span>
@@ -102,6 +225,10 @@
         <a asp-controller="MedicalRecord" asp-action="MyRecords" class="card quick-card amber-hover">
             <div class="stat-icon amber"><i class="ti ti-clipboard-text"></i></div>
             <span class="quick-card-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
+        </a>
+        <a asp-controller="Doctor" asp-action="Browse" class="card quick-card">
+            <div class="stat-icon blue"><i class="ti ti-stethoscope"></i></div>
+            <span class="quick-card-label" data-vi="Tìm bác sĩ" data-en="Find Doctor">Tìm bác sĩ</span>
         </a>
     </div>
 }

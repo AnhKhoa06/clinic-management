@@ -1,0 +1,145 @@
+@model ClinicManagement.DTOs.Appointment.WorkingScheduleCreateDto
+@{
+    ViewData["Title"] = "Thêm lịch làm việc";
+    var doctors = ViewBag.Doctors as List<ClinicManagement.DTOs.Doctor.DoctorResponseDto> ?? new();
+    int? doctorId = ViewBag.DoctorId;
+    bool isDoctor = ViewBag.IsDoctor == true;
+}
+
+<div class="page-header">
+    <div class="d-flex align-center gap-8">
+        <a asp-action="Index" asp-route-doctorId="@doctorId" class="btn btn-outline" style="padding:8px 10px">
+            <i class="ti ti-arrow-left"></i>
+        </a>
+        <h1 data-vi="Thêm lịch làm việc" data-en="Add Working Schedule">Thêm lịch làm việc</h1>
+    </div>
+</div>
+
+<div class="card form-card">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <i class="ti ti-alert-circle"></i>
+            <div>
+                @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                { <div>@err.ErrorMessage</div> }
+            </div>
+        </div>
+    }
+
+    <form asp-action="Create" method="post">
+        @if (isDoctor)
+        {
+            <!-- Doctor: ẩn dropdown, chỉ gửi DoctorId ngầm -->
+            <input type="hidden" asp-for="DoctorId" value="@doctorId" />
+        }
+        else
+        {
+            <!-- Admin: hiện dropdown chọn bác sĩ -->
+            <div class="form-group">
+                <label class="form-label">
+                    <span data-vi="Bác sĩ" data-en="Doctor">Bác sĩ</span>
+                    <span class="required">*</span>
+                </label>
+                <select asp-for="DoctorId" class="form-control">
+                    <option value="">-- Chọn bác sĩ --</option>
+                    @foreach (var d in doctors)
+                    {
+                        <option value="@d.Id" selected="@(doctorId == d.Id)">
+                            @d.FullName — @d.SpecialtyName
+                        </option>
+                    }
+                </select>
+            </div>
+        }
+
+        <div class="form-group">
+            <label class="form-label">
+                <span data-vi="Ngày trong tuần" data-en="Day of Week">Ngày trong tuần</span>
+                <span class="required">*</span>
+            </label>
+            <select asp-for="DayOfWeek" class="form-control">
+                <option value="1">Thứ hai</option>
+                <option value="2">Thứ ba</option>
+                <option value="3">Thứ tư</option>
+                <option value="4">Thứ năm</option>
+                <option value="5">Thứ sáu</option>
+                <option value="6">Thứ bảy</option>
+                <option value="0">Chủ nhật</option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">
+                    <span data-vi="Giờ bắt đầu" data-en="Start Time">Giờ bắt đầu</span>
+                    <span class="required">*</span>
+                </label>
+                <input asp-for="StartTime" type="time" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <span data-vi="Giờ kết thúc" data-en="End Time">Giờ kết thúc</span>
+                    <span class="required">*</span>
+                </label>
+                <input asp-for="EndTime" type="time" class="form-control" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">
+                    <span data-vi="Thời lượng mỗi slot (phút)" data-en="Slot Duration (mins)">Thời lượng mỗi slot (phút)</span>
+                    <span class="required">*</span>
+                </label>
+                <select asp-for="SlotDurationMinutes" class="form-control">
+                    <option value="15">15 phút</option>
+                    <option value="20">20 phút</option>
+                    <option value="30" selected>30 phút</option>
+                    <option value="45">45 phút</option>
+                    <option value="60">60 phút</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-vi="Số slot dự kiến" data-en="Expected Slots">Số slot dự kiến</label>
+                <div id="slotPreview" class="form-control"
+                    style="background:var(--bg-secondary); color:var(--accent); font-weight:600; line-height:36px;">
+                    --
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="ti ti-check"></i>
+                <span data-vi="Lưu" data-en="Save">Lưu</span>
+            </button>
+            <a asp-action="Index" asp-route-doctorId="@doctorId" class="btn btn-outline">
+                <span data-vi="Huỷ" data-en="Cancel">Huỷ</span>
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+    function updatePreview() {
+        const start    = document.querySelector('[name=StartTime]').value;
+        const end      = document.querySelector('[name=EndTime]').value;
+        const duration = parseInt(document.querySelector('[name=SlotDurationMinutes]').value);
+        const preview  = document.getElementById('slotPreview');
+
+        if (start && end && duration) {
+            const [sh, sm] = start.split(':').map(Number);
+            const [eh, em] = end.split(':').map(Number);
+            const totalMins = (eh * 60 + em) - (sh * 60 + sm);
+            preview.textContent = totalMins > 0
+                ? `${Math.floor(totalMins / duration)} slots`
+                : '⚠ Giờ kết thúc phải sau giờ bắt đầu';
+        }
+    }
+
+    ['[name=StartTime]','[name=EndTime]','[name=SlotDurationMinutes]']
+        .forEach(sel => document.querySelector(sel).addEventListener('change', updatePreview));
+</script>
+}

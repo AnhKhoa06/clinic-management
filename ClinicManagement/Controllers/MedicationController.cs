@@ -1,14 +1,11 @@
 using ClinicManagement.DTOs.Medication;
-using ClinicManagement.Helpers;
 using ClinicManagement.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicManagement.Controllers;
 
-[ApiController]
-[Route("api/medications")]
-public class MedicationController : ControllerBase
+public class MedicationController : Controller
 {
     private readonly MedicationService _service;
 
@@ -17,50 +14,130 @@ public class MedicationController : ControllerBase
         _service = service;
     }
 
+    // GET /Medication
     [Authorize(Roles = "Admin,Doctor")]
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> Index(string? search, string? unit, int page = 1)
     {
         var result = await _service.GetAllAsync();
-        return Ok(ApiResponse<List<MedicationResponseDto>>.Ok(result));
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            search = search.Trim().ToLower();
+            result = result.Where(m =>
+                m.Name.ToLower().Contains(search) ||
+                (m.Description != null && m.Description.ToLower().Contains(search))
+            ).ToList();
+        }
+
+        if (!string.IsNullOrWhiteSpace(unit))
+            result = result.Where(m => m.Unit == unit).ToList();
+
+        var allMeds = await _service.GetAllAsync();
+        ViewBag.Units = allMeds
+            .Where(m => m.Unit != null)
+            .Select(m => m.Unit!)
+            .Distinct()
+            .OrderBy(u => u)
+            .ToList();
+
+        const int pageSize = 5;
+        int totalItems = result.Count;
+        int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+        page = Math.Max(1, Math.Min(page, Math.Max(1, totalPages)));
+
+        var paged = result
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        ViewBag.Search = search;
+        ViewBag.Unit = unit;
+        ViewBag.CurrentPage = page;
+        ViewBag.TotalPages = totalPages;
+        ViewBag.TotalItems = totalItems;
+
+        return View(paged);
     }
 
+    // GET /Medication/Create
+    [Authorize(Roles = "Admin")]
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    // POST /Medication/Create
     [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] MedicationCreateDto dto)
+    public async Task<IActionResult> Create(MedicationCreateDto dto)
     {
         if (!ModelState.IsValid)
-            return BadRequest(ApiResponse<object>.Fail("Dữ liệu không hợp lệ."));
+            return View(dto);
 
-        var (success, message, data) = await _service.CreateAsync(dto);
+        var (success, message, _) = await _service.CreateAsync(dto);
         if (!success)
-            return BadRequest(ApiResponse<object>.Fail(message));
+        {
+            ModelState.AddModelError("", message);
+            return View(dto);
+        }
 
-        return Ok(ApiResponse<MedicationResponseDto>.Ok(data!, message));
+        TempData["Success"] = message;
+        return RedirectToAction(nameof(Index));
     }
 
+    // GET /Medication/Edit/5
     [Authorize(Roles = "Admin")]
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] MedicationUpdateDto dto)
+    public async Task<IActionResult> Edit(int id)
+    {
+        var (success, _, data) = await _service.GetByIdAsync(id);
+        if (!success) return NotFound();
+
+        ViewBag.Id = id;
+        var dto = new MedicationUpdateDto
+        {
+            Name = data!.Name,
+            Unit = data.Unit,
+            Description = data.Description,
+            Price = data.Price,
+            IsActive = data.IsActive
+        };
+        return View(dto);
+    }
+
+    // POST /Medication/Edit/5
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    public async Task<IActionResult> Edit(int id, MedicationUpdateDto dto)
     {
         if (!ModelState.IsValid)
-            return BadRequest(ApiResponse<object>.Fail("Dữ liệu không hợp lệ."));
+        {
+            ViewBag.Id = id;
+            return View(dto);
+        }
 
-        var (success, message, data) = await _service.UpdateAsync(id, dto);
+        var (success, message, _) = await _service.UpdateAsync(id, dto);
         if (!success)
-            return BadRequest(ApiResponse<object>.Fail(message));
+        {
+            ModelState.AddModelError("", message);
+            ViewBag.Id = id;
+            return View(dto);
+        }
 
-        return Ok(ApiResponse<MedicationResponseDto>.Ok(data!, message));
+        TempData["Success"] = message;
+        return RedirectToAction(nameof(Index));
     }
 
+    // POST /Medication/Delete/5
     [Authorize(Roles = "Admin")]
-    [HttpDelete("{id}")]
+    [HttpPost]
     public async Task<IActionResult> Delete(int id)
     {
         var (success, message) = await _service.DeleteAsync(id);
         if (!success)
-            return NotFound(ApiResponse<object>.Fail(message));
+            TempData["Error"] = message;
+        else
+            TempData["Success"] = message;
 
-        return Ok(ApiResponse<object>.Ok(new { }, message));
+        return RedirectToAction(nameof(Index));
     }
 }

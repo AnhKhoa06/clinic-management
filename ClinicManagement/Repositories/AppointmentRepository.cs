@@ -18,7 +18,10 @@ public class AppointmentRepository
             .Include(a => a.Patient).ThenInclude(p => p.User)
             .Include(a => a.Doctor).ThenInclude(d => d.User)
             .Include(a => a.Doctor).ThenInclude(d => d.Specialty)
-            .Include(a => a.AppointmentSlot);
+            .Include(a => a.AppointmentSlot)
+            .Include(a => a.Review)
+            .Include(a => a.Payment)
+            .Include(a => a.MedicalRecord);
 
     public async Task<List<Appointment>> GetAllAsync()
     {
@@ -61,4 +64,11 @@ public class AppointmentRepository
         _context.Appointments.Update(appointment);
         await _context.SaveChangesAsync();
     }
+
+    public async Task DeleteAsync(Appointment appointment)
+    {
+        _context.Appointments.Remove(appointment);
+        await _context.SaveChangesAsync();
+    }
 }
+

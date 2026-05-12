@@ -23,7 +23,7 @@ public class WorkingScheduleService
         return schedules.Select(MapToDto).ToList();
     }
 
-    public async Task<(bool Success, string Message, WorkingScheduleResponseDto? Data)> CreateAsync(WorkingScheduleCreateDto dto)
+    public async Task<(bool, string, WorkingScheduleResponseDto?)> CreateAsync(WorkingScheduleCreateDto dto)
     {
         if (dto.StartTime >= dto.EndTime)
             return (false, "Giờ bắt đầu phải trước giờ kết thúc.", null);
@@ -31,15 +31,18 @@ public class WorkingScheduleService
         if (await _scheduleRepo.ExistsAsync(dto.DoctorId, dto.DayOfWeek))
             return (false, "Bác sĩ đã có lịch làm việc vào ngày này.", null);
 
+        // Tự tính MaxSlots
+        int maxSlots = (int)((dto.EndTime - dto.StartTime).TotalMinutes / dto.SlotDurationMinutes);
+
         var schedule = new WorkingSchedule
         {
-            DoctorId = dto.DoctorId,
-            DayOfWeek = dto.DayOfWeek,
-            StartTime = dto.StartTime,
-            EndTime = dto.EndTime,
+            DoctorId            = dto.DoctorId,
+            DayOfWeek           = dto.DayOfWeek,
+            StartTime           = dto.StartTime,
+            EndTime             = dto.EndTime,
             SlotDurationMinutes = dto.SlotDurationMinutes,
-            MaxSlots = dto.MaxSlots,
-            IsActive = true
+            MaxSlots            = maxSlots, // tự tính
+            IsActive            = true
         };
 
         await _scheduleRepo.CreateAsync(schedule);
@@ -47,7 +50,7 @@ public class WorkingScheduleService
         return (true, "Tạo lịch làm việc thành công.", MapToDto(created!));
     }
 
-    public async Task<(bool Success, string Message, WorkingScheduleResponseDto? Data)> UpdateAsync(int id, WorkingScheduleUpdateDto dto)
+    public async Task<(bool, string, WorkingScheduleResponseDto?)> UpdateAsync(int id, WorkingScheduleUpdateDto dto)
     {
         var schedule = await _scheduleRepo.GetByIdAsync(id);
         if (schedule == null)
@@ -56,11 +59,11 @@ public class WorkingScheduleService
         if (dto.StartTime >= dto.EndTime)
             return (false, "Giờ bắt đầu phải trước giờ kết thúc.", null);
 
-        schedule.StartTime = dto.StartTime;
-        schedule.EndTime = dto.EndTime;
+        schedule.StartTime           = dto.StartTime;
+        schedule.EndTime             = dto.EndTime;
         schedule.SlotDurationMinutes = dto.SlotDurationMinutes;
-        schedule.MaxSlots = dto.MaxSlots;
-        schedule.IsActive = dto.IsActive;
+        schedule.MaxSlots            = (int)((dto.EndTime - dto.StartTime).TotalMinutes / dto.SlotDurationMinutes); // tự tính
+        schedule.IsActive            = dto.IsActive;
 
         await _scheduleRepo.UpdateAsync(schedule);
         return (true, "Cập nhật lịch làm việc thành công.", MapToDto(schedule));
@@ -72,6 +75,7 @@ public class WorkingScheduleService
         if (schedule == null)
             return (false, "Không tìm thấy lịch làm việc.");
 
+        await _slotRepo.DeleteByScheduleIdAsync(id);
         await _scheduleRepo.DeleteAsync(schedule);
         return (true, "Xoá lịch làm việc thành công.");
     }

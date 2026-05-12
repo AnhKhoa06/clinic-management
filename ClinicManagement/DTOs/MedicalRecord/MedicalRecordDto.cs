@@ -7,8 +7,10 @@ public class MedicalRecordCreateDto
     [Required]
     public int AppointmentId { get; set; }
 
+    [Required(ErrorMessage = "Vui lòng nhập triệu chứng.")]
     public string? Symptoms { get; set; }
 
+    [Required(ErrorMessage = "Vui lòng nhập chẩn đoán.")]
     public string? Diagnosis { get; set; }
 
     public string? TreatmentNotes { get; set; }
@@ -52,14 +54,19 @@ public class PrescriptionCreateDto
     [Required]
     public int MedicationId { get; set; }
 
-    [Required, MaxLength(100)]
-    public string Dosage { get; set; } = string.Empty;
+    [Required, Range(0.5, 100)]
+    public decimal DosagePerTime { get; set; }   // Số viên/lần
 
-    [Required, MaxLength(100)]
-    public string Frequency { get; set; } = string.Empty;
+    [Required, Range(1, 20)]
+    public int TimesPerDay { get; set; }          // Số lần/ngày
 
     [Required, Range(1, 365)]
-    public int DurationDays { get; set; }
+    public int DurationDays { get; set; }         // Số ngày
+
+    [Required, Range(1, 10000)]
+    public int Quantity { get; set; }             // Tự tính ở client, gửi lên để lưu
+
+    public decimal UnitPrice { get; set; } = 0;
 
     public string? Notes { get; set; }
 }
@@ -70,8 +77,11 @@ public class PrescriptionResponseDto
     public int MedicationId { get; set; }
     public string MedicationName { get; set; } = string.Empty;
     public string Unit { get; set; } = string.Empty;
-    public string Dosage { get; set; } = string.Empty;
-    public string Frequency { get; set; } = string.Empty;
+    public decimal DosagePerTime { get; set; }
+    public int TimesPerDay { get; set; }
     public int DurationDays { get; set; }
+    public int Quantity { get; set; }
+    public decimal UnitPrice { get; set; }
+    public decimal TotalPrice => Quantity * UnitPrice;
     public string? Notes { get; set; }
 }

@@ -1,0 +1,81 @@
+@model List<ClinicManagement.DTOs.Payment.PaymentResponseDto>
+@{
+    ViewData["Title"] = "Quản lý hóa đơn";
+}
+
+<div class="page-header">
+    <h1 data-vi="Quản lý hóa đơn" data-en="Invoice Management">Quản lý hóa đơn</h1>
+</div>
+
+<div class="card table-card">
+    <table>
+        <thead>
+            <tr>
+                <th data-vi="Mã hóa đơn" data-en="Invoice">Mã hóa đơn</th>
+                <th data-vi="Bệnh nhân" data-en="Patient">Bệnh nhân</th>
+                <th data-vi="Bác sĩ" data-en="Doctor">Bác sĩ</th>
+                <th data-vi="Ngày khám" data-en="Date">Ngày khám</th>
+                <th data-vi="Số tiền" data-en="Amount">Số tiền</th>
+                <th data-vi="Phương thức" data-en="Method">Phương thức</th>
+                <th data-vi="Trạng thái" data-en="Status">Trạng thái</th>
+                <th data-vi="Thao tác" data-en="Actions">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="8">
+                        <div class="empty-state">
+                            <i class="ti ti-receipt-off"></i>
+                            <p data-vi="Chưa có hóa đơn nào." data-en="No invoices yet.">Chưa có hóa đơn nào.</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="td-name">@item.InvoiceCode</td>
+                    <td>@item.PatientName</td>
+                    <td class="td-muted">@item.DoctorName</td>
+                    <td>@item.SlotDate.ToString("dd/MM/yyyy")</td>
+                    <td class="fw-500">@item.Amount.ToString("N0") ₫</td>
+                    <td class="td-muted">@item.Method</td>
+                    <td>
+                        @if (item.Status == "Paid")
+                        {
+                            <span class="status status-active">
+                                <span class="status-dot"></span>
+                                <span data-vi="Đã thanh toán" data-en="Paid">Đã thanh toán</span>
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="status status-pending">
+                                <span class="status-dot"></span>
+                                <span data-vi="Chưa thanh toán" data-en="Unpaid">Chưa thanh toán</span>
+                            </span>
+                        }
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <a asp-action="Detail" asp-route-id="@item.Id" class="icon-btn" title="Xem chi tiết">
+                                <i class="ti ti-eye"></i>
+                            </a>
+                            @if (item.Status == "Unpaid" && item.Method == "Cash" && User.IsInRole("Admin"))
+                            {
+                                <form asp-action="MarkPaid" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                    <button type="submit" class="icon-btn" title="Đánh dấu đã thanh toán"
+                                            style="color:var(--success);">
+                                        <i class="ti ti-check"></i>
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

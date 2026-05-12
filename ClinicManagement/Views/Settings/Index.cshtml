@@ -6,68 +6,167 @@
     <h1 data-vi="Cài đặt" data-en="Settings">Cài đặt</h1>
 </div>
 
-<div class="card" style="max-width: 640px; padding: 28px;">
+<!-- Tabs -->
+<div class="settings-tabs">
+    <button class="settings-tab active" onclick="switchTab('profile', this)">
+        <i class="ti ti-user-circle"></i>
+        <span data-vi="Thông tin cá nhân" data-en="Profile">Thông tin cá nhân</span>
+    </button>
+    <button class="settings-tab" onclick="switchTab('appearance', this)">
+        <i class="ti ti-palette"></i>
+        <span data-vi="Giao diện" data-en="Appearance">Giao diện</span>
+    </button>
+</div>
 
-    <!-- ── Giao diện ── -->
-    <div class="settings-section">
-        <div class="settings-section-title">
-            <i class="ti ti-palette"></i>
-            <span data-vi="Giao diện" data-en="Appearance">Giao diện</span>
+<!-- Tab: Thông tin cá nhân -->
+<div class="settings-panel active" id="tab-profile">
+    <div class="card" style="max-width:640px; padding:28px;">
+        <div class="settings-section">
+            <div class="settings-section-title">
+                <i class="ti ti-user-circle"></i>
+                <span data-vi="Thông tin cá nhân" data-en="Personal Information">Thông tin cá nhân</span>
+            </div>
+
+            @if (User.IsInRole("Patient"))
+            {
+                <form asp-controller="Settings" asp-action="UpdateProfile" method="post">
+                    <div class="form-group">
+                        <label class="form-label" data-vi="Họ tên" data-en="Full Name">Họ tên</label>
+                        <input type="text" name="FullName" class="form-control" value="@ViewBag.FullName" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-vi="Số điện thoại" data-en="Phone">Số điện thoại</label>
+                        <input type="tel" name="Phone" class="form-control" value="@ViewBag.Phone" />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" data-vi="Giới tính" data-en="Gender">Giới tính</label>
+                            <select name="Gender" class="form-control">
+                                <option value="">-- Chọn --</option>
+                                <option value="Nam" selected="@(ViewBag.Patient?.Gender == "Nam")">Nam</option>
+                                <option value="Nữ" selected="@(ViewBag.Patient?.Gender == "Nữ")">Nữ</option>
+                                <option value="Khác" selected="@(ViewBag.Patient?.Gender == "Khác")">Khác</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-vi="Ngày sinh" data-en="Date of Birth">Ngày sinh</label>
+                            <input type="date" name="DateOfBirth" class="form-control"
+                                value="@ViewBag.Patient?.DateOfBirth?.ToString("yyyy-MM-dd")" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-vi="Địa chỉ" data-en="Address">Địa chỉ</label>
+                        <input type="text" name="Address" class="form-control" value="@ViewBag.Patient?.Address" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-vi="Liên hệ khẩn cấp" data-en="Emergency Contact">Liên hệ khẩn cấp</label>
+                        <input type="text" name="EmergencyContact" class="form-control"
+                            value="@ViewBag.Patient?.EmergencyContact"
+                            placeholder="Tên người thân — Số điện thoại" />
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ti ti-check"></i>
+                            <span data-vi="Lưu thay đổi" data-en="Save Changes">Lưu thay đổi</span>
+                        </button>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <!-- Admin và Doctor chỉ cần sửa FullName và Phone -->
+                <form asp-controller="Settings" asp-action="UpdateProfile" method="post">
+                    <div class="form-group">
+                        <label class="form-label" data-vi="Họ tên" data-en="Full Name">Họ tên</label>
+                        <input type="text" name="FullName" class="form-control" value="@ViewBag.FullName" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-vi="Số điện thoại" data-en="Phone">Số điện thoại</label>
+                        <input type="tel" name="Phone" class="form-control" value="@ViewBag.Phone" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-vi="Email" data-en="Email">Email</label>
+                        <input type="email" class="form-control" value="@ViewBag.Email" disabled />
+                        <span style="font-size:11px; color:var(--text-secondary);"
+                            data-vi="Email không thể thay đổi." data-en="Email cannot be changed.">
+                            Email không thể thay đổi.
+                        </span>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ti ti-check"></i>
+                            <span data-vi="Lưu thay đổi" data-en="Save Changes">Lưu thay đổi</span>
+                        </button>
+                    </div>
+                </form>
+            }
         </div>
 
-        <p class="text-secondary mb-16" style="font-size:13px"
-           data-vi="Chọn chủ đề hiển thị cho ứng dụng."
-           data-en="Choose the display theme for the application.">
-            Chọn chủ đề hiển thị cho ứng dụng.
-        </p>
-
-        <div class="theme-grid">
-            <!-- Sáng -->
-            <div class="theme-card" data-theme="light" onclick="window.setTheme('light')">
-                <i class="ti ti-sun"></i>
-                <div class="theme-card-name" data-vi="Sáng" data-en="Light">Sáng</div>
-                <div class="theme-card-desc" data-vi="Sáng và sạch sẽ" data-en="Bright and clean">Sáng và sạch sẽ</div>
-                <div class="theme-check"><i class="ti ti-check"></i></div>
+        <!-- Đổi mật khẩu -->
+        <div class="settings-section" style="border-top:0.5px solid var(--card-border); padding-top:24px;">
+            <div class="settings-section-title">
+                <i class="ti ti-key"></i>
+                <span data-vi="Bảo mật" data-en="Security">Bảo mật</span>
             </div>
-
-            <!-- Tối -->
-            <div class="theme-card" data-theme="dark" onclick="window.setTheme('dark')">
-                <i class="ti ti-moon"></i>
-                <div class="theme-card-name" data-vi="Tối" data-en="Dark">Tối</div>
-                <div class="theme-card-desc" data-vi="Dễ chịu cho mắt" data-en="Easy on the eyes">Dễ chịu cho mắt</div>
-                <div class="theme-check"><i class="ti ti-check"></i></div>
-            </div>
-
-            <!-- Hệ thống -->
-            <div class="theme-card" data-theme="system" onclick="window.setTheme('system')">
-                <i class="ti ti-device-desktop"></i>
-                <div class="theme-card-name" data-vi="Hệ thống" data-en="System">Hệ thống</div>
-                <div class="theme-card-desc" data-vi="Theo cài đặt thiết bị" data-en="Follow device setting">Theo cài đặt thiết bị</div>
-                <div class="theme-check"><i class="ti ti-check"></i></div>
-            </div>
+            <a asp-controller="Auth" asp-action="ChangePassword" class="btn btn-outline">
+                <i class="ti ti-key"></i>
+                <span data-vi="Đổi mật khẩu" data-en="Change Password">Đổi mật khẩu</span>
+            </a>
         </div>
     </div>
+</div>
 
-    <!-- ── Tài khoản ── -->
-    <div class="settings-section" style="border-top: 0.5px solid var(--card-border); padding-top: 24px;">
-        <div class="settings-section-title">
-            <i class="ti ti-user-circle"></i>
-            <span data-vi="Tài khoản" data-en="Account">Tài khoản</span>
+<!-- Tab: Giao diện -->
+<div class="settings-panel" id="tab-appearance">
+    <div class="card" style="max-width:640px; padding:28px;">
+        <div class="settings-section">
+            <div class="settings-section-title">
+                <i class="ti ti-palette"></i>
+                <span data-vi="Giao diện" data-en="Appearance">Giao diện</span>
+            </div>
+            <p class="text-secondary mb-16" style="font-size:13px"
+               data-vi="Chọn chủ đề hiển thị cho ứng dụng."
+               data-en="Choose the display theme for the application.">
+                Chọn chủ đề hiển thị cho ứng dụng.
+            </p>
+            <div class="theme-grid">
+                <div class="theme-card" data-theme="light" onclick="window.setTheme('light')">
+                    <i class="ti ti-sun"></i>
+                    <div class="theme-card-name" data-vi="Sáng" data-en="Light">Sáng</div>
+                    <div class="theme-card-desc" data-vi="Sáng và sạch sẽ" data-en="Bright and clean">Sáng và sạch sẽ</div>
+                    <div class="theme-check"><i class="ti ti-check"></i></div>
+                </div>
+                <div class="theme-card" data-theme="dark" onclick="window.setTheme('dark')">
+                    <i class="ti ti-moon"></i>
+                    <div class="theme-card-name" data-vi="Tối" data-en="Dark">Tối</div>
+                    <div class="theme-card-desc" data-vi="Dễ chịu cho mắt" data-en="Easy on the eyes">Dễ chịu cho mắt</div>
+                    <div class="theme-check"><i class="ti ti-check"></i></div>
+                </div>
+                <div class="theme-card" data-theme="system" onclick="window.setTheme('system')">
+                    <i class="ti ti-device-desktop"></i>
+                    <div class="theme-card-name" data-vi="Hệ thống" data-en="System">Hệ thống</div>
+                    <div class="theme-card-desc" data-vi="Theo cài đặt thiết bị" data-en="Follow device setting">Theo cài đặt thiết bị</div>
+                    <div class="theme-check"><i class="ti ti-check"></i></div>
+                </div>
+            </div>
         </div>
-
-        <a asp-controller="Auth" asp-action="ChangePassword" class="btn btn-outline">
-            <i class="ti ti-key"></i>
-            <span data-vi="Đổi mật khẩu" data-en="Change Password">Đổi mật khẩu</span>
-        </a>
     </div>
 </div>
 
 @section Scripts {
 <script>
-    // Sync theme cards với theme đang active khi trang load
+    // Sync theme cards
     const current = localStorage.getItem('clinic_theme') || 'light';
     document.querySelectorAll('.theme-card').forEach(c => {
         c.classList.toggle('active', c.dataset.theme === current);
     });
+
+    // Tab switching
+    function switchTab(tab, el) {
+        document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-' + tab).classList.add('active');
+        el.classList.add('active');
+    }
 </script>
 }

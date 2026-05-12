@@ -1,0 +1,75 @@
+@model ClinicManagement.DTOs.Patient.PatientResponseDto
+@{
+    ViewData["Title"] = "Chi tiết bệnh nhân";
+}
+
+<div class="page-header">
+    <div style="display:flex; align-items:center; gap:12px;">
+        <a asp-action="Index" class="btn btn-outline">
+            <i class="ti ti-arrow-left"></i>
+        </a>
+        <h1 data-vi="Chi tiết bệnh nhân" data-en="Patient Detail">Chi tiết bệnh nhân</h1>
+    </div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+        <i class="ti ti-pencil"></i>
+        <span data-vi="Chỉnh sửa" data-en="Edit">Chỉnh sửa</span>
+    </a>
+</div>
+
+<div class="card" style="max-width:640px; padding:28px;">
+    <div style="display:flex; align-items:center; gap:16px; margin-bottom:28px; padding-bottom:20px; border-bottom:1px solid var(--card-border);">
+        <div class="table-avatar" style="width:56px; height:56px; font-size:22px;">
+            @Model.FullName[0]
+        </div>
+        <div>
+            <div style="font-size:17px; font-weight:600; color:var(--text-primary);">@Model.FullName</div>
+            <div style="font-size:13px; color:var(--text-muted);">@Model.Email</div>
+        </div>
+    </div>
+
+    @{
+        var age = Model.DateOfBirth.HasValue
+            ? (int)((DateTime.Today - Model.DateOfBirth.Value.ToDateTime(TimeOnly.MinValue)).TotalDays / 365.25)
+            : (int?)null;
+    }
+
+    <div class="form-row">
+        <div class="detail-item">
+            <div class="detail-label" data-vi="Số điện thoại" data-en="Phone">Số điện thoại</div>
+            <div class="detail-value">@(Model.Phone ?? "—")</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label" data-vi="Giới tính" data-en="Gender">Giới tính</div>
+            <div class="detail-value">@(Model.Gender ?? "—")</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label" data-vi="Ngày sinh" data-en="Date of Birth">Ngày sinh</div>
+            <div class="detail-value">
+                @if (Model.DateOfBirth.HasValue)
+                {
+                    <span>@Model.DateOfBirth.Value.ToString("dd/MM/yyyy")</span>
+                    <span class="td-muted" style="margin-left:6px; font-size:12px;">
+                        (@age <span data-vi="tuổi" data-en="yrs">tuổi</span>)
+                    </span>
+                }
+                else
+                {
+                    <span>—</span>
+                }
+            </div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label" data-vi="Nhóm máu" data-en="Blood Type">Nhóm máu</div>
+            <div class="detail-value">@(Model.BloodType ?? "—")</div>
+        </div>
+    </div>
+
+    <div class="detail-item" style="margin-top:16px;">
+        <div class="detail-label" data-vi="Địa chỉ" data-en="Address">Địa chỉ</div>
+        <div class="detail-value">@(Model.Address ?? "—")</div>
+    </div>
+    <div class="detail-item" style="margin-top:16px;">
+        <div class="detail-label" data-vi="Liên hệ khẩn cấp" data-en="Emergency Contact">Liên hệ khẩn cấp</div>
+        <div class="detail-value">@(Model.EmergencyContact ?? "—")</div>
+    </div>
+</div>

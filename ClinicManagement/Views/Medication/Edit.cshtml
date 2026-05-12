@@ -1,0 +1,82 @@
+@model ClinicManagement.DTOs.Medication.MedicationUpdateDto
+@{
+    ViewData["Title"] = "Sửa thuốc";
+}
+
+<div class="page-header">
+    <div style="display:flex; align-items:center; gap:12px;">
+        <a asp-action="Index" class="btn btn-outline">
+            <i class="ti ti-arrow-left"></i>
+        </a>
+        <h1 data-vi="Chỉnh sửa thuốc" data-en="Edit Medication">Chỉnh sửa thuốc</h1>
+    </div>
+</div>
+
+<div class="card" style="max-width:560px; padding:28px;">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <i class="ti ti-alert-circle"></i>
+            <div>
+                @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div>@err.ErrorMessage</div>
+                }
+            </div>
+        </div>
+    }
+
+    <form asp-action="Edit" asp-route-id="@ViewBag.Id" method="post">
+        <div class="form-group">
+            <label class="form-label">
+                <span data-vi="Tên thuốc" data-en="Medication Name">Tên thuốc</span>
+                <span class="required">*</span>
+            </label>
+            <input asp-for="Name" class="form-control" />
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" data-vi="Đơn vị tính" data-en="Unit">Đơn vị tính</label>
+                <select asp-for="Unit" class="form-control">
+                    <option value="">-- Chọn đơn vị --</option>
+                    <option value="Viên">Viên</option>
+                    <option value="Gói">Gói</option>
+                    <option value="Chai">Chai</option>
+                    <option value="Ống">Ống</option>
+                    <option value="Lọ">Lọ</option>
+                    <option value="Tuýp">Tuýp</option>
+                    <option value="mg">mg</option>
+                    <option value="ml">ml</option>
+                    <option value="g">g</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-vi="Đơn giá (₫)" data-en="Unit Price">Đơn giá (₫)</label>
+                <input asp-for="Price" type="number" class="form-control"
+                    min="0" step="500" value="@Model.Price.ToString("F0")" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-vi="Trạng thái" data-en="Status">Trạng thái</label>
+                <select asp-for="IsActive" class="form-control">
+                    <option value="true">Đang dùng</option>
+                    <option value="false">Ngừng dùng</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" data-vi="Mô tả / Công dụng" data-en="Description">Mô tả / Công dụng</label>
+            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="ti ti-check"></i>
+                <span data-vi="Cập nhật" data-en="Update">Cập nhật</span>
+            </button>
+            <a asp-action="Index" class="btn btn-outline"
+               data-vi="Huỷ" data-en="Cancel">Huỷ</a>
+        </div>
+    </form>
+</div>

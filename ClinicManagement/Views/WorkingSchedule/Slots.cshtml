@@ -1,0 +1,83 @@
+@model List<ClinicManagement.DTOs.Appointment.AppointmentSlotResponseDto>
+@{
+    ViewData["Title"] = "Danh sách slot";
+    var doctors = ViewBag.Doctors as List<ClinicManagement.DTOs.Doctor.DoctorResponseDto> ?? new();
+    int doctorId = ViewBag.DoctorId ?? 0;
+    string date = ViewBag.Date ?? "";
+}
+
+<div class="page-header">
+    <div class="d-flex align-center gap-8">
+        <a asp-action="Index" asp-route-doctorId="@doctorId" class="btn btn-outline" style="padding:8px 10px">
+            <i class="ti ti-arrow-left"></i>
+        </a>
+        <h1 data-vi="Danh sách slot khám" data-en="Appointment Slots">Danh sách slot khám</h1>
+    </div>
+</div>
+
+<!-- Filter -->
+<div class="card" style="padding:20px; margin-bottom:16px;">
+    <form method="get" asp-action="Slots" style="display:flex; flex-direction:row; gap:16px; align-items:flex-end;">
+        <input type="hidden" name="doctorId" value="@doctorId" />
+        <div style="display:flex; flex-direction:column; gap:4px;">
+            <label class="form-label" data-vi="Chọn ngày" data-en="Select Date">Chọn ngày</label>
+            <input type="date" name="date" class="form-control" value="@date" style="width:200px" />
+        </div>
+        <button type="submit" class="btn btn-primary" style="height:37px;">
+            <i class="ti ti-search"></i>
+            <span data-vi="Xem" data-en="View">Xem</span>
+        </button>
+    </form>
+</div>
+
+<!-- Slot list -->
+<div class="card table-card">
+    <div class="table-header">
+        <span class="table-title">
+            @Model.Count <span data-vi="slot" data-en="slots">slot</span>
+        </span>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th data-vi="Giờ khám" data-en="Time">Giờ khám</th>
+                <th data-vi="Ngày khám" data-en="Date">Ngày khám</th>
+                <th data-vi="Bác sĩ" data-en="Doctor">Bác sĩ</th>
+                <th data-vi="Trạng thái" data-en="Status">Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="4">
+                        <div class="empty-state">
+                            <i class="ti ti-calendar-off"></i>
+                            <p data-vi="Không có slot nào trong ngày này." data-en="No slots found.">
+                                Không có slot nào trong ngày này.
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="td-name">@item.SlotTime.ToString("HH:mm")</td>
+                    <td>@item.SlotDate.ToString("dd/MM/yyyy")</td>
+                    <td>@item.DoctorName</td>
+                    <td>
+                        @if (item.Status == "Available")
+                        {
+                            <span class="badge badge-green" data-vi="Còn trống" data-en="Available">Còn trống</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-red" data-vi="Đã đặt" data-en="Booked">Đã đặt</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

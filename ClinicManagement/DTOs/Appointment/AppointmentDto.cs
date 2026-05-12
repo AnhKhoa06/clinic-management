@@ -38,4 +38,6 @@ public class AppointmentResponseDto
     public string? CancelReason { get; set; }
     public string? Notes { get; set; }
     public DateTime CreatedAt { get; set; }
+    public bool HasReview { get; set; }
+    public bool HasPayment { get; set; }
 }

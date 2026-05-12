@@ -1,0 +1,89 @@
+@model ClinicManagement.DTOs.Doctor.DoctorResponseDto
+@{
+    ViewData["Title"] = Model.FullName;
+}
+
+<div class="page-header">
+    <div class="d-flex align-center gap-8">
+        <a asp-action="Browse" class="btn btn-outline" style="padding:8px 10px">
+            <i class="ti ti-arrow-left"></i>
+        </a>
+        <h1 data-vi="Thông tin bác sĩ" data-en="Doctor Profile">Thông tin bác sĩ</h1>
+    </div>
+</div>
+
+<div class="card" style="max-width:640px; padding:28px;">
+    <!-- Header -->
+    <div class="doctor-profile-header">
+        <div class="doctor-profile-avatar">
+            @if (!string.IsNullOrEmpty(Model.AvatarUrl))
+            {
+                <img src="@Model.AvatarUrl" alt="@Model.FullName" />
+            }
+            else
+            {
+                <span>@Model.FullName[0]</span>
+            }
+        </div>
+        <div>
+            <div class="doctor-profile-name">@Model.FullName</div>
+            <div class="doctor-profile-specialty">
+                <i class="ti ti-grid-dots" style="font-size:14px;"></i>
+                @Model.SpecialtyName
+            </div>
+            @if (Model.AverageRating > 0)
+            {
+                <div class="doctor-card-rating" style="margin-top:6px;">
+                    <i class="ti ti-star-filled" style="color:#f59e0b; font-size:14px;"></i>
+                    <span>@Model.AverageRating / 5</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Bio -->
+    @if (!string.IsNullOrEmpty(Model.Bio))
+    {
+        <div class="settings-section" style="border-top:0.5px solid var(--card-border); padding-top:20px; margin-top:20px;">
+            <div class="settings-section-title">
+                <i class="ti ti-info-circle"></i>
+                <span data-vi="Giới thiệu" data-en="About">Giới thiệu</span>
+            </div>
+            <p style="font-size:13px; color:var(--text-secondary); line-height:1.7;">@Model.Bio</p>
+        </div>
+    }
+
+    <!-- Thông tin -->
+    <div class="settings-section" style="border-top:0.5px solid var(--card-border); padding-top:20px; margin-top:20px;">
+        <div class="settings-section-title">
+            <i class="ti ti-id-badge"></i>
+            <span data-vi="Thông tin chuyên môn" data-en="Professional Info">Thông tin chuyên môn</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; font-size:13px;">
+            <div class="d-flex align-center gap-8">
+                <span style="color:var(--text-secondary); min-width:130px;" data-vi="Chuyên khoa" data-en="Specialty">Chuyên khoa:</span>
+                <span class="fw-500">@Model.SpecialtyName</span>
+            </div>
+            <div class="d-flex align-center gap-8">
+                <span style="color:var(--text-secondary); min-width:130px;" data-vi="Số giấy phép" data-en="License">Số giấy phép:</span>
+                <span class="fw-500">@Model.LicenseNumber</span>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Phone))
+            {
+                <div class="d-flex align-center gap-8">
+                    <span style="color:var(--text-secondary); min-width:130px;" data-vi="Điện thoại" data-en="Phone">Điện thoại:</span>
+                    <span class="fw-500">@Model.Phone</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Đặt lịch -->
+    <div style="margin-top:24px;">
+        <a asp-controller="Appointment" asp-action="Create" asp-route-doctorId="@Model.Id"
+           class="btn btn-primary" style="width:100%; justify-content:center;">
+            <i class="ti ti-calendar-plus"></i>
+            <span data-vi="Đặt lịch khám ngay" data-en="Book Appointment">Đặt lịch khám ngay</span>
+        </a>
+    </div>
+</div>

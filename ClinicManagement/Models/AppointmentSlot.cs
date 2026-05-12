@@ -23,5 +23,4 @@ public class AppointmentSlot
 
     public WorkingSchedule WorkingSchedule { get; set; } = null!;
     public Doctor Doctor { get; set; } = null!;
-    public Appointment? Appointment { get; set; }
 }

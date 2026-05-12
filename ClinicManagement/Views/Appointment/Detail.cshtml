@@ -1,0 +1,173 @@
+@model ClinicManagement.DTOs.Appointment.AppointmentResponseDto
+@{
+    ViewData["Title"] = "Chi tiết lịch hẹn";
+}
+
+<div class="page-header">
+    <div class="d-flex align-center gap-8">
+        <a asp-action="Index" class="btn btn-outline" style="padding:8px 10px">
+            <i class="ti ti-arrow-left"></i>
+        </a>
+        <h1>Chi tiết lịch hẹn #@Model.Id</h1>
+    </div>
+    <div class="d-flex gap-8" style="align-items:stretch;">
+        @if (Model.Status == "Pending")
+        {
+            <form asp-action="Confirm" asp-route-id="@Model.Id" method="post" style="display:flex;">
+                <button type="submit" class="btn btn-primary" style="height:38px; display:flex; align-items:center; gap:6px;">
+                    <i class="ti ti-check"></i> Xác nhận
+                </button>
+            </form>
+        }
+        @if (Model.Status == "Confirmed")
+        {
+            <form asp-action="Complete" asp-route-id="@Model.Id" method="post" style="display:flex;">
+                <button type="submit" class="btn btn-primary" style="height:38px; display:flex; align-items:center; gap:6px;">
+                    <i class="ti ti-circle-check"></i> Hoàn thành
+                </button>
+            </form>
+        }
+        @if (Model.Status != "Cancelled" && Model.Status != "Completed")
+        {
+            <a asp-action="Cancel" asp-route-id="@Model.Id" 
+               class="btn btn-danger" 
+               style="height:38px; display:flex; align-items:center; gap:6px;">
+                <i class="ti ti-x"></i> Huỷ lịch
+            </a>
+        }
+
+        @if (Model.Status == "Completed" && User.IsInRole("Doctor"))
+        {
+            <a asp-controller="MedicalRecord" asp-action="Create"
+            asp-route-appointmentId="@Model.Id"
+            class="btn btn-primary"
+            style="height:38px; display:flex; align-items:center; gap:6px;">
+                <i class="ti ti-clipboard-plus"></i> Tạo hồ sơ
+            </a>
+        }
+    </div>
+</div>
+
+<!-- Trạng thái -->
+<div class="card" style="padding:20px; margin-bottom:16px;">
+    <div style="display:flex; align-items:center; gap:12px;">
+        <span style="font-size:13px; color:var(--text-secondary);">Trạng thái:</span>
+        @switch (Model.Status)
+        {
+            case "Pending":
+                <span class="status status-pending">
+                    <span class="status-dot"></span> Chờ xác nhận
+                </span>
+                break;
+            case "Confirmed":
+                <span class="status status-done">
+                    <span class="status-dot"></span> Đã xác nhận
+                </span>
+                break;
+            case "Completed":
+                <span class="status status-active">
+                    <span class="status-dot"></span> Hoàn thành
+                </span>
+                break;
+            case "Cancelled":
+                <span class="status status-cancel">
+                    <span class="status-dot"></span> Đã huỷ
+                </span>
+                break;
+        }
+    </div>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+    <!-- Thông tin bệnh nhân -->
+    <div class="card" style="padding:20px;">
+        <div class="settings-section-title" style="margin-bottom:16px;">
+            <i class="ti ti-user"></i>
+            <span>Thông tin bệnh nhân</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--text-secondary);">Họ tên</span>
+                <span class="fw-500">@Model.PatientName</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--text-secondary);">Mã bệnh nhân</span>
+                <span class="fw-500">#@Model.PatientId</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thông tin bác sĩ -->
+    <div class="card" style="padding:20px;">
+        <div class="settings-section-title" style="margin-bottom:16px;">
+            <i class="ti ti-stethoscope"></i>
+            <span>Thông tin bác sĩ</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--text-secondary);">Họ tên</span>
+                <span class="fw-500">@Model.DoctorName</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--text-secondary);">Chuyên khoa</span>
+                <span class="fw-500">@Model.SpecialtyName</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thông tin lịch hẹn -->
+    <div class="card" style="padding:20px;">
+        <div class="settings-section-title" style="margin-bottom:16px;">
+            <i class="ti ti-calendar"></i>
+            <span>Thông tin lịch hẹn</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--text-secondary);">Ngày khám</span>
+                <span class="fw-500">@Model.SlotDate.ToString("dd/MM/yyyy")</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--text-secondary);">Giờ khám</span>
+                <span class="fw-500">@Model.SlotTime.ToString("HH:mm")</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--text-secondary);">Ngày đặt</span>
+                <span class="fw-500">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lý do & Ghi chú -->
+    <div class="card" style="padding:20px;">
+        <div class="settings-section-title" style="margin-bottom:16px;">
+            <i class="ti ti-notes"></i>
+            <span>Lý do & Ghi chú</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
+            <div>
+                <span style="color:var(--text-secondary);">Lý do khám</span>
+                <p style="margin:6px 0 0; font-weight:500;">
+                    @(string.IsNullOrEmpty(Model.Reason) ? "—" : Model.Reason)
+                </p>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.CancelReason))
+            {
+                <div>
+                    <span style="color:var(--text-secondary);">Lý do huỷ</span>
+                    <p style="margin:6px 0 0; font-weight:500; color:#dc2626;">
+                        @Model.CancelReason
+                    </p>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <div>
+                    <span style="color:var(--text-secondary);">Ghi chú</span>
+                    <p style="margin:6px 0 0; font-weight:500;">@Model.Notes</p>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>

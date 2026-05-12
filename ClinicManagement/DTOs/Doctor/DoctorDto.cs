@@ -68,4 +68,5 @@ public class DoctorResponseDto
     public string? AvatarUrl { get; set; }
     public bool IsActive { get; set; }
     public double AverageRating { get; set; }
+    public decimal ExaminationFee { get; set; }
 }

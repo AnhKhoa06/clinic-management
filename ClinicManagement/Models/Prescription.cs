@@ -14,13 +14,16 @@ public class Prescription
     [ForeignKey("Medication")]
     public int MedicationId { get; set; }
 
-    [MaxLength(100)]
-    public string? Dosage { get; set; }
+    public decimal DosagePerTime { get; set; }  // Số viên/lần
+    public int TimesPerDay { get; set; }         // Số lần/ngày
+    public int DurationDays { get; set; }        // Số ngày
 
-    [MaxLength(100)]
-    public string? Frequency { get; set; }
+    public int Quantity { get; set; } = 0;       // Tự tính = DosagePerTime * TimesPerDay * DurationDays
 
-    public int DurationDays { get; set; }
+    public decimal UnitPrice { get; set; } = 0;
+
+    [NotMapped]
+    public decimal TotalPrice => Quantity * UnitPrice;
 
     public string? Notes { get; set; }
 

@@ -4,6 +4,7 @@ using ClinicManagement.Data;
 using ClinicManagement.Middlewares;
 using ClinicManagement.Repositories;
 using ClinicManagement.Services;
+using VNPAY.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,7 +72,27 @@ builder.Services.AddScoped<MedicalRecordService>();
 builder.Services.AddScoped<MedicationRepository>();
 builder.Services.AddScoped<MedicationService>();
 
+//review
+builder.Services.AddScoped<ReviewService>();
+
+//payment
+builder.Services.AddScoped<PaymentService>();
+
+//Vnpay
+var vnpayConfig = builder.Configuration.GetSection("VNPAY");
+builder.Services.AddVnpayClient(config =>
+{
+    config.TmnCode = vnpayConfig["TmnCode"]!;
+    config.HashSecret = vnpayConfig["HashSecret"]!;
+    config.CallbackUrl = vnpayConfig["CallbackUrl"]!;
+});
+
 var app = builder.Build();
+
+// Tạo thư mục uploads nếu chưa có
+var uploadsPath = Path.Combine(app.Environment.WebRootPath, "uploads", "avatars");
+if (!Directory.Exists(uploadsPath))
+    Directory.CreateDirectory(uploadsPath);
 
 app.UseMiddleware<ExceptionMiddleware>();
 

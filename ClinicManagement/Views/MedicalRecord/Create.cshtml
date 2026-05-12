@@ -1,0 +1,224 @@
+@model ClinicManagement.DTOs.MedicalRecord.MedicalRecordCreateDto
+@{
+    ViewData["Title"] = "Tạo hồ sơ bệnh án";
+    var medications = ViewBag.Medications as List<ClinicManagement.DTOs.Medication.MedicationResponseDto> ?? new();
+    int appointmentId = ViewBag.AppointmentId ?? 0;
+}
+
+<div class="page-header">
+    <div class="d-flex align-center gap-8">
+        <a onclick="history.back()" class="btn btn-outline" style="padding:8px 10px; cursor:pointer">
+            <i class="ti ti-arrow-left"></i>
+        </a>
+        <h1>Tạo hồ sơ bệnh án</h1>
+    </div>
+</div>
+
+<div class="card form-card">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <i class="ti ti-alert-circle"></i>
+            <div>
+                @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                { <div>@err.ErrorMessage</div> }
+            </div>
+        </div>
+    }
+
+    <form asp-action="Create" method="post" id="medicalForm">
+        <input type="hidden" asp-for="AppointmentId" value="@appointmentId" />
+
+        <!-- Triệu chứng -->
+        <div class="form-group">
+            <label class="form-label">
+                <span>Triệu chứng <span style="color:red">*</span></span>
+            </label>
+            <textarea asp-for="Symptoms" class="form-control" rows="3"
+                    placeholder="Mô tả triệu chứng của bệnh nhân..."></textarea>
+            <span asp-validation-for="Symptoms" class="text-danger" style="font-size:12px;"></span>
+        </div>
+
+        <!-- Chẩn đoán -->
+        <div class="form-group">
+            <label class="form-label">
+                <span>Chẩn đoán <span style="color:red">*</span></span>
+            </label>
+            <textarea asp-for="Diagnosis" class="form-control" rows="3"
+                    placeholder="Chẩn đoán bệnh..."></textarea>
+            <span asp-validation-for="Diagnosis" class="text-danger" style="font-size:12px;"></span>
+        </div>
+
+        <!-- Ghi chú điều trị -->
+        <div class="form-group">
+            <label class="form-label">
+                <span>Ghi chú điều trị</span>
+            </label>
+            <textarea asp-for="TreatmentNotes" class="form-control" rows="3"
+                      placeholder="Hướng dẫn điều trị, lưu ý..."></textarea>
+        </div>
+
+        <!-- Ngày tái khám -->
+        <div class="form-group">
+            <label class="form-label">Ngày tái khám</label>
+            <input asp-for="FollowUpDate" type="date" class="form-control"
+                   style="max-width:250px;"
+                   min="@DateOnly.FromDateTime(DateTime.Today.AddDays(1)).ToString("yyyy-MM-dd")" />
+        </div>
+
+        <!-- Đơn thuốc -->
+        <div class="settings-section-title" style="margin:24px 0 16px;">
+            <i class="ti ti-pill"></i>
+            <span>Kê đơn thuốc</span>
+        </div>
+
+        <div id="prescriptionList" style="display:flex; flex-direction:column; gap:12px; margin-bottom:16px;">
+            <!-- Các dòng thuốc sẽ được thêm vào đây -->
+        </div>
+
+        <button type="button" class="btn btn-outline" onclick="addPrescription()">
+            <i class="ti ti-plus"></i> Thêm thuốc
+        </button>
+
+        <div class="form-actions" style="margin-top:24px;">
+            <button type="submit" class="btn btn-primary">
+                <i class="ti ti-check"></i> Lưu hồ sơ
+            </button>
+            <a onclick="history.back()" class="btn btn-outline" style="cursor:pointer">Huỷ</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+let prescriptionCount = 0;
+
+const medications = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+    medications.Select(m => new { m.Id, m.Name, m.Unit, Price = (double)m.Price })));
+
+function addPrescription() {
+    const idx = prescriptionCount++;
+    const options = medications.map(m =>
+        `<option value="${m.Id ?? m.id}" data-price="${m.Price ?? m.price ?? 0}">
+            ${m.Name ?? m.name} (${m.Unit ?? m.unit ?? ''})
+        </option>`
+    ).join('');
+
+    const html = `
+    <div class="card" style="padding:16px; position:relative;" id="presc-${idx}">
+        <button type="button" onclick="removePrescription(${idx})"
+                style="position:absolute; top:10px; right:10px; background:none; border:none; cursor:pointer; color:#dc2626;">
+            <i class="ti ti-x"></i>
+        </button>
+
+        <!-- Hàng 1: Chọn thuốc -->
+        <div class="form-group">
+            <label class="form-label">Thuốc <span class="required">*</span></label>
+            <select name="Prescriptions[${idx}].MedicationId" class="form-control"
+                    required onchange="onMedicationChange(this, ${idx})">
+                <option value="">-- Chọn thuốc --</option>
+                ${options}
+            </select>
+        </div>
+
+        <!-- Hàng 2: 3 input số -->
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Số viên/lần <span class="required">*</span></label>
+                <input type="number" name="Prescriptions[${idx}].DosagePerTime"
+                       class="form-control" min="0.5" max="100" step="0.5"
+                       placeholder="VD: 2" required
+                       onchange="calculateQuantity(${idx})" oninput="calculateQuantity(${idx})" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Số lần/ngày <span class="required">*</span></label>
+                <input type="number" name="Prescriptions[${idx}].TimesPerDay"
+                       class="form-control" min="1" max="20"
+                       placeholder="VD: 3" required
+                       onchange="calculateQuantity(${idx})" oninput="calculateQuantity(${idx})" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Số ngày <span class="required">*</span></label>
+                <input type="number" name="Prescriptions[${idx}].DurationDays"
+                       class="form-control" min="1" max="365"
+                       placeholder="VD: 7" required
+                       onchange="calculateQuantity(${idx})" oninput="calculateQuantity(${idx})" />
+            </div>
+        </div>
+
+        <!-- Hàng 3: Số lượng (readonly), Đơn giá (readonly), Thành tiền -->
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:12px;">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Số lượng (tự tính)</label>
+                <input type="number" name="Prescriptions[${idx}].Quantity"
+                       id="quantity-${idx}" class="form-control" readonly
+                       style="background:var(--bg-secondary); color:var(--text-secondary);" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Đơn giá (₫)</label>
+                <input type="number" name="Prescriptions[${idx}].UnitPrice"
+                       id="unitPrice-${idx}" class="form-control" readonly
+                       style="background:var(--bg-secondary); color:var(--text-secondary);" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Thành tiền</label>
+                <div id="total-${idx}"
+                     style="height:38px; display:flex; align-items:center; font-size:15px; font-weight:600; color:var(--accent);">
+                    0 ₫
+                </div>
+            </div>
+        </div>
+
+        <!-- Hàng 4: Ghi chú -->
+        <div class="form-group" style="margin-top:12px; margin-bottom:0;">
+            <label class="form-label">Ghi chú</label>
+            <input type="text" name="Prescriptions[${idx}].Notes" class="form-control"
+                   placeholder="Uống sau ăn, tránh rượu bia..." />
+        </div>
+    </div>`;
+
+    document.getElementById('prescriptionList').insertAdjacentHTML('beforeend', html);
+}
+
+function onMedicationChange(select, idx) {
+    const price = parseFloat(select.options[select.selectedIndex].dataset.price) || 0;
+    document.getElementById(`unitPrice-${idx}`).value = price;
+    updateTotal(idx);
+}
+
+function calculateQuantity(idx) {
+    const dose  = parseFloat(document.querySelector(`[name="Prescriptions[${idx}].DosagePerTime"]`)?.value) || 0;
+    const times = parseInt(document.querySelector(`[name="Prescriptions[${idx}].TimesPerDay"]`)?.value)    || 0;
+    const days  = parseInt(document.querySelector(`[name="Prescriptions[${idx}].DurationDays"]`)?.value)   || 0;
+
+    const qty = Math.ceil(dose * times * days); // làm tròn lên cho chắc
+    const qtyInput = document.getElementById(`quantity-${idx}`);
+    if (qtyInput) qtyInput.value = qty > 0 ? qty : '';
+    updateTotal(idx);
+}
+
+function updateTotal(idx) {
+    const qty   = parseInt(document.getElementById(`quantity-${idx}`)?.value)   || 0;
+    const price = parseFloat(document.getElementById(`unitPrice-${idx}`)?.value) || 0;
+    const el = document.getElementById(`total-${idx}`);
+    if (el) el.textContent = (qty * price).toLocaleString('vi-VN') + ' ₫';
+}
+
+function removePrescription(idx) {
+    document.getElementById(`presc-${idx}`)?.remove();
+}
+
+document.getElementById('medicalForm').addEventListener('submit', function(e) {
+    const symptoms  = document.querySelector('textarea[name="Symptoms"]').value.trim();
+    const diagnosis = document.querySelector('textarea[name="Diagnosis"]').value.trim();
+    if (!symptoms || !diagnosis) {
+        e.preventDefault();
+        if (!symptoms)  document.querySelector('textarea[name="Symptoms"]').style.borderColor  = '#ef4444';
+        if (!diagnosis) document.querySelector('textarea[name="Diagnosis"]').style.borderColor = '#ef4444';
+    }
+});
+
+document.querySelector('textarea[name="Symptoms"]').addEventListener('input',  function() { this.style.borderColor = ''; });
+document.querySelector('textarea[name="Diagnosis"]').addEventListener('input', function() { this.style.borderColor = ''; });
+</script>
+}

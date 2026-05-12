@@ -38,7 +38,14 @@
                 <tr>
                     <td>
                         <div class="table-user">
-                            <div class="table-avatar">@item.FullName[0]</div>
+                            @if (!string.IsNullOrEmpty(item.AvatarUrl))
+                            {
+                                <img src="@item.AvatarUrl" style="width:36px; height:36px; border-radius:50%; object-fit:cover;" />
+                            }
+                            else
+                            {
+                                <div class="table-avatar">@item.FullName[0]</div>
+                            }
                             <div>
                                 <div class="table-user-name">@item.FullName</div>
                                 <div class="table-user-email">@item.Email</div>

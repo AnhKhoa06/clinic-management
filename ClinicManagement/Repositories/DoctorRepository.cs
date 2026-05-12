@@ -67,4 +67,13 @@ public class DoctorRepository
         _context.Doctors.Update(doctor);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<Doctor?> GetByUserIdAsync(int userId)
+    {
+        return await _context.Doctors
+            .Include(d => d.User)
+            .Include(d => d.Specialty)
+            .Include(d => d.Reviews)
+            .FirstOrDefaultAsync(d => d.UserId == userId);
+    }
 }

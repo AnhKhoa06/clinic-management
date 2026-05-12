@@ -18,9 +18,7 @@ public class WorkingScheduleCreateDto
 
     [Required, Range(15, 60)]
     public int SlotDurationMinutes { get; set; } = 30;
-
-    [Required, Range(1, 50)]
-    public int MaxSlots { get; set; }
+    // MaxSlots bỏ khỏi đây — tự tính trong service
 }
 
 public class WorkingScheduleUpdateDto
@@ -34,10 +32,8 @@ public class WorkingScheduleUpdateDto
     [Required, Range(15, 60)]
     public int SlotDurationMinutes { get; set; }
 
-    [Required, Range(1, 50)]
-    public int MaxSlots { get; set; }
-
     public bool IsActive { get; set; } = true;
+    // MaxSlots bỏ — tự tính trong service
 }
 
 public class WorkingScheduleResponseDto

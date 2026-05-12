@@ -1,0 +1,145 @@
+@model List<ClinicManagement.DTOs.Appointment.WorkingScheduleResponseDto>
+@{
+    ViewData["Title"] = "Lịch làm việc";
+    var doctors = ViewBag.Doctors as List<ClinicManagement.DTOs.Doctor.DoctorResponseDto> ?? new();
+    int? selectedDoctorId = ViewBag.DoctorId;
+}
+
+@{
+    bool isDoctor = ViewBag.IsDoctor == true;
+}
+
+<div class="page-header">
+    <h1 data-vi="Lịch làm việc" data-en="Working Schedule">Lịch làm việc</h1>
+    @if (selectedDoctorId != null)
+    {
+        <div class="d-flex gap-8">
+            <a asp-action="Slots" asp-route-doctorId="@selectedDoctorId" class="btn btn-outline">
+                <i class="ti ti-clock"></i>
+                <span>Xem slots</span>
+            </a>
+            <a asp-action="Create" asp-route-doctorId="@selectedDoctorId" class="btn btn-primary">
+                <i class="ti ti-plus"></i>
+                <span>Thêm lịch</span>
+            </a>
+        </div>
+    }
+</div>
+
+@* Chỉ Admin mới thấy phần chọn bác sĩ *@
+@if (!isDoctor)
+{
+    <div class="card" style="padding:20px; margin-bottom:16px;">
+        <form method="get" asp-action="Index" style="display:flex; gap:16px; align-items:center;">
+            <select name="doctorId" class="form-control" style="max-width:300px;">
+                <option value="">-- Chọn bác sĩ --</option>
+                @foreach (var d in doctors)
+                {
+                    <option value="@d.Id" selected="@(selectedDoctorId == d.Id)">
+                        @d.FullName — @d.SpecialtyName
+                    </option>
+                }
+            </select>
+            <button type="submit" class="btn btn-primary" style="height:36px;">
+                <i class="ti ti-search"></i>
+                <span>Xem lịch</span>
+            </button>
+        </form>
+    </div>
+}
+
+@if (selectedDoctorId != null)
+{
+    <!-- Generate Slots -->
+    <div class="card" style="padding:20px; margin-bottom:16px;">
+        <div class="settings-section-title" style="margin-bottom:16px;">
+            <i class="ti ti-calendar-plus"></i>
+            <span data-vi="Tạo slot khám tự động" data-en="Generate Appointment Slots">Tạo slot khám tự động</span>
+        </div>
+        <form asp-action="GenerateSlots" method="post">
+            <input type="hidden" name="DoctorId" value="@selectedDoctorId" />
+            <div style="display:flex; gap:16px;">
+                <div class="form-group" style="margin-bottom:0; flex:1;">
+                    <label class="form-label" data-vi="Từ ngày" data-en="From Date">Từ ngày</label>
+                    <input type="date" name="FromDate" class="form-control"
+                        value="@(TempData["LastFromDate"] ?? DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="form-group" style="margin-bottom:0; flex:1;">
+                    <label class="form-label" data-vi="Đến ngày" data-en="To Date">Đến ngày</label>
+                    <input type="date" name="ToDate" class="form-control"
+                        value="@(TempData["LastToDate"] ?? DateOnly.FromDateTime(DateTime.Today.AddDays(7)).ToString("yyyy-MM-dd"))" />
+                </div>
+                <div style="flex-shrink:0; align-self:flex-end;">
+                    <button type="submit" class="btn btn-primary" style="height:36px;">
+                        <i class="ti ti-calendar-check"></i>
+                        <span data-vi="Tạo slots" data-en="Generate">Tạo slots</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Danh sách lịch -->
+    <div class="card table-card">
+        <div class="table-header">
+            <span class="table-title" data-vi="Lịch làm việc" data-en="Schedule List">Lịch làm việc</span>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th data-vi="Thứ" data-en="Day">Thứ</th>
+                    <th data-vi="Giờ bắt đầu" data-en="Start">Giờ bắt đầu</th>
+                    <th data-vi="Giờ kết thúc" data-en="End">Giờ kết thúc</th>
+                    <th data-vi="Thời lượng slot" data-en="Slot Duration">Thời lượng slot</th>
+                    <th data-vi="Số slot tối đa" data-en="Max Slots">Số slot tối đa</th>
+                    <th data-vi="Trạng thái" data-en="Status">Trạng thái</th>
+                    <th data-vi="Thao tác" data-en="Actions">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="ti ti-calendar-off"></i>
+                                <p data-vi="Chưa có lịch làm việc nào." data-en="No schedules found.">Chưa có lịch làm việc nào.</p>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="td-name">@item.DayOfWeekName</td>
+                        <td>@item.StartTime.ToString("HH:mm")</td>
+                        <td>@item.EndTime.ToString("HH:mm")</td>
+                        <td>@item.SlotDurationMinutes phút</td>
+                        <td>@item.MaxSlots slot</td>
+                        <td>
+                            @if (item.IsActive)
+                            {
+                                <span class="badge badge-green" data-vi="Hoạt động" data-en="Active">Hoạt động</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-red" data-vi="Tắt" data-en="Inactive">Tắt</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post"
+                                      onsubmit="return confirm('Xác nhận xoá lịch @item.DayOfWeekName?')">
+                                    <input type="hidden" name="doctorId" value="@item.DoctorId" />
+                                    <button type="submit" class="icon-btn danger">
+                                        <i class="ti ti-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

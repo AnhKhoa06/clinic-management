@@ -15,6 +15,9 @@ public class Medication
 
     public string? Description { get; set; }
 
+    [Range(0, 100000000)]
+    public decimal Price { get; set; } = 0;
+
     public bool IsActive { get; set; } = true;
 
     public ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();

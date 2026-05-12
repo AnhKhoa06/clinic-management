@@ -1,0 +1,97 @@
+@model List<ClinicManagement.DTOs.Patient.PatientResponseDto>
+@{
+    ViewData["Title"] = "Bệnh nhân";
+}
+
+<div class="page-header">
+    <h1 data-vi="Quản lý bệnh nhân" data-en="Patient Management">Quản lý bệnh nhân</h1>
+    <span class="badge badge-blue" style="font-size:13px; padding:6px 14px;">
+        @Model.Count <span data-vi="bệnh nhân" data-en="patients">bệnh nhân</span>
+    </span>
+</div>
+
+<!-- Search bar -->
+<form method="get" asp-action="Index" style="display:flex; gap:10px; margin-bottom:16px; max-width:480px;">
+    <div style="position:relative; flex:1;">
+        <i class="ti ti-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:16px;"></i>
+        <input type="text" name="search" value="@ViewBag.Search"
+               class="form-control" style="padding-left:38px;"
+               placeholder="Tìm tên, email, SĐT..." />
+    </div>
+    @if (!string.IsNullOrEmpty(ViewBag.Search as string))
+    {
+        <a asp-action="Index" class="btn btn-outline">
+            <i class="ti ti-x"></i>
+        </a>
+    }
+</form>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th data-vi="Bệnh nhân" data-en="Patient">Bệnh nhân</th>
+                <th data-vi="Tuổi" data-en="Age">Tuổi</th>
+                <th data-vi="Giới tính" data-en="Gender">Giới tính</th>
+                <th data-vi="Liên hệ khẩn" data-en="Emergency">Liên hệ khẩn</th>
+                <th data-vi="Thao tác" data-en="Actions">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="5" style="text-align:center; color:var(--text-muted); padding:40px;">
+                        @if (!string.IsNullOrEmpty(ViewBag.Search as string))
+                        {
+                            <span>Không tìm thấy kết quả nào.</span>
+                        }
+                        else
+                        {
+                            <span>Chưa có bệnh nhân nào.</span>
+                        }
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                var age = item.DateOfBirth.HasValue
+                    ? (int)((DateTime.Today - item.DateOfBirth.Value.ToDateTime(TimeOnly.MinValue)).TotalDays / 365.25)
+                    : (int?)null;
+
+                <tr>
+                    <td>
+                        <div class="table-user">
+                            <div class="table-avatar">@item.FullName[0]</div>
+                            <div>
+                                <div class="table-user-name">@item.FullName</div>
+                                <div class="table-user-email">@item.Email</div>
+                                @if (item.Phone != null)
+                                {
+                                    <div class="table-user-email">@item.Phone</div>
+                                }
+                            </div>
+                        </div>
+                    </td>
+                    <td class="td-muted">
+                        @(age.HasValue ? $"{age} tuổi" : "—")
+                    </td>
+                    <td class="td-muted">@(item.Gender ?? "—")</td>
+                    <td class="td-muted">@(item.EmergencyContact ?? "—")</td>
+                    <td>
+                        <div class="action-btns">
+                            <a asp-action="Detail" asp-route-id="@item.Id"
+                               class="icon-btn" title="Xem chi tiết">
+                                <i class="ti ti-eye"></i>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id"
+                               class="icon-btn" title="Chỉnh sửa">
+                                <i class="ti ti-pencil"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

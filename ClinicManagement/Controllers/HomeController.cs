@@ -1,7 +1,7 @@
 using ClinicManagement.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Security.Claims;
 namespace ClinicManagement.Controllers;
 
 public class HomeController : Controller
@@ -10,17 +10,20 @@ public class HomeController : Controller
     private readonly PatientService _patientService;
     private readonly AppointmentService _appointmentService;
     private readonly MedicationService _medicationService;
+    private readonly PaymentService _paymentService;
 
     public HomeController(
         DoctorService doctorService,
         PatientService patientService,
         AppointmentService appointmentService,
-        MedicationService medicationService)
+        MedicationService medicationService,
+        PaymentService paymentService)
     {
         _doctorService = doctorService;
         _patientService = patientService;
         _appointmentService = appointmentService;
         _medicationService = medicationService;
+        _paymentService = paymentService;
     }
 
     [Authorize]
@@ -32,6 +35,7 @@ public class HomeController : Controller
             var patients     = await _patientService.GetAllAsync();
             var appointments = await _appointmentService.GetAllAsync();
             var medications  = await _medicationService.GetAllAsync();
+            var payments     = await _paymentService.GetAllAsync();
 
             ViewBag.DoctorCount      = doctors.Count;
             ViewBag.PatientCount     = patients.Count;
@@ -39,7 +43,54 @@ public class HomeController : Controller
                 .Count(a => a.SlotDate == DateOnly.FromDateTime(DateTime.Today)
                         && a.Status != "Cancelled");
             ViewBag.MedicationCount  = medications.Count;
+            ViewBag.AppointmentPending   = appointments.Count(a => a.Status == "Pending");
+            ViewBag.AppointmentCompleted = appointments.Count(a => a.Status == "Completed");
+
+            // Doanh thu
+            ViewBag.RevenueToday  = payments
+                .Where(p => p.Status == "Paid" && p.PaidAt.HasValue
+                        && p.PaidAt.Value.Date == DateTime.Today)
+                .Sum(p => p.Amount);
+            ViewBag.RevenueTotal  = payments
+                .Where(p => p.Status == "Paid")
+                .Sum(p => p.Amount);
+            ViewBag.RevenueUnpaid = payments
+                .Where(p => p.Status == "Unpaid")
+                .Sum(p => p.Amount);
+
+            // Top bác sĩ
+            ViewBag.TopDoctors = doctors
+                .Where(d => d.AverageRating > 0)
+                .OrderByDescending(d => d.AverageRating)
+                .Take(3)
+                .ToList();
+
+            // Lịch hẹn hôm nay chi tiết
+            ViewBag.TodayAppointments = appointments
+                .Where(a => a.SlotDate == DateOnly.FromDateTime(DateTime.Today)
+                        && a.Status != "Cancelled")
+                .OrderBy(a => a.SlotTime)
+                .Take(5)
+                .ToList();
         }
+
+        if (User.IsInRole("Doctor"))
+        {
+            var userId = int.Parse(User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier)!);
+            var doctor = await _doctorService.GetByUserIdAsync(userId);
+
+            if (doctor != null)
+            {
+                var appointments = await _appointmentService.GetByDoctorIdAsync(doctor.Id);
+                ViewBag.DoctorAppointmentToday = appointments
+                    .Count(a => a.SlotDate == DateOnly.FromDateTime(DateTime.Today)
+                            && a.Status != "Cancelled");
+                ViewBag.DoctorMedicalRecordCount = appointments
+                    .Count(a => a.Status == "Completed");
+            }
+        }
+
+        
 
         return View();
     }

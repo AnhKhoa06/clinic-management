@@ -145,8 +145,16 @@ public class DoctorService
         Bio = d.Bio,
         AvatarUrl = d.AvatarUrl,
         IsActive = d.IsActive,
+        ExaminationFee = d.ExaminationFee,
         AverageRating = d.Reviews.Any()
             ? Math.Round(d.Reviews.Average(r => r.Rating), 1)
             : 0
     };
+
+    public async Task<DoctorResponseDto?> GetByUserIdAsync(int userId)
+    {
+        var doctor = await _doctorRepo.GetByUserIdAsync(userId);
+        if (doctor == null) return null;
+        return MapToDto(doctor);
+    }
 }

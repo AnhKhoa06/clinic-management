@@ -98,4 +98,26 @@ public class AuthService
         await _authRepository.UpdateUserAsync(user);
         return (true, "Đổi mật khẩu thành công.");
     }
+
+    public async Task<User?> GetUserByIdAsync(int id)
+    {
+        return await _authRepository.GetUserByIdAsync(id);
+    }
+
+    public async Task UpdatePhoneAsync(int userId, string phone)
+    {
+        var user = await _authRepository.GetUserByIdAsync(userId);
+        if (user == null) return;
+
+        user.Phone = phone.Trim();
+        await _authRepository.UpdateUserAsync(user);
+    }
+    public async Task UpdateFullNameAsync(int userId, string fullName)
+    {
+        var user = await _authRepository.GetUserByIdAsync(userId);
+        if (user == null) return;
+
+        user.FullName = fullName.Trim();
+        await _authRepository.UpdateUserAsync(user);
+    }
 }
