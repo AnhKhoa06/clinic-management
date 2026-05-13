@@ -80,21 +80,24 @@
                         <i class="ti ti-calendar-check"></i>
                         <span data-vi="Lịch hẹn" data-en="Appointments">Lịch hẹn</span>
                     </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "MedicalRecord" ? "active" : "")"
-                    asp-controller="MedicalRecord" asp-action="Index">
-                        <i class="ti ti-clipboard-text"></i>
-                        <span data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
-                    </a>
                     <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "WorkingSchedule" ? "active" : "")"
                         asp-controller="WorkingSchedule" asp-action="Index">
                         <i class="ti ti-clock"></i>
                         <span data-vi="Lịch làm việc" data-en="Working Schedule">Lịch làm việc</span>
                     </a>
-                    <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Payment" ? "active" : "")"
-                        asp-controller="Payment" asp-action="Index">
-                        <i class="ti ti-receipt"></i>
-                        <span data-vi="Hóa đơn" data-en="Invoices">Hóa đơn</span>
+                    <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "MedicalRecord" ? "active" : "")"
+                    asp-controller="MedicalRecord" asp-action="Index">
+                        <i class="ti ti-clipboard-text"></i>
+                        <span data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
                     </a>
+                    @if (User.IsInRole("Doctor"))
+                    {
+                        <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Payment" ? "active" : "")"
+                        asp-controller="Payment" asp-action="Index">
+                            <i class="ti ti-receipt"></i>
+                            <span data-vi="Hóa đơn" data-en="Invoices">Hóa đơn</span>
+                        </a>
+                    }
                 </div>
             }
 
