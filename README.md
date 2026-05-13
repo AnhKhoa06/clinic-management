@@ -27,7 +27,7 @@ cd clinic-management/ClinicManagement
 - Sau đó mở file `appsettings.json`, sửa dòng Password thành mật khẩu MySQL của bạn:
 
 ```json
-"DefaultConnection": "Server=localhost;Port=3306;Database=clinic_management;User=root;Password=MẬT_KHẨU_CỦA_BẠN;"
+"DefaultConnection": "Server=localhost;Port=3306;Database=clinic_management;User=root;Password=MẬT_KHẨU_CỦA_BẠN;charset=utf8mb4;"
 ```
 
 ### Bước 3 — Import database
