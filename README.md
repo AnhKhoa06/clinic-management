@@ -24,10 +24,29 @@ cd clinic-management/ClinicManagement
 ### Bước 2 — Tạo file cấu hình
 
 - Đổi tên file `appsettings.Example.json` thành `appsettings.json`.
-- Sau đó mở file `appsettings.json`, sửa dòng Password thành mật khẩu MySQL của bạn:
+- Mở file `appsettings.json` và điền thông tin vào các chỗ sau:
 
 ```json
-"DefaultConnection": "Server=localhost;Port=3306;Database=clinic_management;User=root;Password=MẬT_KHẨU_CỦA_BẠN;charset=utf8mb4;"
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Port=3306;Database=clinic_management;User=root;Password=MẬT_KHẨU_MYSQL_CỦA_BẠN;charset=utf8mb4;"
+  },
+  "Authentication": {
+    "Google": {
+      "ClientId": "XIN_TỪ_BẠN_KHOA",
+      "ClientSecret": "XIN_TỪ_BẠN_KHOA"
+    }
+  },
+  "VNPAY": {
+    "TmnCode": "XIN_TỪ_BẠN_KHOA",
+    "HashSecret": "XIN_TỪ_BẠN_KHOA",
+    "CallbackUrl": "NGROK_URL_CỦA_BẠN/Payment/VnPayReturn"
+  },
+  "Email": {
+    "Username": "XIN_TỪ_BẠN_KHOA",
+    "Password": "XIN_TỪ_BẠN_KHOA"
+  }
+}
 ```
 
 ### Bước 3 — Import database
@@ -39,22 +58,7 @@ cd clinic-management/ClinicManagement
 5. Ở phần **Default Schema to be Imported To** → gõ `clinic_management`
 6. Click **Start Import**
 
-### Bước 4 — Set Google OAuth (xin Client ID và Secret từ bạn Khoa)
-
-```bash
-dotnet user-secrets init
-dotnet user-secrets set "Authentication:Google:ClientId" "XIN_TỪ_BẠN_KHOA"
-dotnet user-secrets set "Authentication:Google:ClientSecret" "XIN_TỪ_BẠN_KHOA"
-```
-
-### Bước 5 — Set VNPAY (xin TmnCode và HashSecret từ bạn Khoa)
-
-```bash
-dotnet user-secrets set "VNPAY:TmnCode" "XIN_TỪ_BẠN_KHOA"
-dotnet user-secrets set "VNPAY:HashSecret" "XIN_TỪ_BẠN_KHOA"
-```
-
-### Bước 6 — Cài đặt và chạy ngrok
+### Bước 4 — Cài đặt và chạy ngrok
 
 VNPAY cần URL công khai để callback sau khi thanh toán. Dùng ngrok để tạo tunnel từ localhost ra ngoài.
 
@@ -80,7 +84,7 @@ ngrok http 5194
 
 > ⚠️ Mỗi lần khởi động lại ngrok, URL sẽ thay đổi — cần cập nhật lại `CallbackUrl`.
 
-### Bước 7 — Chạy project
+### Bước 5 — Chạy project
 
 ```bash
 dotnet restore
