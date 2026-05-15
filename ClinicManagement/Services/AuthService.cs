@@ -120,4 +120,24 @@ public class AuthService
         user.FullName = fullName.Trim();
         await _authRepository.UpdateUserAsync(user);
     }
+
+    public async Task<(bool Success, string Message)> UpdateEmailAsync(int userId, string email)
+    {
+        email = email.ToLower().Trim();
+
+        // Kiểm tra email đã được dùng bởi tài khoản khác chưa
+        if (await _authRepository.EmailExistsAsync(email))
+        {
+            var existing = await _authRepository.GetUserByEmailAsync(email);
+            if (existing != null && existing.Id != userId)
+                return (false, "Email này đã được sử dụng bởi tài khoản khác.");
+        }
+
+        var user = await _authRepository.GetUserByIdAsync(userId);
+        if (user == null) return (false, "Không tìm thấy người dùng.");
+
+        user.Email = email;
+        await _authRepository.UpdateUserAsync(user);
+        return (true, "Cập nhật email thành công.");
+    }
 }

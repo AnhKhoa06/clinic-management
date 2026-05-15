@@ -11,19 +11,22 @@ public class HomeController : Controller
     private readonly AppointmentService _appointmentService;
     private readonly MedicationService _medicationService;
     private readonly PaymentService _paymentService;
+    private readonly MedicalRecordService _medicalRecordService;
 
     public HomeController(
         DoctorService doctorService,
         PatientService patientService,
         AppointmentService appointmentService,
         MedicationService medicationService,
-        PaymentService paymentService)
+        PaymentService paymentService,
+        MedicalRecordService medicalRecordService)
     {
         _doctorService = doctorService;
         _patientService = patientService;
         _appointmentService = appointmentService;
         _medicationService = medicationService;
         _paymentService = paymentService;
+        _medicalRecordService = medicalRecordService;
     }
 
     [Authorize]
@@ -87,6 +90,51 @@ public class HomeController : Controller
                             && a.Status != "Cancelled");
                 ViewBag.DoctorMedicalRecordCount = appointments
                     .Count(a => a.Status == "Completed");
+            }
+        }
+
+        if (User.IsInRole("Patient"))
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var (_, _, patient) = await _patientService.GetByUserIdAsync(userId);
+
+            if (patient != null)
+            {
+                var appointments = await _appointmentService.GetByPatientIdAsync(patient.Id);
+                var payments = await _paymentService.GetByPatientAsync(userId);
+
+                // Stat cards
+                ViewBag.PatientAppointmentTotal = appointments.Count;
+                ViewBag.PatientAppointmentPending = appointments
+                    .Count(a => a.Status == "Pending" || a.Status == "Confirmed");
+                ViewBag.PatientAppointmentCompleted = appointments
+                    .Count(a => a.Status == "Completed");
+                ViewBag.PatientUnpaidCount = payments
+                    .Count(p => p.Status == "Unpaid");
+
+                // Lịch hẹn sắp tới (Pending/Confirmed, ngày >= hôm nay, lấy 3 cái gần nhất)
+                ViewBag.UpcomingAppointments = appointments
+                    .Where(a => (a.Status == "Pending" || a.Status == "Confirmed")
+                            && a.SlotDate >= DateOnly.FromDateTime(DateTime.Today))
+                    .OrderBy(a => a.SlotDate).ThenBy(a => a.SlotTime)
+                    .Take(3)
+                    .ToList();
+
+                // Hóa đơn chưa thanh toán
+                ViewBag.UnpaidPayments = payments
+                    .Where(p => p.Status == "Unpaid")
+                    .OrderByDescending(p => p.Id)
+                    .Take(3)
+                    .ToList();
+
+                // Lịch tái khám sắp tới (từ MedicalRecord)
+                var medicalRecords = await _medicalRecordService.GetByPatientIdAsync(patient.Id);
+                ViewBag.UpcomingFollowUps = medicalRecords
+                    .Where(mr => mr.FollowUpDate.HasValue
+                            && mr.FollowUpDate.Value >= DateOnly.FromDateTime(DateTime.Today))
+                    .OrderBy(mr => mr.FollowUpDate)
+                    .Take(3)
+                    .ToList();
             }
         }
 

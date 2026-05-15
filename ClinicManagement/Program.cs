@@ -87,6 +87,9 @@ builder.Services.AddVnpayClient(config =>
     config.CallbackUrl = vnpayConfig["CallbackUrl"]!;
 });
 
+//email
+builder.Services.AddScoped<EmailService>();
+
 var app = builder.Build();
 
 // Tạo thư mục uploads nếu chưa có

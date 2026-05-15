@@ -38,7 +38,7 @@ public class SettingsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> UpdateProfile(string? FullName, string? Phone, string? Gender, DateOnly? DateOfBirth, string? Address, string? EmergencyContact)
+    public async Task<IActionResult> UpdateProfile(string? FullName, string? Phone, string? Email, string? Gender, DateOnly? DateOfBirth, string? Address, string? EmergencyContact)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
@@ -47,6 +47,17 @@ public class SettingsController : Controller
             await _authService.UpdateFullNameAsync(userId, FullName);
         if (Phone != null)
             await _authService.UpdatePhoneAsync(userId, Phone);
+        
+        // Chỉ Patient mới được cập nhật email
+        if (User.IsInRole("Patient") && !string.IsNullOrWhiteSpace(Email))
+        {
+            var (emailSuccess, emailMessage) = await _authService.UpdateEmailAsync(userId, Email);
+            if (!emailSuccess)
+            {
+                TempData["Error"] = emailMessage;
+                return RedirectToAction(nameof(Index));
+            }
+        }
 
         // Chỉ Patient mới có Gender, DateOfBirth, Address
         if (User.IsInRole("Patient"))

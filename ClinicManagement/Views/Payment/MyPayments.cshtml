@@ -39,13 +39,35 @@
                     <td>@item.DoctorName</td>
                     <td>@item.SlotDate.ToString("dd/MM/yyyy")</td>
                     <td class="fw-500">@item.Amount.ToString("N0") ₫</td>
-                    <td class="td-muted">@item.Method</td>
+                    <td>
+                        @if (item.Method == "Cash")
+                        {
+                            <span style="display:flex; align-items:center; gap:4px; font-size:12px;">
+                                <i class="ti ti-cash" style="color:#10b981;"></i>
+                                <span data-vi="Tiền mặt" data-en="Cash">Tiền mặt</span>
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="display:flex; align-items:center; gap:4px; font-size:12px;">
+                                <i class="ti ti-building-bank" style="color:#3b82f6;"></i>
+                                <span data-vi="Chuyển khoản" data-en="Bank Transfer">Chuyển khoản</span>
+                            </span>
+                        }
+                    </td>
                     <td>
                         @if (item.Status == "Paid")
                         {
                             <span class="status status-active">
                                 <span class="status-dot"></span>
                                 <span data-vi="Đã thanh toán" data-en="Paid">Đã thanh toán</span>
+                            </span>
+                        }
+                        else if (item.Method == "Cash")
+                        {
+                            <span class="status status-pending">
+                                <span class="status-dot"></span>
+                                <span data-vi="Chờ thu tiền mặt" data-en="Awaiting Cash">Chờ thu tiền mặt</span>
                             </span>
                         }
                         else
@@ -57,9 +79,30 @@
                         }
                     </td>
                     <td>
-                        <a asp-action="Detail" asp-route-id="@item.Id" class="icon-btn" title="Xem chi tiết">
-                            <i class="ti ti-eye"></i>
-                        </a>
+                        <div class="action-btns">
+                            <a asp-action="Detail" asp-route-id="@item.Id" class="icon-btn" title="Xem chi tiết">
+                                <i class="ti ti-eye"></i>
+                            </a>
+                            @if (item.Status == "Unpaid")
+                            {
+                                @if (item.Method == "Cash")
+                                {
+                                    <span style="font-size:12px; color:var(--text-secondary); white-space:nowrap;">
+                                        <i class="ti ti-info-circle"></i>
+                                        <span data-vi="Ra quầy thanh toán" data-en="Pay at counter">Ra quầy thanh toán</span>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <a asp-action="PayOnline" asp-route-id="@item.Id"
+                                    class="btn btn-primary"
+                                    style="font-size:12px; padding:5px 10px; height:auto;">
+                                        <i class="ti ti-credit-card"></i>
+                                        <span data-vi="Thanh toán" data-en="Pay Now">Thanh toán</span>
+                                    </a>
+                                }
+                            }
+                        </div>
                     </td>
                 </tr>
             }

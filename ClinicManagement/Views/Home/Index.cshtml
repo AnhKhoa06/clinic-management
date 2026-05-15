@@ -203,16 +203,173 @@
 
 @if (User.IsInRole("Patient"))
 {
-    <p class="welcome-title">
-        <span data-vi="Xin chào" data-en="Hello">Xin chào</span>,
-        <span>@User.Identity?.Name</span> 👋
-    </p>
+    <div style="margin-bottom:20px;">
+        <div style="font-size:13px; color:var(--text-secondary); margin-bottom:4px;">
+            @{
+                var hour = DateTime.Now.Hour;
+                var greeting = hour < 12 ? "Chào buổi sáng" : hour < 18 ? "Chào buổi chiều" : "Chào buổi tối";
+                var greetingEn = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+            }
+            <span data-vi="@greeting" data-en="@greetingEn">@greeting</span>
+        </div>
+        <div style="font-size:22px; font-weight:600; color:var(--text-primary);">
+            @User.Identity?.Name
+        </div>
+        <div style="font-size:13px; color:var(--text-secondary); margin-top:4px;">
+            <span data-vi="Hôm nay là" data-en="Today is">Hôm nay là</span>
+            @DateTime.Now.ToString("dddd, dd/MM/yyyy")
+        </div>
+    </div>
     <p class="welcome-sub"
        data-vi="Chào mừng bạn quay trở lại hệ thống phòng khám."
        data-en="Welcome back to the clinic system.">
         Chào mừng bạn quay trở lại hệ thống phòng khám.
     </p>
 
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+
+        <!-- Lịch hẹn sắp tới -->
+        <div class="card" style="padding:20px;">
+            <div class="settings-section-title" style="margin-bottom:16px;">
+                <i class="ti ti-calendar-check"></i>
+                <span data-vi="Lịch hẹn sắp tới" data-en="Upcoming Appointments">Lịch hẹn sắp tới</span>
+            </div>
+            @{
+                var upcomingApts = ViewBag.UpcomingAppointments as List<ClinicManagement.DTOs.Appointment.AppointmentResponseDto> ?? new();
+            }
+            @if (!upcomingApts.Any())
+            {
+                <div class="empty-state" style="padding:20px 0;">
+                    <i class="ti ti-calendar-off"></i>
+                    <p data-vi="Không có lịch hẹn sắp tới." data-en="No upcoming appointments.">Không có lịch hẹn sắp tới.</p>
+                </div>
+            }
+            else
+            {
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    @foreach (var apt in upcomingApts)
+                    {
+                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-secondary); border-radius:8px;">
+                            <div style="text-align:center; min-width:40px;">
+                                <div style="font-size:16px; font-weight:600; color:var(--accent);">@apt.SlotDate.Day</div>
+                                <div style="font-size:11px; color:var(--text-secondary);">@apt.SlotDate.ToString("MMM")</div>
+                            </div>
+                            <div style="flex:1;">
+                                <div style="font-size:13px; font-weight:500;">@apt.DoctorName</div>
+                                <div style="font-size:12px; color:var(--text-secondary);">@apt.SpecialtyName · @apt.SlotTime.ToString("HH:mm")</div>
+                            </div>
+                            @if (apt.Status == "Pending")
+                            {
+                                <span class="status status-pending" style="font-size:11px;">
+                                    <span class="status-dot"></span>
+                                    <span data-vi="Chờ xác nhận" data-en="Pending">Chờ xác nhận</span>
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="status status-done" style="font-size:11px;">
+                                    <span class="status-dot"></span>
+                                    <span data-vi="Đã xác nhận" data-en="Confirmed">Đã xác nhận</span>
+                                </span>
+                            }
+                        </div>
+                    }
+                </div>
+                <a asp-controller="Appointment" asp-action="MyAppointments"
+                   style="display:block; text-align:center; font-size:13px; color:var(--accent); margin-top:12px;"
+                   data-vi="Xem tất cả →" data-en="View all →">Xem tất cả →</a>
+            }
+        </div>
+
+        <!-- Hóa đơn chưa thanh toán -->
+        <div class="card" style="padding:20px;">
+            <div class="settings-section-title" style="margin-bottom:16px;">
+                <i class="ti ti-receipt-off" style="color:#ef4444;"></i>
+                <span data-vi="Hóa đơn chưa thanh toán" data-en="Unpaid Invoices">Hóa đơn chưa thanh toán</span>
+            </div>
+            @{
+                var unpaidPayments = ViewBag.UnpaidPayments as List<ClinicManagement.DTOs.Payment.PaymentResponseDto> ?? new();
+            }
+            @if (!unpaidPayments.Any())
+            {
+                <div class="empty-state" style="padding:20px 0;">
+                    <i class="ti ti-circle-check" style="color:#10b981;"></i>
+                    <p data-vi="Không có hóa đơn chưa thanh toán." data-en="No unpaid invoices.">Không có hóa đơn chưa thanh toán.</p>
+                </div>
+            }
+            else
+            {
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    @foreach (var p in unpaidPayments)
+                    {
+                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-secondary); border-radius:8px;">
+                            <div style="flex:1;">
+                                <div style="font-size:13px; font-weight:500;">@p.InvoiceCode</div>
+                                <div style="font-size:12px; color:var(--text-secondary);">@p.SlotDate.ToString("dd/MM/yyyy") · @p.DoctorName</div>
+                            </div>
+                            <div style="font-size:13px; font-weight:600; color:#ef4444;">
+                                @p.Amount.ToString("N0") ₫
+                            </div>
+                            @if (p.Method == "Cash")
+                            {
+                                <span style="font-size:11px; color:var(--text-secondary);">
+                                    <i class="ti ti-building"></i>
+                                    <span data-vi="Ra quầy TT" data-en="Pay at counter">Ra quầy TT</span>
+                                </span>
+                            }
+                            else
+                            {
+                                <a asp-controller="Payment" asp-action="PayOnline" asp-route-id="@p.Id"
+                                   class="btn btn-primary" style="font-size:11px; padding:4px 8px; height:auto;">
+                                    <span data-vi="Thanh toán" data-en="Pay">Thanh toán</span>
+                                </a>
+                            }
+                        </div>
+                    }
+                </div>
+                <a asp-controller="Payment" asp-action="MyPayments"
+                   style="display:block; text-align:center; font-size:13px; color:var(--accent); margin-top:12px;"
+                   data-vi="Xem tất cả →" data-en="View all →">Xem tất cả →</a>
+            }
+        </div>
+
+        <!-- Lịch tái khám -->
+        <div class="card" style="padding:20px; grid-column:1 / -1;">
+            <div class="settings-section-title" style="margin-bottom:16px;">
+                <i class="ti ti-calendar-repeat" style="color:#f59e0b;"></i>
+                <span data-vi="Lịch tái khám sắp tới" data-en="Upcoming Follow-ups">Lịch tái khám sắp tới</span>
+            </div>
+            @{
+                var followUps = ViewBag.UpcomingFollowUps as List<ClinicManagement.DTOs.MedicalRecord.MedicalRecordResponseDto> ?? new();
+            }
+            @if (!followUps.Any())
+            {
+                <div class="empty-state" style="padding:10px 0;">
+                    <i class="ti ti-calendar-off"></i>
+                    <p data-vi="Không có lịch tái khám sắp tới." data-en="No upcoming follow-ups.">Không có lịch tái khám sắp tới.</p>
+                </div>
+            }
+            else
+            {
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    @foreach (var mr in followUps)
+                    {
+                        <div style="flex:1; min-width:200px; padding:12px; background:var(--bg-secondary); border-radius:8px; border-left:3px solid #f59e0b;">
+                            <div style="font-size:13px; font-weight:600; color:#f59e0b;">
+                                @mr.FollowUpDate!.Value.ToString("dd/MM/yyyy")
+                            </div>
+                            <div style="font-size:13px; font-weight:500; margin-top:4px;">@mr.DoctorName</div>
+                            <div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">@(mr.Diagnosis ?? "—")</div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+    </div>
+
+    <!-- Quick Access -->
+    <span class="section-label" style="margin-top:16px;" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
     <div class="quick-grid-4">
         <a asp-controller="Appointment" asp-action="Create" class="card quick-card">
             <div class="stat-icon blue"><i class="ti ti-calendar-plus"></i></div>

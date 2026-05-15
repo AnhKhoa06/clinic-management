@@ -35,6 +35,15 @@
                         <input type="text" name="FullName" class="form-control" value="@ViewBag.FullName" />
                     </div>
                     <div class="form-group">
+                        <label class="form-label" data-vi="Email" data-en="Notification Email">Email</label>
+                        <input type="email" name="Email" class="form-control" value="@ViewBag.Email" />
+                        <span style="font-size:11px; color:var(--text-secondary);"
+                            data-vi="Email dùng để nhận thông báo thanh toán, lịch hẹn."
+                            data-en="Email used for payment and appointment notifications.">
+                            Email dùng để nhận thông báo thanh toán, lịch hẹn.
+                        </span>
+                    </div>
+                    <div class="form-group">
                         <label class="form-label" data-vi="Số điện thoại" data-en="Phone">Số điện thoại</label>
                         <input type="tel" name="Phone" class="form-control" value="@ViewBag.Phone" />
                     </div>

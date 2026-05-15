@@ -8,12 +8,13 @@ namespace ClinicManagement.Services;
 public class PaymentService
 {
     private readonly AppDbContext _db;
+    private readonly EmailService _emailService;
 
-    public PaymentService(AppDbContext db)
+    public PaymentService(AppDbContext db, EmailService emailService)
     {
         _db = db;
+        _emailService = emailService;
     }
-
     // Admin/Doctor tạo hóa đơn
     public async Task<(bool, string, PaymentResponseDto?)> CreateAsync(PaymentCreateDto dto)
     {
@@ -64,7 +65,12 @@ public class PaymentService
     // Đánh dấu đã thanh toán
     public async Task<(bool, string)> MarkPaidAsync(int id)
     {
-        var payment = await _db.Payments.FindAsync(id);
+        var payment = await _db.Payments
+            .Include(p => p.Appointment).ThenInclude(a => a.Patient).ThenInclude(p => p.User)
+            .Include(p => p.Appointment).ThenInclude(a => a.Doctor).ThenInclude(d => d.User)
+            .Include(p => p.Appointment).ThenInclude(a => a.AppointmentSlot)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
         if (payment == null)
             return (false, "Không tìm thấy hóa đơn.");
 
@@ -74,6 +80,18 @@ public class PaymentService
         payment.Status = "Paid";
         payment.PaidAt = DateTime.UtcNow;
         await _db.SaveChangesAsync();
+
+        // Gửi email thông báo
+        await _emailService.SendPaymentSuccessAsync(
+            toEmail:     payment.Appointment.Patient.User.Email,
+            patientName: payment.Appointment.Patient.User.FullName,
+            invoiceCode: payment.InvoiceCode,
+            doctorName:  payment.Appointment.Doctor.User.FullName,
+            slotDate:    payment.Appointment.AppointmentSlot.SlotDate.ToString("dd/MM/yyyy"),
+            amount:      payment.Amount,
+            method:      payment.Method == "Cash" ? "Tiền mặt" :
+                        payment.Method == "BankTransfer" ? "Chuyển khoản" : payment.Method
+        );
 
         return (true, "Thanh toán thành công!");
     }
@@ -137,7 +155,12 @@ public class PaymentService
 
     public async Task<(bool, string)> MarkPaidVnPayAsync(int paymentId)
     {
-        var payment = await _db.Payments.FindAsync(paymentId);
+        var payment = await _db.Payments
+            .Include(p => p.Appointment).ThenInclude(a => a.Patient).ThenInclude(p => p.User)
+            .Include(p => p.Appointment).ThenInclude(a => a.Doctor).ThenInclude(d => d.User)
+            .Include(p => p.Appointment).ThenInclude(a => a.AppointmentSlot)
+            .FirstOrDefaultAsync(p => p.Id == paymentId);
+
         if (payment == null)
             return (false, "Không tìm thấy hóa đơn.");
 
@@ -147,6 +170,17 @@ public class PaymentService
         payment.Status = "Paid";
         payment.PaidAt = DateTime.UtcNow;
         await _db.SaveChangesAsync();
+
+        // Gửi email thông báo
+        await _emailService.SendPaymentSuccessAsync(
+            toEmail:     payment.Appointment.Patient.User.Email,
+            patientName: payment.Appointment.Patient.User.FullName,
+            invoiceCode: payment.InvoiceCode,
+            doctorName:  payment.Appointment.Doctor.User.FullName,
+            slotDate:    payment.Appointment.AppointmentSlot.SlotDate.ToString("dd/MM/yyyy"),
+            amount:      payment.Amount,
+            method:      "Chuyển khoản (VNPay)"
+        );
 
         return (true, "Thanh toán VNPay thành công!");
     }

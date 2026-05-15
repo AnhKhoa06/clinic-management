@@ -41,7 +41,22 @@
                     <td class="td-muted">@item.DoctorName</td>
                     <td>@item.SlotDate.ToString("dd/MM/yyyy")</td>
                     <td class="fw-500">@item.Amount.ToString("N0") ₫</td>
-                    <td class="td-muted">@item.Method</td>
+                    <td>
+                        @if (item.Method == "Cash")
+                        {
+                            <span style="display:flex; align-items:center; gap:4px; font-size:12px;">
+                                <i class="ti ti-cash" style="color:#10b981;"></i>
+                                <span data-vi="Tiền mặt" data-en="Cash">Tiền mặt</span>
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="display:flex; align-items:center; gap:4px; font-size:12px;">
+                                <i class="ti ti-building-bank" style="color:#3b82f6;"></i>
+                                <span data-vi="Chuyển khoản" data-en="Bank Transfer">Chuyển khoản</span>
+                            </span>
+                        }
+                    </td>
                     <td>
                         @if (item.Status == "Paid")
                         {
@@ -65,10 +80,11 @@
                             </a>
                             @if (item.Status == "Unpaid" && item.Method == "Cash" && User.IsInRole("Admin"))
                             {
-                                <form asp-action="MarkPaid" asp-route-id="@item.Id" method="post" style="display:inline;">
-                                    <button type="submit" class="icon-btn" title="Đánh dấu đã thanh toán"
+                                <form asp-action="MarkPaid" asp-route-id="@item.Id" method="post" style="display:inline;"
+                                    onsubmit="return confirm('Xác nhận đã thu tiền mặt hóa đơn @item.InvoiceCode?')">
+                                    <button type="submit" class="icon-btn" title="Xác nhận đã thu tiền mặt"
                                             style="color:var(--success);">
-                                        <i class="ti ti-check"></i>
+                                        <i class="ti ti-cash"></i>
                                     </button>
                                 </form>
                             }
