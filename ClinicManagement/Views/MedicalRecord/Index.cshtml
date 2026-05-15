@@ -59,11 +59,19 @@
                             <a asp-action="Detail" asp-route-id="@item.Id" class="icon-btn" title="Xem chi tiết">
                                 <i class="ti ti-eye"></i>
                             </a>
-                            @if (User.IsInRole("Doctor"))
+                            @if (User.IsInRole("Doctor") || User.IsInRole("Admin"))
                             {
                                 <a asp-action="Edit" asp-route-id="@item.Id" class="icon-btn" title="Chỉnh sửa">
                                     <i class="ti ti-edit"></i>
                                 </a>
+                                @if (!item.HasPayment)
+                                {
+                                    <a asp-controller="Payment" asp-action="Create"
+                                    asp-route-appointmentId="@item.AppointmentId"
+                                    class="icon-btn" title="Tạo hóa đơn" style="color:var(--accent);">
+                                        <i class="ti ti-receipt"></i>
+                                    </a>
+                                }
                             }
                         </div>
                     </td>

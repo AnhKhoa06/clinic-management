@@ -35,7 +35,9 @@
                 <option value="">-- Chọn bác sĩ --</option>
                 @foreach (var d in doctors)
                 {
-                    <option value="@d.Id">@d.FullName — @d.SpecialtyName</option>
+                    <option value="@d.Id" selected="@(Model.DoctorId == d.Id)">
+                        @d.FullName — @d.SpecialtyName
+                    </option>
                 }
             </select>
         </div>

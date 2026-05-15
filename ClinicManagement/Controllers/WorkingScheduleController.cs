@@ -18,7 +18,7 @@ public class WorkingScheduleController : Controller
         _doctorService = doctorService;
     }
 
-// GET /WorkingSchedule?doctorId=1
+    // GET /WorkingSchedule?doctorId=1
     public async Task<IActionResult> Index(int? doctorId)
     {
         if (User.IsInRole("Doctor"))
@@ -41,8 +41,10 @@ public class WorkingScheduleController : Controller
         ViewBag.IsDoctor = false;
 
         if (doctorId == null)
-            return View(new List<WorkingScheduleResponseDto>());
-
+        {
+            var allSchedules = await _service.GetAllAsync();// Load tất cả lịch của mọi bác sĩ
+            return View(allSchedules);
+        }
         return View(await _service.GetByDoctorIdAsync(doctorId.Value));
     }
 

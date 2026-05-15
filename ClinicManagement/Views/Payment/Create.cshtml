@@ -5,7 +5,7 @@
 
 <div class="page-header">
     <div class="d-flex align-center gap-8">
-        <a asp-controller="Appointment" asp-action="Index" class="btn btn-outline" style="padding:8px 10px">
+        <a asp-controller="MedicalRecord" asp-action="Index" class="btn btn-outline" style="padding:8px 10px">
             <i class="ti ti-arrow-left"></i>
         </a>
         <h1 data-vi="Tạo hóa đơn" data-en="Create Invoice">Tạo hóa đơn</h1>
@@ -17,15 +17,15 @@
     <div style="margin-bottom:24px; padding:16px; background:var(--bg-secondary); border-radius:10px; display:flex; flex-direction:column; gap:10px; font-size:13px;">
         <div style="display:flex; justify-content:space-between;">
             <span style="color:var(--text-secondary);">Phí khám</span>
-            <span class="fw-500">@ViewBag.ExaminationFee.ToString("N0") ₫</span>
+            <span class="fw-500">@Convert.ToDecimal(ViewBag.ExaminationFee).ToString("N0") ₫</span>
         </div>
         <div style="display:flex; justify-content:space-between;">
             <span style="color:var(--text-secondary);">Phí thuốc</span>
-            <span class="fw-500">@ViewBag.MedicationFee.ToString("N0") ₫</span>
+            <span class="fw-500">@Convert.ToDecimal(ViewBag.MedicationFee).ToString("N0") ₫</span>
         </div>
         <div style="display:flex; justify-content:space-between; padding-top:10px; border-top:0.5px solid var(--card-border);">
             <span style="font-weight:600;">Tổng tiền</span>
-            <span style="font-weight:700; color:var(--accent); font-size:16px;">@ViewBag.TotalAmount.ToString("N0") ₫</span>
+            <span style="font-weight:700; color:var(--accent); font-size:16px;">@Convert.ToDecimal(ViewBag.TotalAmount).ToString("N0") ₫</span>
         </div>
     </div>
 

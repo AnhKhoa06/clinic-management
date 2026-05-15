@@ -26,7 +26,7 @@
         </div>
     }
 
-    <form asp-action="Create" method="post">
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
         <div class="form-section-title">
             <i class="ti ti-user"></i>
             <span data-vi="Thông tin tài khoản" data-en="Account Information">Thông tin tài khoản</span>
@@ -81,6 +81,26 @@
                       placeholder="Mô tả ngắn về bác sĩ..."></textarea>
         </div>
 
+        <div class="form-group">
+            <label class="form-label">Ảnh đại diện</label>
+            <div style="display:flex; align-items:center; gap:16px; margin-bottom:8px;">
+                <div id="avatarPreview" style="width:72px; height:72px; border-radius:50%; background:var(--accent-light); display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:600; color:var(--accent);">
+                    <i class="ti ti-user"></i>
+                </div>
+                <div>
+                    <input type="file" name="avatar" id="avatarInput" accept="image/*"
+                        style="display:none;" onchange="previewAvatar(this)" />
+                    <button type="button" class="btn btn-outline" onclick="document.getElementById('avatarInput').click()">
+                        <i class="ti ti-upload"></i>
+                        <span>Chọn ảnh</span>
+                    </button>
+                    <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">
+                        JPG, PNG, WEBP — tối đa 2MB
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">
                 <i class="ti ti-check"></i>
@@ -91,3 +111,25 @@
         </div>
     </form>
 </div>
+
+@section Scripts {
+<script>
+function previewAvatar(input) {
+    if (!input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        const preview = document.getElementById('avatarPreview');
+        if (preview.tagName === 'IMG') {
+            preview.src = e.target.result;
+        } else {
+            const img = document.createElement('img');
+            img.id = 'avatarPreview';
+            img.src = e.target.result;
+            img.style = 'width:72px; height:72px; border-radius:50%; object-fit:cover; border:2px solid var(--card-border);';
+            preview.replaceWith(img);
+        }
+    };
+    reader.readAsDataURL(input.files[0]);
+}
+</script>
+}

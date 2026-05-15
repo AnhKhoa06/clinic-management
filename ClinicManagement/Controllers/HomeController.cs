@@ -85,11 +85,34 @@ public class HomeController : Controller
             if (doctor != null)
             {
                 var appointments = await _appointmentService.GetByDoctorIdAsync(doctor.Id);
+                var medicalRecords = await _medicalRecordService.GetByDoctorIdAsync(doctor.Id);
+
+                // Stat cards
                 ViewBag.DoctorAppointmentToday = appointments
                     .Count(a => a.SlotDate == DateOnly.FromDateTime(DateTime.Today)
                             && a.Status != "Cancelled");
-                ViewBag.DoctorMedicalRecordCount = appointments
-                    .Count(a => a.Status == "Completed");
+                ViewBag.DoctorAppointmentPending = appointments
+                    .Count(a => a.Status == "Pending");
+                ViewBag.DoctorMedicalRecordCount = medicalRecords.Count;
+                ViewBag.DoctorAverageRating = doctor.AverageRating;
+
+                // Lịch hẹn hôm nay chi tiết
+                ViewBag.DoctorTodayAppointments = appointments
+                    .Where(a => a.SlotDate == DateOnly.FromDateTime(DateTime.Today)
+                            && a.Status != "Cancelled")
+                    .OrderBy(a => a.SlotTime)
+                    .Take(5)
+                    .ToList();
+
+                // Lịch hẹn sắp tới trong tuần
+                var nextWeek = DateOnly.FromDateTime(DateTime.Today.AddDays(7));
+                ViewBag.DoctorUpcomingAppointments = appointments
+                    .Where(a => a.SlotDate > DateOnly.FromDateTime(DateTime.Today)
+                            && a.SlotDate <= nextWeek
+                            && a.Status != "Cancelled")
+                    .OrderBy(a => a.SlotDate).ThenBy(a => a.SlotTime)
+                    .Take(5)
+                    .ToList();
             }
         }
 

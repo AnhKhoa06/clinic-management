@@ -46,6 +46,7 @@ public class MedicalRecordResponseDto
     public string? TreatmentNotes { get; set; }
     public DateOnly? FollowUpDate { get; set; }
     public DateTime CreatedAt { get; set; }
+    public bool HasPayment { get; set; }
     public List<PrescriptionResponseDto> Prescriptions { get; set; } = new();
 }
 

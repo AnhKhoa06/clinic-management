@@ -70,10 +70,14 @@ public class AppointmentController : Controller
 
     // GET /Appointment/Create — Bệnh nhân đặt lịch
     [Authorize(Roles = "Patient")]
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> Create(int? doctorId)
     {
+        var dto = new AppointmentCreateDto
+        {
+            DoctorId = doctorId ?? 0
+        };
         ViewBag.Doctors = await _doctorService.GetAllAsync();
-        return View();
+        return View(dto);
     }
 
     // POST /Appointment/Create

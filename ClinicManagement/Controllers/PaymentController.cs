@@ -59,14 +59,16 @@ public class PaymentController : Controller
         var (_, _, appointment) = await _appointmentService.GetByIdAsync(appointmentId);
         var medicalRecord = await _medicalRecordService.GetByAppointmentIdAsync(appointmentId);
 
-        decimal examinationFee = 0;
+        decimal examinationFee = 0m;
+        decimal medicationFee = 0m;
+
         if (appointment != null)
         {
             var (_, _, doctor) = await _doctorService.GetByIdAsync(appointment.DoctorId);
-            examinationFee = doctor?.ExaminationFee ?? 0;
+            examinationFee = doctor?.ExaminationFee ?? 0m;
         }
 
-        decimal medicationFee = medicalRecord?.Prescriptions.Sum(p => p.Quantity * p.UnitPrice) ?? 0;
+        medicationFee = medicalRecord?.Prescriptions?.Sum(p => p.Quantity * p.UnitPrice) ?? 0m;
 
         ViewBag.ExaminationFee = examinationFee;
         ViewBag.MedicationFee = medicationFee;
@@ -90,7 +92,7 @@ public class PaymentController : Controller
         }
 
         TempData["Success"] = message;
-        return RedirectToAction("Index", "Appointment");
+        return RedirectToAction("Index", "Payment");
     }
 
     // POST /Payment/MarkPaid/5 — Admin đánh dấu đã thanh toán

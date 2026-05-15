@@ -285,11 +285,20 @@ window.setTheme = applyTheme;
     function showLogout() {
         const overlay = document.getElementById('logoutOverlay');
         overlay.style.display = 'flex';
+        // Delay nhỏ để trigger transition
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                overlay.classList.add('active');
+            });
+        });
     }
+
     function closeLogout() {
-        document.getElementById('logoutOverlay').style.display = 'none';
+        const overlay = document.getElementById('logoutOverlay');
+        overlay.classList.remove('active');
+        setTimeout(() => overlay.style.display = 'none', 300);
     }
-    // Click outside to close
+
     document.getElementById('logoutOverlay').addEventListener('click', function(e) {
         if (e.target === this) closeLogout();
     });

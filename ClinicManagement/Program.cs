@@ -90,6 +90,9 @@ builder.Services.AddVnpayClient(config =>
 //email
 builder.Services.AddScoped<EmailService>();
 
+//payment repository để check xem lịch hẹn đã có hóa đơn chưa khi tạo hồ sơ bệnh án
+builder.Services.AddScoped<PaymentRepository>();
+
 var app = builder.Build();
 
 // Tạo thư mục uploads nếu chưa có

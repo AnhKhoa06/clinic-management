@@ -1330,15 +1330,29 @@ textarea.form-control {
   z-index: 999;
   align-items: center;
   justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
+
 .logout-dialog {
   background: var(--card-bg);
   border-radius: 16px;
-  padding: 33px 32px;
-  width: 400px;
+  padding: 28px 32px 36px;
+  width: 100%;
+  max-width: 400px;
   text-align: center;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
   border: 0.5px solid var(--card-border);
+  transform: scale(0.95);
+  transition: transform 0.2s ease;
+}
+
+.logout-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.logout-overlay.active .logout-dialog {
+  transform: scale(1);
 }
 .logout-icon {
   width: 60px;
@@ -1764,6 +1778,7 @@ textarea.form-control {
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

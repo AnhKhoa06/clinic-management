@@ -35,7 +35,7 @@ public class DoctorController : Controller
     // POST /Doctor/Create
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Create(DoctorCreateWithAccountDto dto)
+    public async Task<IActionResult> Create(DoctorCreateWithAccountDto dto, IFormFile? avatar)
     {
         if (!ModelState.IsValid)
         {
@@ -43,12 +43,35 @@ public class DoctorController : Controller
             return View(dto);
         }
 
-        var (success, message, _) = await _service.CreateWithAccountAsync(dto);
+        var (success, message, created) = await _service.CreateWithAccountAsync(dto);
         if (!success)
         {
             ModelState.AddModelError("", message);
             ViewBag.Specialties = await _specialtyService.GetAllAsync();
             return View(dto);
+        }
+
+        // Upload avatar nếu có
+        if (avatar != null && avatar.Length > 0 && created != null)
+        {
+            var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp" };
+            if (allowedTypes.Contains(avatar.ContentType))
+            {
+                var ext = Path.GetExtension(avatar.FileName);
+                var fileName = $"doctor-{created.Id}-{DateTime.Now:yyyyMMddHHmmss}{ext}";
+                var filePath = Path.Combine("wwwroot", "uploads", "avatars", fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                    await avatar.CopyToAsync(stream);
+
+                var updateDto = new DoctorUpdateDto
+                {
+                    SpecialtyId = created.SpecialtyId,
+                    LicenseNumber = created.LicenseNumber,
+                    Bio = created.Bio,
+                    AvatarUrl = $"/uploads/avatars/{fileName}"
+                };
+                await _service.UpdateAsync(created.Id, updateDto);
+            }
         }
 
         TempData["Success"] = message;

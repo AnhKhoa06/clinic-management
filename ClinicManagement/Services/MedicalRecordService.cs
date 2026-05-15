@@ -8,13 +8,16 @@ public class MedicalRecordService
 {
     private readonly MedicalRecordRepository _medicalRecordRepo;
     private readonly AppointmentRepository _appointmentRepo;
+    private readonly PaymentRepository _paymentRepo;
 
     public MedicalRecordService(
         MedicalRecordRepository medicalRecordRepo,
-        AppointmentRepository appointmentRepo)
+        AppointmentRepository appointmentRepo,
+        PaymentRepository paymentRepo)
     {
         _medicalRecordRepo = medicalRecordRepo;
         _appointmentRepo = appointmentRepo;
+        _paymentRepo = paymentRepo;
     }
 
     public async Task<List<MedicalRecordResponseDto>> GetAllAsync()
@@ -91,7 +94,7 @@ public class MedicalRecordService
         return (true, "Cập nhật hồ sơ bệnh án thành công.", MapToDto(record));
     }
 
-    private static MedicalRecordResponseDto MapToDto(MedicalRecord mr) => new()
+    private MedicalRecordResponseDto MapToDto(MedicalRecord mr) => new()
     {
         Id = mr.Id,
         AppointmentId = mr.AppointmentId,
@@ -106,6 +109,7 @@ public class MedicalRecordService
         TreatmentNotes = mr.TreatmentNotes,
         FollowUpDate = mr.FollowUpDate,
         CreatedAt = mr.CreatedAt,
+        HasPayment = _paymentRepo.ExistsByAppointmentIdAsync(mr.AppointmentId).Result,
         Prescriptions = mr.Prescriptions.Select(p => new PrescriptionResponseDto
         {
             Id = p.Id,

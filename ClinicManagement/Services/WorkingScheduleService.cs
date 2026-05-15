@@ -23,6 +23,12 @@ public class WorkingScheduleService
         return schedules.Select(MapToDto).ToList();
     }
 
+    public async Task<List<WorkingScheduleResponseDto>> GetAllAsync()
+    {
+        var schedules = await _scheduleRepo.GetAllAsync();
+        return schedules.Select(MapToDto).ToList();
+    }
+
     public async Task<(bool, string, WorkingScheduleResponseDto?)> CreateAsync(WorkingScheduleCreateDto dto)
     {
         if (dto.StartTime >= dto.EndTime)

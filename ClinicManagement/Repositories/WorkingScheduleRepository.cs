@@ -31,6 +31,16 @@ public class WorkingScheduleRepository
             .FirstOrDefaultAsync(ws => ws.Id == id);
     }
 
+    public async Task<List<WorkingSchedule>> GetAllAsync()
+    {
+        return await _context.WorkingSchedules
+            .Include(ws => ws.Doctor)
+                .ThenInclude(d => d.User)
+            .OrderBy(ws => ws.DoctorId)
+            .ThenBy(ws => ws.DayOfWeek)
+            .ToListAsync();
+    }
+
     public async Task<bool> ExistsAsync(int doctorId, int dayOfWeek, int? excludeId = null)
     {
         return await _context.WorkingSchedules

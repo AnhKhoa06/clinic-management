@@ -11,19 +11,19 @@
 
 <div class="page-header">
     <h1 data-vi="Lịch làm việc" data-en="Working Schedule">Lịch làm việc</h1>
-    @if (selectedDoctorId != null)
-    {
-        <div class="d-flex gap-8">
+    <div class="d-flex gap-8">
+        @if (selectedDoctorId != null)
+        {
             <a asp-action="Slots" asp-route-doctorId="@selectedDoctorId" class="btn btn-outline">
                 <i class="ti ti-clock"></i>
                 <span>Xem slots</span>
             </a>
-            <a asp-action="Create" asp-route-doctorId="@selectedDoctorId" class="btn btn-primary">
-                <i class="ti ti-plus"></i>
-                <span>Thêm lịch</span>
-            </a>
-        </div>
-    }
+        }
+        <a asp-action="Create" asp-route-doctorId="@selectedDoctorId" class="btn btn-primary">
+            <i class="ti ti-plus"></i>
+            <span data-vi="Thêm lịch" data-en="Add Schedule">Thêm lịch</span>
+        </a>
+    </div>   
 </div>
 
 @* Chỉ Admin mới thấy phần chọn bác sĩ *@
@@ -78,68 +78,76 @@
             </div>
         </form>
     </div>
-
-    <!-- Danh sách lịch -->
-    <div class="card table-card">
-        <div class="table-header">
-            <span class="table-title" data-vi="Lịch làm việc" data-en="Schedule List">Lịch làm việc</span>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th data-vi="Thứ" data-en="Day">Thứ</th>
-                    <th data-vi="Giờ bắt đầu" data-en="Start">Giờ bắt đầu</th>
-                    <th data-vi="Giờ kết thúc" data-en="End">Giờ kết thúc</th>
-                    <th data-vi="Thời lượng slot" data-en="Slot Duration">Thời lượng slot</th>
-                    <th data-vi="Số slot tối đa" data-en="Max Slots">Số slot tối đa</th>
-                    <th data-vi="Trạng thái" data-en="Status">Trạng thái</th>
-                    <th data-vi="Thao tác" data-en="Actions">Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (!Model.Any())
-                {
-                    <tr>
-                        <td colspan="7">
-                            <div class="empty-state">
-                                <i class="ti ti-calendar-off"></i>
-                                <p data-vi="Chưa có lịch làm việc nào." data-en="No schedules found.">Chưa có lịch làm việc nào.</p>
-                            </div>
-                        </td>
-                    </tr>
-                }
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td class="td-name">@item.DayOfWeekName</td>
-                        <td>@item.StartTime.ToString("HH:mm")</td>
-                        <td>@item.EndTime.ToString("HH:mm")</td>
-                        <td>@item.SlotDurationMinutes phút</td>
-                        <td>@item.MaxSlots slot</td>
-                        <td>
-                            @if (item.IsActive)
-                            {
-                                <span class="badge badge-green" data-vi="Hoạt động" data-en="Active">Hoạt động</span>
-                            }
-                            else
-                            {
-                                <span class="badge badge-red" data-vi="Tắt" data-en="Inactive">Tắt</span>
-                            }
-                        </td>
-                        <td>
-                            <div class="action-btns">
-                                <form asp-action="Delete" asp-route-id="@item.Id" method="post"
-                                      onsubmit="return confirm('Xác nhận xoá lịch @item.DayOfWeekName?')">
-                                    <input type="hidden" name="doctorId" value="@item.DoctorId" />
-                                    <button type="submit" class="icon-btn danger">
-                                        <i class="ti ti-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
 }
+
+<!-- Danh sách lịch -->
+<div class="card table-card">
+    <div class="table-header">
+        <span class="table-title" data-vi="Lịch làm việc" data-en="Schedule List">Lịch làm việc</span>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                @if (selectedDoctorId == null)
+                {
+                    <th data-vi="Bác sĩ" data-en="Doctor">Bác sĩ</th>
+                }
+                <th data-vi="Thứ" data-en="Day">Thứ</th>
+                <th data-vi="Giờ bắt đầu" data-en="Start">Giờ bắt đầu</th>
+                <th data-vi="Giờ kết thúc" data-en="End">Giờ kết thúc</th>
+                <th data-vi="Thời lượng slot" data-en="Slot Duration">Thời lượng slot</th>
+                <th data-vi="Số slot tối đa" data-en="Max Slots">Số slot tối đa</th>
+                <th data-vi="Trạng thái" data-en="Status">Trạng thái</th>
+                <th data-vi="Thao tác" data-en="Actions">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <i class="ti ti-calendar-off"></i>
+                            <p data-vi="Chưa có lịch làm việc nào." data-en="No schedules found.">Chưa có lịch làm việc nào.</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @if (selectedDoctorId == null)
+                    {
+                        <td class="td-name" data-vi="@item.DoctorName" data-en="@item.DoctorName">@item.DoctorName</td>
+                    }
+                    <td class="td-name">@item.DayOfWeekName</td>
+                    <td>@item.StartTime.ToString("HH:mm")</td>
+                    <td>@item.EndTime.ToString("HH:mm")</td>
+                    <td>@item.SlotDurationMinutes phút</td>
+                    <td>@item.MaxSlots slot</td>
+                    <td>
+                        @if (item.IsActive)
+                        {
+                            <span class="badge badge-green" data-vi="Hoạt động" data-en="Active">Hoạt động</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-red" data-vi="Tắt" data-en="Inactive">Tắt</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post"
+                                    onsubmit="return confirm('Xác nhận xoá lịch @item.DayOfWeekName?')">
+                                <input type="hidden" name="doctorId" value="@item.DoctorId" />
+                                <button type="submit" class="icon-btn danger">
+                                    <i class="ti ti-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -154,14 +154,6 @@
                                 <i class="ti ti-eye"></i>
                             </a>
 
-                            @if (item.Status == "Completed" && !item.HasPayment)
-                            {
-                                <a asp-controller="Payment" asp-action="Create"
-                                asp-route-appointmentId="@item.Id"
-                                class="icon-btn" title="Tạo hóa đơn" style="color:var(--accent);">
-                                    <i class="ti ti-receipt"></i>
-                                </a>
-                            }
                             @if (User.IsInRole("Admin") && (item.Status == "Cancelled" || item.Status == "Completed"))
                             {
                                 <form asp-action="Delete" asp-route-id="@item.Id" method="post"
