@@ -32,7 +32,7 @@
     <div class="card" style="padding:20px; margin-bottom:16px;">
         <form method="get" asp-action="Index" style="display:flex; gap:16px; align-items:center;">
             <select name="doctorId" class="form-control" style="max-width:300px;">
-                <option value="">-- Chọn bác sĩ --</option>
+                <option value="">Xem tất cả lịch</option>
                 @foreach (var d in doctors)
                 {
                     <option value="@d.Id" selected="@(selectedDoctorId == d.Id)">
@@ -140,6 +140,7 @@
                             <form asp-action="Delete" asp-route-id="@item.Id" method="post"
                                     onsubmit="return confirm('Xác nhận xoá lịch @item.DayOfWeekName?')">
                                 <input type="hidden" name="doctorId" value="@item.DoctorId" />
+                                <input type="hidden" name="keepFilter" value="@(selectedDoctorId != null ? "true" : "false")" />
                                 <button type="submit" class="icon-btn danger">
                                     <i class="ti ti-trash"></i>
                                 </button>

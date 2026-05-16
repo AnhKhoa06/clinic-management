@@ -90,7 +90,7 @@ public class WorkingScheduleController : Controller
 
     // POST /WorkingSchedule/Delete/5
     [HttpPost]
-    public async Task<IActionResult> Delete(int id, int doctorId)
+    public async Task<IActionResult> Delete(int id, int doctorId, bool keepFilter = false)
     {
         var (success, message) = await _service.DeleteAsync(id);
         if (!success)
@@ -98,7 +98,11 @@ public class WorkingScheduleController : Controller
         else
             TempData["Success"] = message;
 
-        return RedirectToAction(nameof(Index), new { doctorId });
+        // keepFilter=true → đang xem theo bác sĩ cụ thể → giữ doctorId
+        // keepFilter=false → đang xem tất cả → về Index không kèm doctorId
+        return keepFilter
+            ? RedirectToAction(nameof(Index), new { doctorId })
+            : RedirectToAction(nameof(Index));
     }
 
     // POST /WorkingSchedule/GenerateSlots

@@ -61,58 +61,16 @@ public class AppointmentSlotRepository
 
         if (!slots.Any()) return;
 
-        var slotIds = slots.Select(s => s.Id).ToList();
+        var availableSlots = slots.Where(s => s.Status == "Available").ToList();
+        var bookedSlots    = slots.Where(s => s.Status == "Booked").ToList();
 
-        var appointments = await _context.Appointments
-            .Where(a => slotIds.Contains(a.SlotId))
-            .ToListAsync();
+        // Slot Available → xóa hẳn vì chưa có ai đặt
+        if (availableSlots.Any())
+            _context.AppointmentSlots.RemoveRange(availableSlots);
 
-        if (appointments.Any())
-        {
-            var appointmentIds = appointments.Select(a => a.Id).ToList();
-
-            // Prescriptions (con của MedicalRecord)
-            var medicalRecordIds = await _context.MedicalRecords
-                .Where(m => appointmentIds.Contains(m.AppointmentId))
-                .Select(m => m.Id)
-                .ToListAsync();
-
-            if (medicalRecordIds.Any())
-            {
-                var prescriptions = await _context.Prescriptions
-                    .Where(p => medicalRecordIds.Contains(p.MedicalRecordId))
-                    .ToListAsync();
-                if (prescriptions.Any())
-                    _context.Prescriptions.RemoveRange(prescriptions);
-            }
-
-            // MedicalRecords
-            var medicalRecords = await _context.MedicalRecords
-                .Where(m => appointmentIds.Contains(m.AppointmentId))
-                .ToListAsync();
-            if (medicalRecords.Any())
-                _context.MedicalRecords.RemoveRange(medicalRecords);
-
-            // Reviews
-            var reviews = await _context.Reviews
-                .Where(r => appointmentIds.Contains(r.AppointmentId))
-                .ToListAsync();
-            if (reviews.Any())
-                _context.Reviews.RemoveRange(reviews);
-
-            // Payments
-            var payments = await _context.Payments
-                .Where(p => appointmentIds.Contains(p.AppointmentId))
-                .ToListAsync();
-            if (payments.Any())
-                _context.Payments.RemoveRange(payments);
-
-            // Appointments
-            _context.Appointments.RemoveRange(appointments);
-        }
-
-        // AppointmentSlots
-        _context.AppointmentSlots.RemoveRange(slots);
+        // Slot Booked → chỉ tách khỏi WorkingSchedule, giữ nguyên Appointment/MedicalRecord/Payment/Review
+        foreach (var slot in bookedSlots)
+            slot.WorkingScheduleId = null; // cần cho phép null ở model
 
         await _context.SaveChangesAsync();
     }
@@ -121,5 +79,21 @@ public class AppointmentSlotRepository
     {
         return await _context.AppointmentSlots
             .AnyAsync(s => s.WorkingScheduleId == scheduleId && s.Status == "Booked");
+    }
+
+    //ktra xem lịch làm việc có slot nào đang có lịch hẹn pending/confirmed hay ko, 
+    // nếu có thì không cho xóa lịch làm việc đó
+    public async Task<bool> HasActiveAppointmentsAsync(int scheduleId)
+    {
+        var slotIds = await _context.AppointmentSlots
+            .Where(s => s.WorkingScheduleId == scheduleId)
+            .Select(s => s.Id)
+            .ToListAsync();
+
+        if (!slotIds.Any()) return false;
+
+        return await _context.Appointments
+            .AnyAsync(a => slotIds.Contains(a.SlotId)
+                && (a.Status == "Pending" || a.Status == "Confirmed"));
     }
 }

@@ -81,6 +81,10 @@ public class WorkingScheduleService
         if (schedule == null)
             return (false, "Không tìm thấy lịch làm việc.");
 
+        var hasActive = await _slotRepo.HasActiveAppointmentsAsync(id);
+        if (hasActive)
+            return (false, "Không thể xóa vì còn lịch hẹn Pending/Confirmed. Hãy xử lý lịch hẹn trước.");
+
         await _slotRepo.DeleteByScheduleIdAsync(id);
         await _scheduleRepo.DeleteAsync(schedule);
         return (true, "Xoá lịch làm việc thành công.");

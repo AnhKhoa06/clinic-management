@@ -78,7 +78,7 @@ public class AuthController : Controller
 
     // POST /Auth/Login
     [HttpPost]
-    public async Task<IActionResult> Login(LoginDto dto)
+    public async Task<IActionResult> Login(LoginDto dto, bool rememberMe = false)
     {
         if (!ModelState.IsValid)
             return View(dto);
@@ -105,7 +105,7 @@ public class AuthController : Controller
         await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             principal,
-            new AuthenticationProperties { IsPersistent = true }
+            new AuthenticationProperties { IsPersistent = rememberMe }
         );
 
         // Redirect theo role

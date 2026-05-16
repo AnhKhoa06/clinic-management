@@ -9,7 +9,7 @@ public class AppointmentSlot
     public int Id { get; set; }
 
     [ForeignKey("WorkingSchedule")]
-    public int WorkingScheduleId { get; set; }
+    public int? WorkingScheduleId { get; set; } 
 
     [ForeignKey("Doctor")]
     public int DoctorId { get; set; }
@@ -21,6 +21,6 @@ public class AppointmentSlot
     [Required]
     public string Status { get; set; } = "Available";
 
-    public WorkingSchedule WorkingSchedule { get; set; } = null!;
+    public WorkingSchedule? WorkingSchedule { get; set; }
     public Doctor Doctor { get; set; } = null!;
 }
