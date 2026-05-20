@@ -16,8 +16,10 @@ public class SpecialtyRepository
     public async Task<List<Specialty>> GetAllAsync()
     {
         return await _context.Specialties
-            .OrderBy(s => s.Name)
-            .ToListAsync();
+            .OrderBy(s => s.Name)//sx kết quả theo cột name với thứ tự tăng dần (a-z)
+            .ToListAsync();//Trả về các rows kết quả, --> quay lại repository: 
+            // EF Core nhận rows từ MySQL, map từng row thành object Specialty, 
+            // gộp thành List<Speciatly> và trả về cho service
     }
 
     public async Task<Specialty?> GetByIdAsync(int id)

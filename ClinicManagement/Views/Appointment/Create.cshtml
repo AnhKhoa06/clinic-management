@@ -6,7 +6,7 @@
 
 <div class="page-header">
     <div class="d-flex align-center gap-8">
-        <a asp-action="MyAppointments" class="btn btn-outline" style="padding:8px 10px">
+        <a href="@(Context.Request.Headers["Referer"].ToString() != "" ? Context.Request.Headers["Referer"].ToString() : "/Doctor/Browse")" class="btn btn-outline" style="padding:8px 10px">
             <i class="ti ti-arrow-left"></i>
         </a>
         <h1 data-vi="Đặt lịch khám" data-en="Book Appointment">Đặt lịch khám</h1>

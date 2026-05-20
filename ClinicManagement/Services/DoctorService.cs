@@ -132,6 +132,13 @@ public class DoctorService
         return (true, $"Đã {status} bác sĩ thành công.");
     }
 
+    public async Task<DoctorResponseDto?> GetByUserIdAsync(int userId)
+    {
+        var doctor = await _doctorRepo.GetByUserIdAsync(userId);
+        if (doctor == null) return null;
+        return MapToDto(doctor);
+    }
+
     private static DoctorResponseDto MapToDto(Doctor d) => new()
     {
         Id = d.Id,
@@ -150,11 +157,4 @@ public class DoctorService
             ? Math.Round(d.Reviews.Average(r => r.Rating), 1)
             : 0
     };
-
-    public async Task<DoctorResponseDto?> GetByUserIdAsync(int userId)
-    {
-        var doctor = await _doctorRepo.GetByUserIdAsync(userId);
-        if (doctor == null) return null;
-        return MapToDto(doctor);
-    }
 }

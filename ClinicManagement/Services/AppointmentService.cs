@@ -133,26 +133,6 @@ public class AppointmentService
         return (true, "Đánh dấu khám xong thành công.", MapToDto(appointment));
     }
 
-    private static AppointmentResponseDto MapToDto(Appointment a) => new()
-    {
-        Id = a.Id,
-        PatientId = a.PatientId,
-        PatientName = a.Patient.User.FullName,
-        DoctorId = a.DoctorId,
-        DoctorName = a.Doctor.User.FullName,
-        SpecialtyName = a.Doctor.Specialty.Name,
-        SlotId = a.SlotId,
-        SlotDate = a.AppointmentSlot.SlotDate,
-        SlotTime = a.AppointmentSlot.SlotTime,
-        Status = a.Status,
-        Reason = a.Reason,
-        CancelReason = a.CancelReason,
-        Notes = a.Notes,
-        CreatedAt = a.CreatedAt,
-        HasReview = a.Review != null,
-        HasPayment = a.Payment != null
-    };
-
     public async Task<(bool, string)> DeleteAsync(int id)
     {
         var appointment = await _appointmentRepo.GetByIdAsync(id);
@@ -174,4 +154,24 @@ public class AppointmentService
         await _appointmentRepo.DeleteAsync(appointment);
         return (true, "Xóa lịch hẹn thành công.");
     }
+
+    private static AppointmentResponseDto MapToDto(Appointment a) => new()
+    {
+        Id = a.Id,
+        PatientId = a.PatientId,
+        PatientName = a.Patient.User.FullName,
+        DoctorId = a.DoctorId,
+        DoctorName = a.Doctor.User.FullName,
+        SpecialtyName = a.Doctor.Specialty.Name,
+        SlotId = a.SlotId,
+        SlotDate = a.AppointmentSlot.SlotDate,
+        SlotTime = a.AppointmentSlot.SlotTime,
+        Status = a.Status,
+        Reason = a.Reason,
+        CancelReason = a.CancelReason,
+        Notes = a.Notes,
+        CreatedAt = a.CreatedAt,
+        HasReview = a.Review != null,
+        HasPayment = a.Payment != null
+    };
 }

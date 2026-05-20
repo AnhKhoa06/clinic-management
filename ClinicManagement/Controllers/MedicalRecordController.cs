@@ -120,7 +120,7 @@ public class MedicalRecordController : Controller
     }
 
     // GET /MedicalRecord/Edit/5
-    [Authorize(Roles = "Doctor")]
+    [Authorize(Roles = "Admin,Doctor")]
     public async Task<IActionResult> Edit(int id)
     {
         var (success, _, data) = await _service.GetByIdAsync(id);
@@ -140,7 +140,7 @@ public class MedicalRecordController : Controller
     }
 
     // POST /MedicalRecord/Edit/5
-    [Authorize(Roles = "Doctor")]
+    [Authorize(Roles = "Admin,Doctor")]
     [HttpPost]
     public async Task<IActionResult> Edit(int id, MedicalRecordUpdateDto dto)
     {

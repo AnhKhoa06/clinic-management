@@ -66,6 +66,15 @@ public class MedicationService
         return (true, "Xoá thuốc thành công.");
     }
 
+    public async Task<(bool Success, string Message, MedicationResponseDto? Data)> GetByIdAsync(int id)
+    {
+        var medication = await _repo.GetByIdAsync(id);
+        if (medication == null)
+            return (false, "Không tìm thấy thuốc.", null);
+
+        return (true, "OK", MapToDto(medication));
+    }
+
     private static MedicationResponseDto MapToDto(Medication m) => new()
     {
         Id = m.Id,
@@ -76,12 +85,4 @@ public class MedicationService
         IsActive = m.IsActive
     };
 
-    public async Task<(bool Success, string Message, MedicationResponseDto? Data)> GetByIdAsync(int id)
-    {
-        var medication = await _repo.GetByIdAsync(id);
-        if (medication == null)
-            return (false, "Không tìm thấy thuốc.", null);
-
-        return (true, "OK", MapToDto(medication));
-    }
 }

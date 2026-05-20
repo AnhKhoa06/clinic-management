@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using ClinicManagement.Data;
-using ClinicManagement.Middlewares;
 using ClinicManagement.Repositories;
 using ClinicManagement.Services;
 using VNPAY.Extensions;
@@ -18,13 +17,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
 
-// Cookie Auth 
+// Cookie Authentication  
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.LoginPath = "/Auth/Login";         // Chưa login → redirect về đây
         options.LogoutPath = "/Auth/Logout";
-        options.AccessDeniedPath = "/Auth/AccessDenied"; // Không đủ quyền → redirect về đây
+        options.AccessDeniedPath = "/Auth/AccessDenied"; // Không đủ quyền, sai role → redirect về đây
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
         options.SlidingExpiration = true;          // Tự gia hạn nếu còn dùng
     })
@@ -93,6 +92,7 @@ builder.Services.AddScoped<EmailService>();
 //payment repository để check xem lịch hẹn đã có hóa đơn chưa khi tạo hồ sơ bệnh án
 builder.Services.AddScoped<PaymentRepository>();
 
+
 var app = builder.Build();
 
 // Tạo thư mục uploads nếu chưa có
@@ -100,7 +100,7 @@ var uploadsPath = Path.Combine(app.Environment.WebRootPath, "uploads", "avatars"
 if (!Directory.Exists(uploadsPath))
     Directory.CreateDirectory(uploadsPath);
 
-app.UseMiddleware<ExceptionMiddleware>();
+
 
 // Seed admin
 using (var scope = app.Services.CreateScope())
@@ -131,11 +131,15 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection(); //
 app.UseStaticFiles();  // Cho phép dùng wwwroot (CSS, JS, ảnh)
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseRouting(); //xác định request đi đến controller nào
+
+
+app.UseAuthentication(); //đọc Cookie trong request (từ trình duyệt), xác định user là ai, có hợp 
+// lệ hay ko
+
+app.UseAuthorization(); //kiểm tra User.Identity.IsAuthenticated, nếu chưa ... và nếu rồi ...
 
 // Route mặc định của MVC
 app.MapControllerRoute(

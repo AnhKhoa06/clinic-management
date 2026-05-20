@@ -135,24 +135,6 @@ public class PaymentService
         return (true, "OK", MapToDto(p, p.Appointment));
     }
 
-    private static PaymentResponseDto MapToDto(Payment p, Appointment a) => new()
-    {
-        Id = p.Id,
-        AppointmentId = p.AppointmentId,
-        InvoiceCode = p.InvoiceCode,
-        PatientName = a.Patient.User.FullName,
-        DoctorName = a.Doctor.User.FullName,
-        SlotDate = a.AppointmentSlot.SlotDate,
-        ExaminationFee = p.ExaminationFee,
-        MedicationFee = p.MedicationFee,
-        Amount = p.Amount,
-        Status = p.Status,
-        Method = p.Method,
-        Notes = p.Notes,
-        PaidAt = p.PaidAt,
-        CreatedAt = p.CreatedAt
-    };
-
     public async Task<(bool, string)> MarkPaidVnPayAsync(int paymentId)
     {
         var payment = await _db.Payments
@@ -197,4 +179,22 @@ public class PaymentService
 
         return payments.Select(p => MapToDto(p, p.Appointment)).ToList();
     }
+
+    private static PaymentResponseDto MapToDto(Payment p, Appointment a) => new()
+    {
+        Id = p.Id,
+        AppointmentId = p.AppointmentId,
+        InvoiceCode = p.InvoiceCode,
+        PatientName = a.Patient.User.FullName,
+        DoctorName = a.Doctor.User.FullName,
+        SlotDate = a.AppointmentSlot.SlotDate,
+        ExaminationFee = p.ExaminationFee,
+        MedicationFee = p.MedicationFee,
+        Amount = p.Amount,
+        Status = p.Status,
+        Method = p.Method,
+        Notes = p.Notes,
+        PaidAt = p.PaidAt,
+        CreatedAt = p.CreatedAt
+    };
 }

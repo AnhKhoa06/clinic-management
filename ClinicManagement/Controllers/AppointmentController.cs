@@ -80,7 +80,7 @@ public class AppointmentController : Controller
         return View(dto);
     }
 
-    // POST /Appointment/Create
+    // POST /Appointment/Create/đặt lịch
     [Authorize(Roles = "Patient")]
     [HttpPost]
     public async Task<IActionResult> Create(AppointmentCreateDto dto)

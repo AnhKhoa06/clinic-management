@@ -18,7 +18,7 @@ public class SpecialtyController : Controller
     // GET /Specialty
     public async Task<IActionResult> Index()
     {
-        var result = await _service.GetAllAsync();
+        var result = await _service.GetAllAsync(); //Nhận List<SpecialtyResponseDto>
         return View(result);
     }
 

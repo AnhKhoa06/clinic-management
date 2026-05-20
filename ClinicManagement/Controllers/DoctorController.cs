@@ -169,18 +169,20 @@ public class DoctorController : Controller
     [Authorize]
     public async Task<IActionResult> Browse(int? specialtyId)
     {
-        var role = User.FindFirstValue(ClaimTypes.Role);
-        var name = User.FindFirstValue(ClaimTypes.Name);
+        var role = User.FindFirstValue(ClaimTypes.Role);// Lấy role của user đang đăng nhập từ Cookie
+        var name = User.FindFirstValue(ClaimTypes.Name);// Lấy tên của user đang đăng nhập từ Cookie
 
-        var specialties = await _specialtyService.GetAllAsync();
-        ViewBag.Specialties = specialties;
-        ViewBag.SelectedSpecialtyId = specialtyId;
+        var specialties = await _specialtyService.GetAllAsync();//Lấy danh sách chuyên khoa để hiện filter
+        
+        ViewBag.Specialties = specialties;// bỏ danh sách chuyên khoa vào
+        ViewBag.SelectedSpecialtyId = specialtyId;// bỏ id chuyên khoa đang chọn vào
 
         List<DoctorResponseDto> doctors;
+        
         if (specialtyId.HasValue)
             doctors = await _service.GetBySpecialtyAsync(specialtyId.Value);
         else
-            doctors = await _service.GetAllAsync();
+            doctors = await _service.GetAllAsync();//Lấy tất cả bác sĩ IsActive = true
 
         doctors = doctors.Where(d => d.IsActive).ToList();
         return View(doctors);

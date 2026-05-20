@@ -90,19 +90,19 @@ public class AuthController : Controller
             return View(dto);
         }
 
-        // Tạo claims từ thông tin user
+        // Tạo ds claims từ thông tin user - bỏ vào cookie để dùng cho các request sau
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user!.Id.ToString()),
             new(ClaimTypes.Name, user.FullName),
             new(ClaimTypes.Email, user.Email),
-            new(ClaimTypes.Role, user.Role),
+            new(ClaimTypes.Role, user.Role), 
         };
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var principal = new ClaimsPrincipal(identity);
 
-        await HttpContext.SignInAsync(
+        await HttpContext.SignInAsync(//Truyền principal vào .. để tạo cookie và gửi về trình duyệt
             CookieAuthenticationDefaults.AuthenticationScheme,
             principal,
             new AuthenticationProperties { IsPersistent = rememberMe }

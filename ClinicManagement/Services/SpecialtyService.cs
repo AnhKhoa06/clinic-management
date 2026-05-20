@@ -16,7 +16,10 @@ public class SpecialtyService
     public async Task<List<SpecialtyResponseDto>> GetAllAsync()
     {
         var specialties = await _repo.GetAllAsync();
-        return specialties.Select(MapToDto).ToList();
+        return specialties.Select(MapToDto).ToList();//Sau khi có ds thực thể Specialty, thì 
+        // nó sẽ sd biểu thức LINQ Select kết hợp với 1 hàm bổ trợ (helper method) 
+        // MapToDto để chuyển đổi các đối tg Entity này sang dạng DTO (Data Transfer Object). 
+        // Cuối cùng, dữ liệu được chuyển thành một List để trả về cho Controller
     }
 
     public async Task<(bool Success, string Message, SpecialtyResponseDto? Data)> GetByIdAsync(int id)

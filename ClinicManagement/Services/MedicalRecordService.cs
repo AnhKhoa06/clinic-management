@@ -94,6 +94,28 @@ public class MedicalRecordService
         return (true, "Cập nhật hồ sơ bệnh án thành công.", MapToDto(record));
     }
 
+    public async Task<(bool, string)> DeleteAsync(int id)
+    {
+        var record = await _medicalRecordRepo.GetByIdAsync(id);
+        if (record == null)
+            return (false, "Không tìm thấy hồ sơ bệnh án.");
+
+        await _medicalRecordRepo.DeleteAsync(record);
+        return (true, "Xóa hồ sơ bệnh án thành công.");
+    }
+
+    public async Task<List<MedicalRecordResponseDto>> GetByDoctorIdAsync(int doctorId)
+    {
+        var records = await _medicalRecordRepo.GetByDoctorIdAsync(doctorId);
+        return records.Select(MapToDto).ToList();
+    }
+
+    public async Task<MedicalRecordResponseDto?> GetByAppointmentIdAsync(int appointmentId)
+    {
+        var record = await _medicalRecordRepo.GetByAppointmentIdAsync(appointmentId);
+        return record == null ? null : MapToDto(record);
+    }
+
     private MedicalRecordResponseDto MapToDto(MedicalRecord mr) => new()
     {
         Id = mr.Id,
@@ -124,26 +146,4 @@ public class MedicalRecordService
             Notes = p.Notes
         }).ToList()
     };
-
-    public async Task<(bool, string)> DeleteAsync(int id)
-    {
-        var record = await _medicalRecordRepo.GetByIdAsync(id);
-        if (record == null)
-            return (false, "Không tìm thấy hồ sơ bệnh án.");
-
-        await _medicalRecordRepo.DeleteAsync(record);
-        return (true, "Xóa hồ sơ bệnh án thành công.");
-    }
-
-    public async Task<List<MedicalRecordResponseDto>> GetByDoctorIdAsync(int doctorId)
-    {
-        var records = await _medicalRecordRepo.GetByDoctorIdAsync(doctorId);
-        return records.Select(MapToDto).ToList();
-    }
-
-    public async Task<MedicalRecordResponseDto?> GetByAppointmentIdAsync(int appointmentId)
-    {
-        var record = await _medicalRecordRepo.GetByAppointmentIdAsync(appointmentId);
-        return record == null ? null : MapToDto(record);
-    }
 }
