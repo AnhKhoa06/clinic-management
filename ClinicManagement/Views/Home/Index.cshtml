@@ -4,55 +4,79 @@
 
 @if (User.IsInRole("Admin"))
 {
-    <!-- Stat Cards -->
-    <div class="stats-grid">
-        <div class="card stat-card">
-            <div class="stat-icon blue"><i class="ti ti-stethoscope"></i></div>
-            <div class="stat-value">@ViewBag.DoctorCount</div>
-            <div class="stat-label" data-vi="Bác sĩ" data-en="Doctors">Bác sĩ</div>
+    <!-- 4 Stat Cards -->
+    <div class="stats-grid" style="margin-bottom:20px;">
+
+        <div class="card dash-card blue">
+            <div class="dash-card-header">
+                <div class="dash-card-icon blue"><i class="ti ti-users"></i></div>
+                <span class="dash-card-badge green">
+                    <i class="ti ti-trending-up"></i> Active
+                </span>
+            </div>
+            <div class="dash-card-value">@ViewBag.PatientCount</div>
+            <div class="dash-card-label" data-vi="Tổng bệnh nhân" data-en="Total Patients">Tổng bệnh nhân</div>
         </div>
-        <div class="card stat-card">
-            <div class="stat-icon teal"><i class="ti ti-users"></i></div>
-            <div class="stat-value">@ViewBag.PatientCount</div>
-            <div class="stat-label" data-vi="Bệnh nhân" data-en="Patients">Bệnh nhân</div>
+
+        <div class="card dash-card amber">
+            <div class="dash-card-header">
+                <div class="dash-card-icon amber"><i class="ti ti-calendar-check"></i></div>
+                <span class="dash-card-badge amber">@DateTime.Today.ToString("dd/MM")</span>
+            </div>
+            <div class="dash-card-value">@ViewBag.AppointmentToday</div>
+            <div class="dash-card-label" data-vi="Lịch hẹn hôm nay" data-en="Today's Appointments">Lịch hẹn hôm nay</div>
         </div>
-        <div class="card stat-card">
-            <div class="stat-icon amber"><i class="ti ti-calendar-check"></i></div>
-            <div class="stat-value">@ViewBag.AppointmentToday</div>
-            <div class="stat-label" data-vi="Lịch hẹn hôm nay" data-en="Today's Appointments">Lịch hẹn hôm nay</div>
+
+        <div class="card dash-card green">
+            <div class="dash-card-header">
+                <div class="dash-card-icon green"><i class="ti ti-stethoscope"></i></div>
+                <span class="dash-card-badge green">
+                    <i class="ti ti-circle-check"></i> Online
+                </span>
+            </div>
+            <div class="dash-card-value">@ViewBag.DoctorCount</div>
+            <div class="dash-card-label" data-vi="Bác sĩ" data-en="Doctors">Bác sĩ</div>
         </div>
-        <div class="card stat-card">
-            <div class="stat-icon red"><i class="ti ti-clock"></i></div>
-            <div class="stat-value">@ViewBag.AppointmentPending</div>
-            <div class="stat-label" data-vi="Chờ xác nhận" data-en="Pending">Chờ xác nhận</div>
+
+        <div class="card dash-card purple">
+            <div class="dash-card-header">
+                <div class="dash-card-icon purple"><i class="ti ti-cash"></i></div>
+                <span class="dash-card-badge purple">@DateTime.Today.ToString("MM/yyyy")</span>
+            </div>
+            <div class="dash-card-value sm">@(((decimal)ViewBag.RevenueThisMonth).ToString("N0")) ₫</div>
+            <div class="dash-card-label" data-vi="Doanh thu tháng này" data-en="Monthly Revenue">Doanh thu tháng này</div>
+        </div>
+
+    </div>
+
+    <!-- Biểu đồ Patient Flow -->
+    <div class="card" style="padding:20px; margin-bottom:16px;">
+        <div class="settings-section-title" style="margin-bottom:4px;">
+            <i class="ti ti-chart-line"></i>
+            <span data-vi="Lưu lượng bệnh nhân" data-en="Patient Flow">Lưu lượng bệnh nhân</span>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+            <p style="font-size:12px; color:var(--text-secondary); margin:0;"
+            data-vi="7 ngày gần nhất" data-en="Last 7 days">7 ngày gần nhất</p>
+            <div style="display:flex; gap:16px;">
+                <span style="font-size:12px; color:var(--text-secondary);">
+                    <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#1a5cbf; margin-right:5px;"></span>
+                    <span data-vi="Tổng" data-en="Total">Tổng</span>:
+                    <strong style="color:var(--text-primary);">@ViewBag.ChartTotalSum</strong>
+                </span>
+                <span style="font-size:12px; color:var(--text-secondary);">
+                    <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#22c55e; margin-right:5px;"></span>
+                    <span data-vi="Hoàn thành" data-en="Completed">Hoàn thành</span>:
+                    <strong style="color:var(--text-primary);">@ViewBag.ChartCompletedSum</strong>
+                </span>
+            </div>
+        </div>
+        <div style="position:relative; height:220px;">
+            <canvas id="patientFlowChart"></canvas>
         </div>
     </div>
 
-    <!-- Doanh thu -->
-    <div class="stats-grid" style="margin-top:0;">
-        <div class="card stat-card">
-            <div class="stat-icon teal"><i class="ti ti-cash"></i></div>
-            <div class="stat-value" style="font-size:18px;">@(((decimal)ViewBag.RevenueToday).ToString("N0")) ₫</div>
-            <div class="stat-label" data-vi="Doanh thu hôm nay" data-en="Today's Revenue">Doanh thu hôm nay</div>
-        </div>
-        <div class="card stat-card">
-            <div class="stat-icon blue"><i class="ti ti-report-money"></i></div>
-            <div class="stat-value" style="font-size:18px;">@(((decimal)ViewBag.RevenueTotal).ToString("N0")) ₫</div>
-            <div class="stat-label" data-vi="Tổng doanh thu" data-en="Total Revenue">Tổng doanh thu</div>
-        </div>
-        <div class="card stat-card">
-            <div class="stat-icon red"><i class="ti ti-receipt-off"></i></div>
-            <div class="stat-value" style="font-size:18px;">@(((decimal)ViewBag.RevenueUnpaid).ToString("N0")) ₫</div>
-            <div class="stat-label" data-vi="Chưa thanh toán" data-en="Unpaid">Chưa thanh toán</div>
-        </div>
-        <div class="card stat-card">
-            <div class="stat-icon red"><i class="ti ti-pill"></i></div>
-            <div class="stat-value">@ViewBag.MedicationCount</div>
-            <div class="stat-label" data-vi="Loại thuốc" data-en="Medications">Loại thuốc</div>
-        </div>
-    </div>
-
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
         <!-- Lịch hẹn hôm nay -->
         <div class="card" style="padding:20px;">
             <div class="settings-section-title" style="margin-bottom:16px;">
@@ -71,10 +95,10 @@
             }
             else
             {
-                <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; flex-direction:column; gap:8px;">
                     @foreach (var apt in todayApts)
                     {
-                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-secondary); border-radius:8px;">
+                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--setting-card-bg); border-radius:8px;">
                             <div style="font-size:13px; font-weight:600; color:var(--accent); min-width:45px;">
                                 @apt.SlotTime.ToString("HH:mm")
                             </div>
@@ -86,17 +110,20 @@
                             {
                                 case "Pending":
                                     <span class="status status-pending" style="font-size:11px;">
-                                        <span class="status-dot"></span>Chờ
+                                        <span class="status-dot"></span>
+                                        <span data-vi="Chờ" data-en="Pending">Chờ</span>
                                     </span>
                                     break;
                                 case "Confirmed":
                                     <span class="status status-done" style="font-size:11px;">
-                                        <span class="status-dot"></span>Xác nhận
+                                        <span class="status-dot"></span>
+                                        <span data-vi="Xác nhận" data-en="Confirmed">Xác nhận</span>
                                     </span>
                                     break;
                                 case "Completed":
                                     <span class="status status-active" style="font-size:11px;">
-                                        <span class="status-dot"></span>Xong
+                                        <span class="status-dot"></span>
+                                        <span data-vi="Xong" data-en="Done">Xong</span>
                                     </span>
                                     break;
                             }
@@ -104,10 +131,8 @@
                     }
                 </div>
                 <a asp-controller="Appointment" asp-action="Index"
-                style="display:block; text-align:center; font-size:13px; color:var(--accent); margin-top:12px;"
-                data-vi="Xem tất cả →" data-en="View all →">
-                    Xem tất cả →
-                </a>
+                   style="display:block; text-align:center; font-size:13px; color:var(--accent); margin-top:12px;"
+                   data-vi="Xem tất cả →" data-en="View all →">Xem tất cả →</a>
             }
         </div>
 
@@ -132,10 +157,17 @@
                 <div style="display:flex; flex-direction:column; gap:10px;">
                     @foreach (var doc in topDoctors)
                     {
-                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-secondary); border-radius:8px;">
-                            <div style="width:36px; height:36px; border-radius:50%; background:var(--accent-light); display:flex; align-items:center; justify-content:center; font-weight:600; color:var(--accent); flex-shrink:0;">
-                                @doc.FullName[0]
-                            </div>
+                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--setting-card-bg); border-radius:8px;">
+                            @if (!string.IsNullOrEmpty(doc.AvatarUrl))
+                            {
+                                <img src="@doc.AvatarUrl" style="width:36px; height:36px; border-radius:50%; object-fit:cover; flex-shrink:0;" />
+                            }
+                            else
+                            {
+                                <div style="width:36px; height:36px; border-radius:50%; background:var(--accent-light); display:flex; align-items:center; justify-content:center; font-weight:600; color:var(--accent); flex-shrink:0;">
+                                    @doc.FullName[0]
+                                </div>
+                            }
                             <div style="flex:1;">
                                 <div style="font-size:13px; font-weight:500;">@doc.FullName</div>
                                 <div style="font-size:12px; color:var(--text-secondary);">@doc.SpecialtyName</div>
@@ -152,25 +184,166 @@
     </div>
 
     <!-- Quick Access -->
-    <span class="section-label" style="margin-top:16px;" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
+    <span class="section-label" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
     <div class="quick-grid-4">
         <a asp-controller="Doctor" asp-action="Index" class="card quick-card">
             <div class="stat-icon blue"><i class="ti ti-stethoscope"></i></div>
-            <span class="quick-card-label" data-vi="Bác sĩ" data-en="Doctors">Bác sĩ</span>
+            <div class="quick-card-body">
+                <span class="quick-card-label" data-vi="Bác sĩ" data-en="Doctors">Bác sĩ</span>
+                <span class="quick-card-sub" data-vi="Quản lý bác sĩ" data-en="Manage doctors">Quản lý bác sĩ</span>
+            </div>
+            <i class="ti ti-chevron-right quick-card-arrow"></i>
         </a>
-        <a asp-controller="Patient" asp-action="Index" class="card quick-card teal-hover">
+        <a asp-controller="Patient" asp-action="Index" class="card quick-card">
             <div class="stat-icon teal"><i class="ti ti-users"></i></div>
-            <span class="quick-card-label" data-vi="Bệnh nhân" data-en="Patients">Bệnh nhân</span>
+            <div class="quick-card-body">
+                <span class="quick-card-label" data-vi="Bệnh nhân" data-en="Patients">Bệnh nhân</span>
+                <span class="quick-card-sub" data-vi="Quản lý bệnh nhân" data-en="Manage patients">Quản lý bệnh nhân</span>
+            </div>
+            <i class="ti ti-chevron-right quick-card-arrow"></i>
         </a>
-        <a asp-controller="Appointment" asp-action="Index" class="card quick-card amber-hover">
+        <a asp-controller="Appointment" asp-action="Index" class="card quick-card">
             <div class="stat-icon amber"><i class="ti ti-calendar-check"></i></div>
-            <span class="quick-card-label" data-vi="Lịch hẹn" data-en="Appointments">Lịch hẹn</span>
+            <div class="quick-card-body">
+                <span class="quick-card-label" data-vi="Lịch hẹn" data-en="Appointments">Lịch hẹn</span>
+                <span class="quick-card-sub" data-vi="Xem lịch hẹn" data-en="View appointments">Xem lịch hẹn</span>
+            </div>
+            <i class="ti ti-chevron-right quick-card-arrow"></i>
         </a>
         <a asp-controller="Payment" asp-action="Index" class="card quick-card">
-            <div class="stat-icon teal"><i class="ti ti-receipt"></i></div>
-            <span class="quick-card-label" data-vi="Hóa đơn" data-en="Invoices">Hóa đơn</span>
+            <div class="stat-icon red"><i class="ti ti-receipt"></i></div>
+            <div class="quick-card-body">
+                <span class="quick-card-label" data-vi="Hóa đơn" data-en="Invoices">Hóa đơn</span>
+                <span class="quick-card-sub" data-vi="Quản lý hóa đơn" data-en="Manage invoices">Quản lý hóa đơn</span>
+            </div>
+            <i class="ti ti-chevron-right quick-card-arrow"></i>
         </a>
     </div>
+
+    @section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script>
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const gridColor  = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)';
+        const labelColor = isDark ? '#6b7280' : '#9ca3af';
+
+        const ctx = document.getElementById('patientFlowChart').getContext('2d');
+
+        const gradientBlue = ctx.createLinearGradient(0, 0, 0, 220);
+        gradientBlue.addColorStop(0, 'rgba(26,92,191,0.18)');
+        gradientBlue.addColorStop(1, 'rgba(26,92,191,0)');
+
+        const gradientGreen = ctx.createLinearGradient(0, 0, 0, 220);
+        gradientGreen.addColorStop(0, 'rgba(34,197,94,0.15)');
+        gradientGreen.addColorStop(1, 'rgba(34,197,94,0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(ViewBag.ChartLabels),
+                datasets: [
+                    {
+                        label: 'Tổng lịch hẹn',
+                        data: @Html.Raw(ViewBag.ChartTotal),
+                        borderColor: '#1a5cbf',
+                        backgroundColor: gradientBlue,
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#1a5cbf',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        pointHoverBackgroundColor: '#1a5cbf',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Đã hoàn thành',
+                        data: @Html.Raw(ViewBag.ChartCompleted),
+                        borderColor: '#22c55e',
+                        backgroundColor: gradientGreen,
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#22c55e',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        pointHoverBackgroundColor: '#22c55e',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'center',
+                        labels: {
+                            color: isDark ? '#9ca3af' : '#6b7280',
+                            font: { size: 12, family: 'Inter, sans-serif' },
+                            boxWidth: 10,
+                            boxHeight: 10,
+                            borderRadius: 3,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: isDark ? '#1e2d45' : '#fff',
+                        titleColor: isDark ? '#f3f4f6' : '#111827',
+                        bodyColor: isDark ? '#9ca3af' : '#6b7280',
+                        borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 10,
+                        titleFont: { size: 13, weight: '600', family: 'Inter, sans-serif' },
+                        bodyFont: { size: 12, family: 'Inter, sans-serif' },
+                        callbacks: {
+                            title: (items) => `${items[0].label}`,
+                            label: (item) => `  ${item.dataset.label}: ${item.parsed.y} lịch hẹn`
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: gridColor,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: labelColor,
+                            font: { size: 12, family: 'Inter, sans-serif' },
+                            padding: 8
+                        },
+                        border: { display: false }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: gridColor,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: labelColor,
+                            font: { size: 12, family: 'Inter, sans-serif' },
+                            stepSize: 1,
+                            padding: 8
+                        },
+                        border: { display: false }
+                    }
+                }
+            }
+        });
+    </script>
+    }
 }
 
 @if (User.IsInRole("Doctor"))
@@ -180,25 +353,49 @@
 
     <!-- Stat Cards -->
     <div class="stats-grid">
-        <div class="card stat-card">
-            <div class="stat-icon amber"><i class="ti ti-calendar-check"></i></div>
-            <div class="stat-value">@(ViewBag.DoctorAppointmentToday ?? 0)</div>
-            <div class="stat-label" data-vi="Lịch hẹn hôm nay" data-en="Today's Appointments">Lịch hẹn hôm nay</div>
+        <div class="card dash-card amber">
+            <div class="dash-card-header">
+                <div class="dash-card-icon amber"><i class="ti ti-calendar-check"></i></div>
+                <span class="dash-card-badge amber">@DateTime.Today.ToString("dd/MM")</span>
+            </div>
+            <div class="dash-card-value">@(ViewBag.DoctorAppointmentToday ?? 0)</div>
+            <div class="dash-card-label" data-vi="Lịch hẹn hôm nay" data-en="Today's Appointments">Lịch hẹn hôm nay</div>
         </div>
-        <div class="card stat-card">
-            <div class="stat-icon red"><i class="ti ti-clock"></i></div>
-            <div class="stat-value">@(ViewBag.DoctorAppointmentPending ?? 0)</div>
-            <div class="stat-label" data-vi="Chờ xác nhận" data-en="Pending">Chờ xác nhận</div>
+
+        <div class="card dash-card blue">
+            <div class="dash-card-header">
+                <div class="dash-card-icon blue"><i class="ti ti-clock"></i></div>
+                <span class="dash-card-badge blue">
+                    <i class="ti ti-hourglass"></i>
+                    <span data-vi="Chờ xử lý" data-en="Pending">Chờ xử lý</span>
+                </span>
+            </div>
+            <div class="dash-card-value">@(ViewBag.DoctorAppointmentPending ?? 0)</div>
+            <div class="dash-card-label" data-vi="Chờ xác nhận" data-en="Pending">Chờ xác nhận</div>
         </div>
-        <div class="card stat-card">
-            <div class="stat-icon blue"><i class="ti ti-clipboard-text"></i></div>
-            <div class="stat-value">@(ViewBag.DoctorMedicalRecordCount ?? 0)</div>
-            <div class="stat-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</div>
+
+        <div class="card dash-card green">
+            <div class="dash-card-header">
+                <div class="dash-card-icon green"><i class="ti ti-clipboard-text"></i></div>
+                <span class="dash-card-badge green">
+                    <i class="ti ti-circle-check"></i> 
+                    <span data-vi="Hoàn thành" data-en="Done">Hoàn thành</span>
+                </span>
+            </div>
+            <div class="dash-card-value">@(ViewBag.DoctorMedicalRecordCount ?? 0)</div>
+            <div class="dash-card-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</div>
         </div>
-        <div class="card stat-card">
-            <div class="stat-icon teal"><i class="ti ti-star-filled"></i></div>
-            <div class="stat-value" style="font-size:20px;">@(ViewBag.DoctorAverageRating ?? 0)</div>
-            <div class="stat-label" data-vi="Đánh giá trung bình" data-en="Average Rating">Đánh giá trung bình</div>
+
+        <div class="card dash-card purple">
+            <div class="dash-card-header">
+                <div class="dash-card-icon purple"><i class="ti ti-star-filled"></i></div>
+                <span class="dash-card-badge purple">
+                    <i class="ti ti-star"></i> 
+                    <span data-vi="Đánh giá" data-en="Rating">Đánh giá</span>
+                </span>
+            </div>
+            <div class="dash-card-value sm">@(ViewBag.DoctorAverageRating ?? 0)</div>
+            <div class="dash-card-label" data-vi="Đánh giá trung bình" data-en="Average Rating">Đánh giá trung bình</div>
         </div>
     </div>
 
@@ -305,23 +502,39 @@
     </div>
 
     <!-- Quick Access -->
-    <span class="section-label" style="margin-top:16px;" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
+    <span class="section-label" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
     <div class="quick-grid-4">
-        <a asp-controller="Appointment" asp-action="Index" class="card quick-card amber-hover">
+        <a asp-controller="Appointment" asp-action="Index" class="card quick-card">
             <div class="stat-icon amber"><i class="ti ti-calendar-check"></i></div>
-            <span class="quick-card-label" data-vi="Lịch hẹn" data-en="Appointments">Lịch hẹn</span>
+            <div class="quick-card-body">
+                <span class="quick-card-label" data-vi="Lịch hẹn" data-en="Appointments">Lịch hẹn</span>
+                <span class="quick-card-sub" data-vi="Xem lịch hẹn" data-en="View appointments">Xem lịch hẹn</span>
+            </div>
+            <i class="ti ti-chevron-right quick-card-arrow"></i>
         </a>
         <a asp-controller="MedicalRecord" asp-action="Index" class="card quick-card">
             <div class="stat-icon blue"><i class="ti ti-clipboard-text"></i></div>
-            <span class="quick-card-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
+            <div class="quick-card-body">
+                <span class="quick-card-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
+                <span class="quick-card-sub" data-vi="Xem hồ sơ" data-en="View records">Xem hồ sơ</span>
+            </div>
+            <i class="ti ti-chevron-right quick-card-arrow"></i>
         </a>
         <a asp-controller="WorkingSchedule" asp-action="Index" class="card quick-card">
-            <div class="stat-icon teal"><i class="ti ti-calendar-time"></i></div>
-            <span class="quick-card-label" data-vi="Lịch làm việc" data-en="Work Schedule">Lịch làm việc</span>
+            <div class="stat-icon teal"><i class="ti ti-clock"></i></div>
+            <div class="quick-card-body">
+                <span class="quick-card-label" data-vi="Lịch làm việc" data-en="Schedule">Lịch làm việc</span>
+                <span class="quick-card-sub" data-vi="Quản lý lịch" data-en="Manage schedule">Quản lý lịch</span>
+            </div>
+            <i class="ti ti-chevron-right quick-card-arrow"></i>
         </a>
-        <a asp-controller="Patient" asp-action="Index" class="card quick-card">
-            <div class="stat-icon red"><i class="ti ti-users"></i></div>
-            <span class="quick-card-label" data-vi="Bệnh nhân" data-en="Patients">Bệnh nhân</span>
+        <a asp-controller="Payment" asp-action="Index" class="card quick-card">
+            <div class="stat-icon red"><i class="ti ti-receipt"></i></div>
+            <div class="quick-card-body">
+                <span class="quick-card-label" data-vi="Hóa đơn" data-en="Invoices">Hóa đơn</span>
+                <span class="quick-card-sub" data-vi="Xem hóa đơn" data-en="View invoices">Xem hóa đơn</span>
+            </div>
+            <i class="ti ti-chevron-right quick-card-arrow"></i>
         </a>
     </div>
 }
@@ -494,23 +707,39 @@
     </div>
 
     <!-- Quick Access -->
-    <span class="section-label" style="margin-top:16px;" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
+    <span class="section-label" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
     <div class="quick-grid-4">
         <a asp-controller="Appointment" asp-action="Create" class="card quick-card">
             <div class="stat-icon blue"><i class="ti ti-calendar-plus"></i></div>
-            <span class="quick-card-label" data-vi="Đặt lịch khám" data-en="Book Appointment">Đặt lịch khám</span>
+            <div class="quick-card-body">
+                <span class="quick-card-label" data-vi="Đặt lịch khám" data-en="Book Appointment">Đặt lịch khám</span>
+                <span class="quick-card-sub" data-vi="Chọn bác sĩ & giờ khám" data-en="Choose doctor & time">Chọn bác sĩ & giờ khám</span>
+            </div>
+            <i class="ti ti-chevron-right quick-card-arrow"></i>
         </a>
-        <a asp-controller="Appointment" asp-action="MyAppointments" class="card quick-card teal-hover">
+        <a asp-controller="Appointment" asp-action="MyAppointments" class="card quick-card">
             <div class="stat-icon teal"><i class="ti ti-calendar-check"></i></div>
-            <span class="quick-card-label" data-vi="Lịch hẹn của tôi" data-en="My Appointments">Lịch hẹn của tôi</span>
+            <div class="quick-card-body">
+                <span class="quick-card-label" data-vi="Lịch hẹn của tôi" data-en="My Appointments">Lịch hẹn của tôi</span>
+                <span class="quick-card-sub" data-vi="Xem & quản lý lịch" data-en="View & manage">Xem & quản lý lịch</span>
+            </div>
+            <i class="ti ti-chevron-right quick-card-arrow"></i>
         </a>
-        <a asp-controller="MedicalRecord" asp-action="MyRecords" class="card quick-card amber-hover">
+        <a asp-controller="MedicalRecord" asp-action="MyRecords" class="card quick-card">
             <div class="stat-icon amber"><i class="ti ti-clipboard-text"></i></div>
-            <span class="quick-card-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
+            <div class="quick-card-body">
+                <span class="quick-card-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
+                <span class="quick-card-sub" data-vi="Xem lịch sử khám" data-en="View history">Xem lịch sử khám</span>
+            </div>
+            <i class="ti ti-chevron-right quick-card-arrow"></i>
         </a>
         <a asp-controller="Doctor" asp-action="Browse" class="card quick-card">
-            <div class="stat-icon blue"><i class="ti ti-stethoscope"></i></div>
-            <span class="quick-card-label" data-vi="Tìm bác sĩ" data-en="Find Doctor">Tìm bác sĩ</span>
+            <div class="stat-icon red"><i class="ti ti-stethoscope"></i></div>
+            <div class="quick-card-body">
+                <span class="quick-card-label" data-vi="Tìm bác sĩ" data-en="Find Doctor">Tìm bác sĩ</span>
+                <span class="quick-card-sub" data-vi="Tìm theo chuyên khoa" data-en="Search by specialty">Tìm theo chuyên khoa</span>
+            </div>
+            <i class="ti ti-chevron-right quick-card-arrow"></i>
         </a>
     </div>
 }

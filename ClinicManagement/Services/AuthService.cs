@@ -129,8 +129,9 @@ public class AuthService
         if (await _authRepository.EmailExistsAsync(email))
         {
             var existing = await _authRepository.GetUserByEmailAsync(email);
-            if (existing != null && existing.Id != userId)
+            if (existing != null && existing.Id != userId) // email ng khác thì báo lỗi
                 return (false, "Email này đã được sử dụng bởi tài khoản khác.");
+            // cùng người thì cho phép (giữ nguyên email cũ)
         }
 
         var user = await _authRepository.GetUserByIdAsync(userId);

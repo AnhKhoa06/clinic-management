@@ -48,8 +48,8 @@ public class SettingsController : Controller
         if (Phone != null)
             await _authService.UpdatePhoneAsync(userId, Phone);
         
-        // Chỉ Patient mới được cập nhật email
-        if (User.IsInRole("Patient") && !string.IsNullOrWhiteSpace(Email))
+        // Tất cả roles đều được cập nhật email
+        if (!string.IsNullOrWhiteSpace(Email))
         {
             var (emailSuccess, emailMessage) = await _authService.UpdateEmailAsync(userId, Email);
             if (!emailSuccess)

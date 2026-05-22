@@ -37,43 +37,71 @@ public class HomeController : Controller
             var doctors      = await _doctorService.GetAllAsync();
             var patients     = await _patientService.GetAllAsync();
             var appointments = await _appointmentService.GetAllAsync();
-            var medications  = await _medicationService.GetAllAsync();
             var payments     = await _paymentService.GetAllAsync();
 
+            // 4 stat cards
             ViewBag.DoctorCount      = doctors.Count;
             ViewBag.PatientCount     = patients.Count;
             ViewBag.AppointmentToday = appointments
                 .Count(a => a.SlotDate == DateOnly.FromDateTime(DateTime.Today)
                         && a.Status != "Cancelled");
-            ViewBag.MedicationCount  = medications.Count;
-            ViewBag.AppointmentPending   = appointments.Count(a => a.Status == "Pending");
-            ViewBag.AppointmentCompleted = appointments.Count(a => a.Status == "Completed");
-
-            // Doanh thu
-            ViewBag.RevenueToday  = payments
+            ViewBag.RevenueThisMonth = payments
                 .Where(p => p.Status == "Paid" && p.PaidAt.HasValue
-                        && p.PaidAt.Value.Date == DateTime.Today)
+                        && p.PaidAt.Value.Month == DateTime.Today.Month
+                        && p.PaidAt.Value.Year == DateTime.Today.Year)
                 .Sum(p => p.Amount);
-            ViewBag.RevenueTotal  = payments
-                .Where(p => p.Status == "Paid")
-                .Sum(p => p.Amount);
-            ViewBag.RevenueUnpaid = payments
-                .Where(p => p.Status == "Unpaid")
-                .Sum(p => p.Amount);
+
+            // Biểu đồ 7 ngày
+            var last7Days = Enumerable.Range(0, 7)
+                .Select(i => DateOnly.FromDateTime(DateTime.Today.AddDays(-6 + i)))
+                .ToList();
+
+            ViewBag.ChartLabels = System.Text.Json.JsonSerializer.Serialize(
+                last7Days.Select(d => d.DayOfWeek switch
+                {
+                    DayOfWeek.Monday    => "T2",
+                    DayOfWeek.Tuesday   => "T3",
+                    DayOfWeek.Wednesday => "T4",
+                    DayOfWeek.Thursday  => "T5",
+                    DayOfWeek.Friday    => "T6",
+                    DayOfWeek.Saturday  => "T7",
+                    _                   => "CN"
+                }).ToList()
+            );
+
+            ViewBag.ChartTotal = System.Text.Json.JsonSerializer.Serialize(
+                last7Days.Select(d => appointments
+                    .Count(a => a.SlotDate == d && a.Status != "Cancelled"))
+                .ToList()
+            );
+
+            ViewBag.ChartCompleted = System.Text.Json.JsonSerializer.Serialize(
+                last7Days.Select(d => appointments
+                    .Count(a => a.SlotDate == d && a.Status == "Completed"))
+                .ToList()
+            );
+
+            //tính tổng lịch hẹn
+            ViewBag.ChartTotalSum = last7Days
+                .Sum(d => appointments.Count(a => a.SlotDate == d && a.Status != "Cancelled"));
+
+            //tính đã hoàn thành
+            ViewBag.ChartCompletedSum = last7Days
+                .Sum(d => appointments.Count(a => a.SlotDate == d && a.Status == "Completed"));
+
+            // Lịch hẹn hôm nay
+            ViewBag.TodayAppointments = appointments
+                .Where(a => a.SlotDate == DateOnly.FromDateTime(DateTime.Today)
+                        && a.Status != "Cancelled")
+                .OrderBy(a => a.SlotTime)
+                .Take(5)
+                .ToList();
 
             // Top bác sĩ
             ViewBag.TopDoctors = doctors
                 .Where(d => d.AverageRating > 0)
                 .OrderByDescending(d => d.AverageRating)
                 .Take(3)
-                .ToList();
-
-            // Lịch hẹn hôm nay chi tiết
-            ViewBag.TodayAppointments = appointments
-                .Where(a => a.SlotDate == DateOnly.FromDateTime(DateTime.Today)
-                        && a.Status != "Cancelled")
-                .OrderBy(a => a.SlotTime)
-                .Take(5)
                 .ToList();
         }
 

@@ -83,23 +83,19 @@
             }
             else
             {
-                <!-- Admin và Doctor chỉ cần sửa FullName và Phone -->
+                <!-- Admin và Doctor -->
                 <form asp-controller="Settings" asp-action="UpdateProfile" method="post">
                     <div class="form-group">
                         <label class="form-label" data-vi="Họ tên" data-en="Full Name">Họ tên</label>
                         <input type="text" name="FullName" class="form-control" value="@ViewBag.FullName" />
                     </div>
                     <div class="form-group">
-                        <label class="form-label" data-vi="Số điện thoại" data-en="Phone">Số điện thoại</label>
-                        <input type="tel" name="Phone" class="form-control" value="@ViewBag.Phone" />
+                        <label class="form-label" data-vi="Email" data-en="Email">Email</label>
+                        <input type="email" name="Email" class="form-control" value="@ViewBag.Email" />
                     </div>
                     <div class="form-group">
-                        <label class="form-label" data-vi="Email" data-en="Email">Email</label>
-                        <input type="email" class="form-control" value="@ViewBag.Email" disabled />
-                        <span style="font-size:11px; color:var(--text-secondary);"
-                            data-vi="Email không thể thay đổi." data-en="Email cannot be changed.">
-                            Email không thể thay đổi.
-                        </span>
+                        <label class="form-label" data-vi="Số điện thoại" data-en="Phone">Số điện thoại</label>
+                        <input type="tel" name="Phone" class="form-control" value="@ViewBag.Phone" />
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
