@@ -9,15 +9,18 @@ public class MedicalRecordService
     private readonly MedicalRecordRepository _medicalRecordRepo;
     private readonly AppointmentRepository _appointmentRepo;
     private readonly PaymentRepository _paymentRepo;
+    private readonly NotificationService _notificationService;
 
     public MedicalRecordService(
         MedicalRecordRepository medicalRecordRepo,
         AppointmentRepository appointmentRepo,
-        PaymentRepository paymentRepo)
+        PaymentRepository paymentRepo,
+        NotificationService notificationService)
     {
         _medicalRecordRepo = medicalRecordRepo;
         _appointmentRepo = appointmentRepo;
         _paymentRepo = paymentRepo;
+        _notificationService = notificationService;
     }
 
     public async Task<List<MedicalRecordResponseDto>> GetAllAsync()
@@ -93,6 +96,34 @@ public class MedicalRecordService
             Notes = null
         };
         await _paymentRepo.CreateAsync(payment);
+
+        try
+        {
+            await _notificationService.CreateAsync(new Notification
+            {
+                UserId = created.Patient.UserId,
+                Title = "Đã tạo hồ sơ bệnh án",
+                Message = $"Bác sĩ {created.Doctor.User.FullName} đã tạo hồ sơ bệnh án cho lịch hẹn {created.Appointment.AppointmentSlot.SlotDate:dd/MM/yyyy} {created.Appointment.AppointmentSlot.SlotTime}.",
+                Link = $"/MedicalRecord/MyDetail/{created.Id}"
+            });
+
+            await _notificationService.CreateAsync(new Notification
+            {
+                Role = "Admin",
+                Title = "Đã tạo hồ sơ bệnh án",
+                Message = $"Hồ sơ bệnh án #{created.Id} đã được tạo cho bệnh nhân {created.Patient.User.FullName}.",
+                Link = $"/MedicalRecord/Detail/{created.Id}"
+            });
+
+            await _notificationService.CreateAsync(new Notification
+            {
+                Role = "Doctor",
+                Title = "Đã tạo hóa đơn",
+                Message = $"Hóa đơn cho lịch hẹn {created.Appointment.AppointmentSlot.SlotDate:dd/MM/yyyy} {created.Appointment.AppointmentSlot.SlotTime} đã được tạo.",
+                Link = $"/Payment/Detail/{payment.Id}"
+            });
+        }
+        catch { }
 
         return (true, "Tạo hồ sơ bệnh án thành công.", MapToDto(created!));
     }

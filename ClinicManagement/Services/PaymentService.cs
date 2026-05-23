@@ -9,11 +9,13 @@ public class PaymentService
 {
     private readonly AppDbContext _db;
     private readonly EmailService _emailService;
+    private readonly NotificationService _notificationService;
 
-    public PaymentService(AppDbContext db, EmailService emailService)
+    public PaymentService(AppDbContext db, EmailService emailService, NotificationService notificationService)
     {
         _db = db;
         _emailService = emailService;
+        _notificationService = notificationService;
     }
     // Admin/Doctor tạo hóa đơn
     public async Task<(bool, string, PaymentResponseDto?)> CreateAsync(PaymentCreateDto dto)
@@ -59,6 +61,34 @@ public class PaymentService
         _db.Payments.Add(payment);
         await _db.SaveChangesAsync();
 
+        try
+        {
+            await _notificationService.CreateAsync(new Notification
+            {
+                UserId = appointment.Patient.UserId,
+                Title = "Đã tạo hóa đơn",
+                Message = $"Hóa đơn {invoiceCode} đã được tạo cho lịch hẹn với bác sĩ {appointment.Doctor.User.FullName}.",
+                Link = $"/Payment/MyPayments"
+            });
+
+            await _notificationService.CreateAsync(new Notification
+            {
+                UserId = appointment.Doctor.UserId,
+                Title = "Đã tạo hóa đơn",
+                Message = $"Hóa đơn {invoiceCode} đã được tạo cho bệnh nhân {appointment.Patient.User.FullName}.",
+                Link = $"/Payment/Detail/{payment.Id}"
+            });
+
+            await _notificationService.CreateAsync(new Notification
+            {
+                Role = "Admin",
+                Title = "Đã tạo hóa đơn",
+                Message = $"Hóa đơn {invoiceCode} đã được tạo cho bệnh nhân {appointment.Patient.User.FullName}.",
+                Link = $"/Payment/Detail/{payment.Id}"
+            });
+        }
+        catch { }
+
         return (true, "Tạo hóa đơn thành công.", MapToDto(payment, appointment));
     }
 
@@ -92,6 +122,34 @@ public class PaymentService
             method:      payment.Method == "Cash" ? "Tiền mặt" :
                         payment.Method == "BankTransfer" ? "Chuyển khoản" : payment.Method
         );
+
+        try
+        {
+            await _notificationService.CreateAsync(new Notification
+            {
+                UserId = payment.Appointment.Patient.UserId,
+                Title = "Thanh toán thành công",
+                Message = $"Hóa đơn {payment.InvoiceCode} đã được thanh toán.",
+                Link = $"/Payment/MyPayments"
+            });
+
+            await _notificationService.CreateAsync(new Notification
+            {
+                UserId = payment.Appointment.Doctor.UserId,
+                Title = "Hóa đơn đã được thanh toán",
+                Message = $"Hóa đơn {payment.InvoiceCode} của bệnh nhân {payment.Appointment.Patient.User.FullName} đã được thanh toán.",
+                Link = $"/Payment/Detail/{payment.Id}"
+            });
+
+            await _notificationService.CreateAsync(new Notification
+            {
+                Role = "Admin",
+                Title = "Đã xác nhận thanh toán",
+                Message = $"Hóa đơn {payment.InvoiceCode} của bệnh nhân {payment.Appointment.Patient.User.FullName} đã được thanh toán.",
+                Link = $"/Payment/Detail/{payment.Id}"
+            });
+        }
+        catch { }
 
         return (true, "Thanh toán thành công!");
     }
@@ -163,6 +221,34 @@ public class PaymentService
             amount:      payment.Amount,
             method:      "Chuyển khoản (VNPay)"
         );
+
+        try
+        {
+            await _notificationService.CreateAsync(new Notification
+            {
+                UserId = payment.Appointment.Patient.UserId,
+                Title = "Thanh toán VNPay thành công",
+                Message = $"Hóa đơn {payment.InvoiceCode} đã được thanh toán qua VNPay.",
+                Link = $"/Payment/MyPayments"
+            });
+
+            await _notificationService.CreateAsync(new Notification
+            {
+                UserId = payment.Appointment.Doctor.UserId,
+                Title = "Hóa đơn VNPay đã được thanh toán",
+                Message = $"Hóa đơn {payment.InvoiceCode} của bệnh nhân {payment.Appointment.Patient.User.FullName} đã được thanh toán qua VNPay.",
+                Link = $"/Payment/Detail/{payment.Id}"
+            });
+
+            await _notificationService.CreateAsync(new Notification
+            {
+                Role = "Admin",
+                Title = "Đã xác nhận thanh toán VNPay",
+                Message = $"Hóa đơn {payment.InvoiceCode} của bệnh nhân {payment.Appointment.Patient.User.FullName} đã được thanh toán qua VNPay.",
+                Link = $"/Payment/Detail/{payment.Id}"
+            });
+        }
+        catch { }
 
         return (true, "Thanh toán VNPay thành công!");
     }

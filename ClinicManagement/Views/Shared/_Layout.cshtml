@@ -1,8 +1,10 @@
 @using ClinicManagement.Services
+@using ClinicManagement.Models
 @using System.Security.Claims
 @inject PaymentService PaymentService
 @inject AppointmentService AppointmentService
 @inject DoctorService DoctorService
+@inject NotificationService NotificationService
 
 @{
     int unpaidCount = User.IsInRole("Admin") ? await PaymentService.GetUnpaidCountAsync() : 0;
@@ -31,6 +33,16 @@
         //Gọi GetByPatientAsync(userId) lấy toàn bộ hóa đơn của patient đó
         patientUnpaidCount = patientPayments.Count(p => p.Status == "Unpaid");
         //Đếm xem có bao nhiêu cái Status == "Unpaid" → gán vào patientUnpaidCount
+    }
+
+    int notificationUnreadCount = 0;
+    var initialNotifications = new List<Notification>();
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+        var role = User.IsInRole("Admin") ? "Admin" : User.IsInRole("Doctor") ? "Doctor" : "Patient";
+        notificationUnreadCount = await NotificationService.CountUnreadAsync(userId, role);
+        initialNotifications = await NotificationService.GetForUserAsync(userId, role);
     }
 }
 
@@ -254,9 +266,23 @@
                 </button>
 
                 <!-- Notification -->
-                <div class="notif-btn">
-                    <i class="ti ti-bell"></i>
-                    <span class="notif-dot"></span>
+                <div class="notif-root">
+                    <button class="notif-btn" id="notifToggle" aria-label="Notifications">
+                        <i class="ti ti-bell"></i>
+                        <span class="notif-badge" id="notifBadge" style="@(notificationUnreadCount > 0 ? "display:inline-flex;" : "display:none;")">@notificationUnreadCount</span>
+                    </button>
+
+                    <div class="notif-panel" id="notifPanel" aria-hidden="true">
+                        <div class="notif-panel-header">
+                            <strong>Thông báo</strong>
+                            <button class="notif-close" id="notifClose"><i class="ti ti-x"></i></button>
+                        </div>
+                        <div class="notif-list" id="notifList">
+                        </div>
+                        <div class="notif-footer">
+                            <a href="/" id="notifViewAll">Xem tất cả</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
@@ -409,6 +435,116 @@ window.setTheme = applyTheme;
     {
         <text>showToast('error', 'Lỗi', '@TempData["Error"]');</text>
     }
+
+    // ── NOTIFICATIONS (AJAX) ───────────────────────────
+    const notifToggle = document.getElementById('notifToggle');
+    const notifPanel = document.getElementById('notifPanel');
+    const notifList = document.getElementById('notifList');
+    const notifBadge = document.getElementById('notifBadge');
+
+    const initialNotifData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(initialNotifications.Select(n => new {
+        id = n.Id,
+        title = n.Title,
+        message = n.Message,
+        isRead = n.IsRead,
+        createdAt = n.CreatedAt,
+        link = n.Link
+    })));
+
+    let notifData = Array.isArray(initialNotifData) ? initialNotifData : [];
+
+    async function fetchNotifications() {
+        try {
+            const res = await fetch('/api/notifications', { credentials: 'same-origin' });
+            if (!res.ok) return;
+            const data = await res.json();
+            notifData = data;
+            renderNotifications();
+        } catch (e) {
+            console.error('Failed to fetch notifications', e);
+        }
+    }
+
+    function renderNotifications() {
+        notifList.innerHTML = '';
+        if (!notifData || notifData.length === 0) {
+            notifList.innerHTML = '<div class="notif-empty">Không có thông báo</div>';
+            notifBadge.style.display = 'none';
+            return;
+        }
+
+        let unread = 0;
+        notifData.forEach(n => {
+            if (!n.isRead) unread++;
+            const item = document.createElement('div');
+            item.className = 'notif-item' + (n.isRead ? ' read' : ' unread');
+            item.innerHTML = `
+                <div class="notif-item-body">
+                    <div class="notif-item-title">${escapeHtml(n.title)}</div>
+                    <div class="notif-item-msg">${escapeHtml(n.message)}</div>
+                </div>
+                <div class="notif-item-meta">${timeAgo(new Date(n.createdAt))}</div>
+            `;
+            item.addEventListener('click', () => onNotifClick(n));
+            notifList.appendChild(item);
+        });
+
+        if (unread > 0) {
+            notifBadge.textContent = unread > 99 ? '99+' : String(unread);
+            notifBadge.style.display = 'inline-flex';
+        } else {
+            notifBadge.style.display = 'none';
+        }
+    }
+
+    function escapeHtml(s) { return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':"&#39;"})[c]); }
+
+    async function onNotifClick(n) {
+        try {
+            await fetch(`/api/notifications/mark-read/${n.id}`, { method: 'POST' });
+        } catch (e) { console.warn(e); }
+        // optional navigation
+        if (n.link) location.href = n.link;
+        fetchNotifications();
+    }
+
+    function timeAgo(date) {
+        const seconds = Math.floor((new Date() - date) / 1000);
+        const intervals = [[60,'giây'],[60,'phút'],[24,'giờ'],[7,'ngày'],[4.34524,'tuần'],[12,'tháng'],[Number.POSITIVE_INFINITY,'năm']];
+        let unit = 'giây';
+        let value = seconds;
+        for (let i=0, s=seconds; i<intervals.length; i++){
+            const [div,name] = intervals[i];
+            if (s < div) { unit = name; value = Math.floor(s); break; }
+            s = s / div;
+        }
+        return value + ' ' + unit + ' trước';
+    }
+
+    notifToggle?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = notifPanel.classList.toggle('open');
+        notifPanel.setAttribute('aria-hidden', !open);
+        if (open) fetchNotifications();
+    });
+
+    document.getElementById('notifClose')?.addEventListener('click', () => {
+        notifPanel.classList.remove('open');
+        notifPanel.setAttribute('aria-hidden', 'true');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!notifPanel.contains(e.target) && e.target !== notifToggle) {
+            notifPanel.classList.remove('open');
+            notifPanel.setAttribute('aria-hidden', 'true');
+        }
+    });
+
+    // initial render from server data, then refresh from API
+    renderNotifications();
+    fetchNotifications();
+    // poll every 30s
+    setInterval(fetchNotifications, 30000);
 </script>
 </body>
 </html>

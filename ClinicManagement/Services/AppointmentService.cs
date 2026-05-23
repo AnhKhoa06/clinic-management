@@ -8,13 +8,16 @@ public class AppointmentService
 {
     private readonly AppointmentRepository _appointmentRepo;
     private readonly AppointmentSlotRepository _slotRepo;
+    private readonly NotificationService _notificationService;
 
     public AppointmentService(
         AppointmentRepository appointmentRepo,
-        AppointmentSlotRepository slotRepo)
+        AppointmentSlotRepository slotRepo,
+        NotificationService notificationService)
     {
         _appointmentRepo = appointmentRepo;
         _slotRepo = slotRepo;
+        _notificationService = notificationService;
     }
 
     public async Task<List<AppointmentResponseDto>> GetAllAsync()
@@ -71,6 +74,46 @@ public class AppointmentService
         await _slotRepo.UpdateAsync(slot);
 
         var created = await _appointmentRepo.GetByIdAsync(appointment.Id);
+        // Send notifications: to doctor and admin
+        try
+        {
+            if (created != null)
+            {
+                var doctorName = created.Doctor?.User?.FullName ?? "bác sĩ";
+                var patientName = created.Patient?.User?.FullName ?? "bệnh nhân";
+                var slotDateText = created.AppointmentSlot?.SlotDate.ToString("dd/MM/yyyy") ?? "ngày khám";
+                var slotTimeText = created.AppointmentSlot?.SlotTime.ToString() ?? "";
+
+                var patientNotif = new Notification
+                {
+                    UserId = created.Patient?.UserId,
+                    Title = "Đặt lịch thành công",
+                    Message = $"Bạn đã đặt lịch với bác sĩ {doctorName} vào {slotDateText} {slotTimeText}.",
+                    Link = "/Appointment/MyAppointments"
+                };
+                await _notificationService.CreateAsync(patientNotif);
+
+                var notifToDoctor = new ClinicManagement.Models.Notification
+                {
+                    UserId = created.Doctor?.UserId,
+                    Title = "Lịch hẹn mới",
+                    Message = $"Bệnh nhân {patientName} đã đặt lịch vào {slotDateText} {slotTimeText}",
+                    Link = $"/Appointment/Detail/{created.Id}"
+                };
+                await _notificationService.CreateAsync(notifToDoctor);
+
+                var notifToAdmin = new ClinicManagement.Models.Notification
+                {
+                    Role = "Admin",
+                    Title = "Lịch hẹn mới",
+                    Message = $"Lịch hẹn #{created.Id} được tạo bởi {patientName}",
+                    Link = $"/Appointment/Detail/{created.Id}"
+                };
+                await _notificationService.CreateAsync(notifToAdmin);
+            }
+        }
+        catch { /* non-blocking */ }
+
         return (true, "Đặt lịch hẹn thành công.", MapToDto(created!));
     }
 
@@ -85,6 +128,42 @@ public class AppointmentService
 
         appointment.Status = "Confirmed";
         await _appointmentRepo.UpdateAsync(appointment);
+        // notify patient
+        try
+        {
+            var doctorName = appointment.Doctor?.User?.FullName ?? "bác sĩ";
+            var patientName = appointment.Patient?.User?.FullName ?? "bệnh nhân";
+            var slotDateText = appointment.AppointmentSlot?.SlotDate.ToString("dd/MM/yyyy") ?? "ngày khám";
+            var slotTimeText = appointment.AppointmentSlot?.SlotTime.ToString() ?? "";
+
+            var doctorNotif = new Notification
+            {
+                UserId = appointment.Doctor?.UserId,
+                Title = "Lịch hẹn đã được xác nhận",
+                Message = $"Lịch hẹn với bệnh nhân {patientName} vào {slotDateText} {slotTimeText} đã được xác nhận.",
+                Link = $"/Appointment/Detail/{appointment.Id}"
+            };
+            await _notificationService.CreateAsync(doctorNotif);
+
+            var notif = new Notification
+            {
+                UserId = appointment.Patient?.UserId,
+                Title = "Lịch hẹn đã được xác nhận",
+                Message = $"Lịch hẹn với {doctorName} vào {slotDateText} {slotTimeText} đã được xác nhận.",
+                Link = $"/Appointment/MyAppointments"
+            };
+            await _notificationService.CreateAsync(notif);
+
+            await _notificationService.CreateAsync(new Notification
+            {
+                Role = "Admin",
+                Title = "Lịch hẹn đã được xác nhận",
+                Message = $"Lịch hẹn #{appointment.Id} đã được xác nhận.",
+                Link = $"/Appointment/Detail/{appointment.Id}"
+            });
+        }
+        catch { }
+
         return (true, "Xác nhận lịch hẹn thành công.", MapToDto(appointment));
     }
 
@@ -111,6 +190,42 @@ public class AppointmentService
             await _slotRepo.UpdateAsync(slot);
         }
 
+        // notify patient and doctor
+        try
+        {
+            var doctorName = appointment.Doctor?.User?.FullName ?? "bác sĩ";
+            var patientName = appointment.Patient?.User?.FullName ?? "bệnh nhân";
+            var slotDateText = appointment.AppointmentSlot?.SlotDate.ToString("dd/MM/yyyy") ?? "ngày khám";
+            var slotTimeText = appointment.AppointmentSlot?.SlotTime.ToString() ?? "";
+
+            var notifPatient = new Notification
+            {
+                UserId = appointment.Patient?.UserId,
+                Title = "Lịch hẹn đã bị huỷ",
+                Message = $"Lịch hẹn với {doctorName} vào {slotDateText} {slotTimeText} đã bị huỷ. Lý do: {appointment.CancelReason}",
+                Link = $"/Appointment/MyAppointments"
+            };
+            await _notificationService.CreateAsync(notifPatient);
+
+            var notifDoctor = new Notification
+            {
+                UserId = appointment.Doctor?.UserId,
+                Title = "Lịch hẹn đã bị huỷ",
+                Message = $"Lịch hẹn của bệnh nhân {patientName} vào {slotDateText} {slotTimeText} đã bị huỷ. Lý do: {appointment.CancelReason}",
+                Link = $"/Appointment/Detail/{appointment.Id}"
+            };
+            await _notificationService.CreateAsync(notifDoctor);
+
+            await _notificationService.CreateAsync(new Notification
+            {
+                Role = "Admin",
+                Title = "Lịch hẹn đã bị huỷ",
+                Message = $"Lịch hẹn #{appointment.Id} đã bị huỷ.",
+                Link = $"/Appointment/Detail/{appointment.Id}"
+            });
+        }
+        catch { }
+
         return (true, "Huỷ lịch hẹn thành công.", MapToDto(appointment));
     }
 
@@ -123,6 +238,9 @@ public class AppointmentService
         if (appointment.Status != "Confirmed")
             return (false, "Chỉ có thể hoàn thành lịch hẹn đã xác nhận.", null);
 
+        if (appointment.AppointmentSlot == null)
+            return (false, "Không tìm thấy slot của lịch hẹn.", null);
+
         // Kiểm tra ngày khám đã tới chưa
         var today = DateOnly.FromDateTime(DateTime.Today);
         if (appointment.AppointmentSlot.SlotDate > today)
@@ -130,6 +248,38 @@ public class AppointmentService
 
         appointment.Status = "Completed";
         await _appointmentRepo.UpdateAsync(appointment);
+        try
+        {
+            var doctorName = appointment.Doctor?.User?.FullName ?? "bác sĩ";
+            var slotDateText = appointment.AppointmentSlot?.SlotDate.ToString("dd/MM/yyyy") ?? "ngày khám";
+            var slotTimeText = appointment.AppointmentSlot?.SlotTime.ToString() ?? "";
+            var notif = new Notification
+            {
+                UserId = appointment.Patient?.UserId,
+                Title = "Hoàn thành khám",
+                Message = $"Lịch hẹn với {doctorName} vào {slotDateText} {slotTimeText} đã được đánh dấu hoàn thành.",
+                Link = $"/Appointment/MyAppointments"
+            };
+            await _notificationService.CreateAsync(notif);
+
+            await _notificationService.CreateAsync(new Notification
+            {
+                UserId = appointment.Doctor?.UserId,
+                Title = "Đã hoàn thành khám",
+                Message = $"Bạn đã hoàn thành khám cho bệnh nhân {appointment.Patient?.User?.FullName ?? "bệnh nhân"}.",
+                Link = $"/Appointment/Detail/{appointment.Id}"
+            });
+
+            await _notificationService.CreateAsync(new Notification
+            {
+                Role = "Admin",
+                Title = "Hoàn thành khám",
+                Message = $"Lịch hẹn #{appointment.Id} đã được đánh dấu hoàn thành.",
+                Link = $"/Appointment/Detail/{appointment.Id}"
+            });
+        }
+        catch { }
+
         return (true, "Đánh dấu khám xong thành công.", MapToDto(appointment));
     }
 

@@ -77,6 +77,10 @@ builder.Services.AddScoped<ReviewService>();
 //payment
 builder.Services.AddScoped<PaymentService>();
 
+// notifications
+builder.Services.AddScoped<NotificationRepository>();
+builder.Services.AddScoped<NotificationService>();
+
 //Vnpay
 var vnpayConfig = builder.Configuration.GetSection("VNPAY");
 builder.Services.AddVnpayClient(config =>
@@ -106,6 +110,23 @@ if (!Directory.Exists(uploadsPath))
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.Migrate();
+    context.Database.ExecuteSqlRaw(@"
+        CREATE TABLE IF NOT EXISTS `Notifications` (
+            `Id` int NOT NULL AUTO_INCREMENT,
+            `UserId` int NULL,
+            `Role` longtext NULL,
+            `Title` longtext NOT NULL,
+            `Message` longtext NOT NULL,
+            `IsRead` tinyint(1) NOT NULL,
+            `CreatedAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+            `Link` longtext NULL,
+            PRIMARY KEY (`Id`),
+            KEY `IX_Notifications_UserId_IsRead` (`UserId`, `IsRead`),
+            CONSTRAINT `FK_Notifications_Users_UserId` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ");
+
     if (!context.Users.Any(u => u.Email == "admin@gmail.com"))
     {
         context.Users.Add(new ClinicManagement.Models.User
