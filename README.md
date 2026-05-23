@@ -95,7 +95,9 @@ Mở trình duyệt vào `http://localhost:5194`
 
 ## Tài khoản mặc định
 
-| Vai trò | Email            | Mật khẩu |
-| ------- | ---------------- | -------- |
-| Admin   | admin@gmail.com  | admin123 |
-| Bác sĩ  | doctor@gmail.com | 123456   |
+| Vai trò      | Email             | Mật khẩu |
+| ------------ | ----------------- | -------- |
+| Admin        | admin@gmail.com   | 123456   |
+| Bác sĩ: Lâm  | doctor@gmail.com  | 123456   |
+| Bác sĩ: Tài  | doctor1@gmail.com | 123456   |
+| Bác sĩ: Loan | doctor4@gmail.com | 123456   |

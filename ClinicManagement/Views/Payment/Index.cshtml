@@ -42,7 +42,20 @@
                     <td>@item.SlotDate.ToString("dd/MM/yyyy")</td>
                     <td class="fw-500">@item.Amount.ToString("N0") ₫</td>
                     <td>
-                        @if (item.Method == "Cash")
+                        @if (item.Status == "Unpaid" && User.IsInRole("Admin"))
+                        {
+                            <form asp-action="SetMethod" method="post" style="display:flex; align-items:center; gap:6px;">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <select name="method" class="form-control" style="font-size:12px; padding:4px 8px; height:auto;">
+                                    <option value="Cash" selected="@(item.Method == "Cash")">Tiền mặt</option>
+                                    <option value="BankTransfer" selected="@(item.Method == "BankTransfer")">Chuyển khoản</option>
+                                </select>
+                                <button type="submit" class="icon-btn" title="Lưu phương thức" style="color:var(--accent);">
+                                    <i class="ti ti-device-floppy"></i>
+                                </button>
+                            </form>
+                        }
+                        else if (item.Method == "Cash")
                         {
                             <span style="display:flex; align-items:center; gap:4px; font-size:12px;">
                                 <i class="ti ti-cash" style="color:#10b981;"></i>

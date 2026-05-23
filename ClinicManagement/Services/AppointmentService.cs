@@ -155,6 +155,20 @@ public class AppointmentService
         return (true, "Xóa lịch hẹn thành công.");
     }
 
+    //admin: lấy toàn bộ lịch hẹn, đếm có bn cái đang Pending, trả về con số đó.
+    public async Task<int> GetPendingCountAsync()
+    {
+        var all = await _appointmentRepo.GetAllAsync();
+        return all.Count(a => a.Status == "Pending");
+    }
+
+    //doctor: chỉ lấy lịch hẹn của đúng bác sĩ đó, đếm có bn cái đang Pending, trả về con số đó.
+    public async Task<int> GetPendingCountByDoctorAsync(int doctorId)
+    {
+        var all = await _appointmentRepo.GetByDoctorIdAsync(doctorId);
+        return all.Count(a => a.Status == "Pending");
+    }
+
     private static AppointmentResponseDto MapToDto(Appointment a) => new()
     {
         Id = a.Id,

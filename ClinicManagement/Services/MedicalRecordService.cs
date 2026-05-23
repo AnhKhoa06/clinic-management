@@ -75,7 +75,25 @@ public class MedicalRecordService
         };
 
         await _medicalRecordRepo.CreateAsync(record);
+        
+        // Tự động tạo hóa đơn
         var created = await _medicalRecordRepo.GetByIdAsync(record.Id);
+        var medicationFee = created!.Prescriptions.Sum(p => p.Quantity * p.UnitPrice);
+        var examinationFee = created.Doctor.ExaminationFee;
+
+        var payment = new Payment
+        {
+            AppointmentId = dto.AppointmentId,
+            InvoiceCode = $"INV-{DateTime.Now:yyyyMMdd}-{dto.AppointmentId:D4}",
+            ExaminationFee = examinationFee,
+            MedicationFee = medicationFee,
+            Amount = examinationFee + medicationFee,
+            Status = "Unpaid",
+            Method = "Cash", // default, Admin đổi sau
+            Notes = null
+        };
+        await _paymentRepo.CreateAsync(payment);
+
         return (true, "Tạo hồ sơ bệnh án thành công.", MapToDto(created!));
     }
 

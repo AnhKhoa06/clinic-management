@@ -180,6 +180,22 @@ public class PaymentService
         return payments.Select(p => MapToDto(p, p.Appointment)).ToList();
     }
 
+    public async Task<(bool, string)> SetMethodAsync(int id, string method)
+    {
+        var payment = await _db.Payments.FindAsync(id);
+        if (payment == null) return (false, "Không tìm thấy hóa đơn.");
+        if (payment.Status == "Paid") return (false, "Hóa đơn đã được thanh toán.");
+
+        payment.Method = method;
+        await _db.SaveChangesAsync();
+        return (true, "Cập nhật phương thức thành công.");
+    }
+
+    public async Task<int> GetUnpaidCountAsync()
+    {
+        return await _db.Payments.CountAsync(p => p.Status == "Unpaid");
+    }
+    
     private static PaymentResponseDto MapToDto(Payment p, Appointment a) => new()
     {
         Id = p.Id,

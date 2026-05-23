@@ -342,6 +342,40 @@
                 }
             }
         });
+
+        // COUNT-UP ANIMATION
+        function countUp(el, target, duration = 1200, suffix = '') {
+            const isDecimal = String(target).includes('.');
+            const start = performance.now();
+
+            requestAnimationFrame(function step(now) {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = 1 - Math.pow(1 - progress, 4);
+                const value = ease * target;
+
+                if (isDecimal) {
+                    el.textContent = value.toFixed(1) + suffix;
+                } else {
+                    el.textContent = Math.floor(value).toLocaleString('en-US') + suffix;
+                }
+
+                if (progress < 1) requestAnimationFrame(step);
+                else el.textContent = isDecimal
+                    ? target.toFixed(1) + suffix
+                    : target.toLocaleString('en-US') + suffix;
+            });
+        }
+
+        document.querySelectorAll('.dash-card-value').forEach(el => {
+            const text = el.textContent.trim();
+            const hasVnd = text.includes('₫');
+            const raw = text.replace(/[^\d.]/g, '');
+            const target = parseFloat(raw);
+            if (!isNaN(target) && target > 0) {
+                countUp(el, target, 1200, hasVnd ? ' ₫' : '');
+            }
+        });
     </script>
     }
 }
@@ -537,6 +571,41 @@
             <i class="ti ti-chevron-right quick-card-arrow"></i>
         </a>
     </div>
+        @section Scripts {
+        <script>
+            function countUp(el, target, duration = 1200, suffix = '') {
+                const isDecimal = String(target).includes('.');
+                const start = performance.now();
+
+                requestAnimationFrame(function step(now) {
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const ease = 1 - Math.pow(1 - progress, 4);
+                    const value = ease * target;
+
+                    if (isDecimal) {
+                        el.textContent = value.toFixed(1) + suffix;
+                    } else {
+                        el.textContent = Math.floor(value).toLocaleString('en-US') + suffix;
+                    }
+
+                    if (progress < 1) requestAnimationFrame(step);
+                    else el.textContent = isDecimal
+                        ? target.toFixed(1) + suffix
+                        : target.toLocaleString('en-US') + suffix;
+                });
+            }
+
+            document.querySelectorAll('.dash-card-value').forEach(el => {
+                const raw = el.textContent.trim().replace(/[^\d.]/g, '');
+                const target = parseFloat(raw);
+                if (!isNaN(target) && target > 0) {
+                    countUp(el, target, 1200);
+                }
+            });
+        </script>
+        }
+    }
 }
 
 @if (User.IsInRole("Patient"))

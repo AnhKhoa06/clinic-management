@@ -50,49 +50,14 @@ public class PaymentController : Controller
         return View(list);
     }
 
-    // GET /Payment/Create?appointmentId=5 — Admin/Doctor tạo hóa đơn
-    [Authorize(Roles = "Admin,Doctor")]
-    public async Task<IActionResult> Create(int appointmentId)
-    {
-        var dto = new PaymentCreateDto { AppointmentId = appointmentId };
-
-        var (_, _, appointment) = await _appointmentService.GetByIdAsync(appointmentId);
-        var medicalRecord = await _medicalRecordService.GetByAppointmentIdAsync(appointmentId);
-
-        decimal examinationFee = 0m;
-        decimal medicationFee = 0m;
-
-        if (appointment != null)
-        {
-            var (_, _, doctor) = await _doctorService.GetByIdAsync(appointment.DoctorId);
-            examinationFee = doctor?.ExaminationFee ?? 0m;
-        }
-
-        medicationFee = medicalRecord?.Prescriptions?.Sum(p => p.Quantity * p.UnitPrice) ?? 0m;
-
-        ViewBag.ExaminationFee = examinationFee;
-        ViewBag.MedicationFee = medicationFee;
-        ViewBag.TotalAmount = examinationFee + medicationFee;
-
-        return View(dto);
-    }
-
-    // POST /Payment/Create
+    // POST /Payment/SetMethod — Admin chọn phương thức trước khi xác nhận
     [HttpPost]
-    [Authorize(Roles = "Admin,Doctor")]
-    public async Task<IActionResult> Create(PaymentCreateDto dto)
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> SetMethod(int id, string method)
     {
-        if (!ModelState.IsValid) return View(dto);
-
-        var (success, message, _) = await _paymentService.CreateAsync(dto);
-        if (!success)
-        {
-            ModelState.AddModelError("", message);
-            return View(dto);
-        }
-
-        TempData["Success"] = message;
-        return RedirectToAction("Index", "Payment");
+        var (success, message) = await _paymentService.SetMethodAsync(id, method);
+        TempData[success ? "Success" : "Error"] = message;
+        return RedirectToAction(nameof(Index));
     }
 
     // POST /Payment/MarkPaid/5 — Admin đánh dấu đã thanh toán
