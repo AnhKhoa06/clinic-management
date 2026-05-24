@@ -14,7 +14,18 @@
     </div>
 </div>
 
-<div class="card" style="max-width:600px; padding:28px;">
+<div class="edit-card">
+
+    <div class="patient-badge">
+        <div class="patient-avatar">
+            @(ViewBag.FullName != null ? ViewBag.FullName.ToString().Substring(0, 1).ToUpper() : "?")
+        </div>
+        <div class="patient-badge-info">
+            <span class="patient-badge-name">@ViewBag.FullName</span>
+            <span class="patient-badge-id">BN-@ViewBag.Id</span>
+        </div>
+    </div>
+
     @if (!ViewData.ModelState.IsValid)
     {
         <div class="alert alert-danger">
@@ -28,7 +39,10 @@
         </div>
     }
 
-        <form asp-action="Edit" asp-route-id="@ViewBag.Id" method="post">
+    <form asp-action="Edit" asp-route-id="@ViewBag.Id" method="post">
+
+        <div class="edit-section-label">Thông tin cơ bản</div>
+
         <div class="form-row">
             <div class="form-group">
                 <label class="form-label" data-vi="Giới tính" data-en="Gender">Giới tính</label>
@@ -45,6 +59,9 @@
             </div>
         </div>
 
+        <div class="edit-divider"></div>
+        <div class="edit-section-label">Liên hệ</div>
+
         <div class="form-group">
             <label class="form-label" data-vi="Địa chỉ" data-en="Address">Địa chỉ</label>
             <input asp-for="Address" class="form-control" placeholder="Số nhà, đường, quận/huyện, tỉnh/thành" />
@@ -53,6 +70,7 @@
         <div class="form-group">
             <label class="form-label" data-vi="Liên hệ khẩn cấp" data-en="Emergency Contact">Liên hệ khẩn cấp</label>
             <input asp-for="EmergencyContact" class="form-control" placeholder="Tên người thân — Số điện thoại" />
+            <span class="form-hint">Ví dụ: Nguyễn Thị B — 0912 345 678</span>
         </div>
 
         <div class="form-actions">

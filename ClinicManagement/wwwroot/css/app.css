@@ -2190,6 +2190,115 @@ textarea.form-control {
   color: var(--accent);
 }
 
+/* ============================================
+   Patient Edit Form — thêm vào app.css
+   ============================================ */
+
+/* Card wrapper */
+.edit-card {
+    max-width: 620px;
+    background: #ffffff;
+    border: 0.5px solid #e0ddd6;
+    border-radius: 12px;
+    padding: 1.75rem;
+}
+
+/* Badge bệnh nhân */
+.patient-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #f7f6f2;
+    border: 0.5px solid #e0ddd6;
+    border-radius: 999px;
+    padding: 5px 14px 5px 5px;
+    margin-bottom: 1.5rem;
+}
+
+.patient-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #e6f1fb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: #185fa5;
+    flex-shrink: 0;
+}
+
+.patient-badge-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+}
+
+.patient-badge-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1a1916;
+}
+
+.patient-badge-id {
+    font-size: 12px;
+    color: #888780;
+}
+
+/* Section label */
+.edit-section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #888780;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 1rem;
+    padding-bottom: 8px;
+    border-bottom: 0.5px solid #e0ddd6;
+}
+
+/* Divider giữa các section */
+.edit-divider {
+    height: 0.5px;
+    background: #e0ddd6;
+    margin: 1.25rem 0;
+}
+
+/* Form hint dưới input */
+.form-hint {
+    font-size: 12px;
+    color: #aaa9a2;
+    margin-top: 2px;
+}
+
+/* Lỗi validation từng field */
+.field-error {
+    font-size: 12px;
+    color: #e24b4a;
+    margin-top: 2px;
+    display: block;
+}
+
+/* Nút icon quay lại */
+.btn.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+/* Form focus state */
+.edit-card .form-control:focus {
+    border-color: #378add;
+    box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.12);
+    outline: none;
+}
+
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 900px) {
   .stats-grid {

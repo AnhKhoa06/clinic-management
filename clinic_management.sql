@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `clinic_management` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `clinic_management`;
--- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.46, for Win64 (x86_64)
 --
 -- Host: localhost    Database: clinic_management
 -- ------------------------------------------------------
--- Server version	8.0.42
+-- Server version	9.7.0
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,6 +16,14 @@ USE `clinic_management`;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+SET @MYSQLDUMP_TEMP_LOG_BIN = @@SESSION.SQL_LOG_BIN;
+SET @@SESSION.SQL_LOG_BIN= 0;
+
+--
+-- GTID state at the beginning of the backup 
+--
+
+SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '7c6c70ef-502a-11f1-a846-bceca0149460:1-409';
 
 --
 -- Table structure for table `__efmigrationshistory`
@@ -132,7 +140,7 @@ CREATE TABLE `doctors` (
   KEY `IX_Doctors_SpecialtyId` (`SpecialtyId`),
   CONSTRAINT `FK_Doctors_Specialties_SpecialtyId` FOREIGN KEY (`SpecialtyId`) REFERENCES `specialties` (`Id`) ON DELETE RESTRICT,
   CONSTRAINT `FK_Doctors_Users_UserId` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -141,7 +149,7 @@ CREATE TABLE `doctors` (
 
 LOCK TABLES `doctors` WRITE;
 /*!40000 ALTER TABLE `doctors` DISABLE KEYS */;
-INSERT INTO `doctors` VALUES (2,10,5,'GP-12345','Khám tai mũi họng','/uploads/avatars/doctor-2-20260515175050.jpg',1,0.000000000000000000000000000000),(3,15,1,'GP-54321','Chuyên về các bệnh nội khoa','/uploads/avatars/doctor-3-20260511110618.jpg',1,0.000000000000000000000000000000),(4,17,6,'GP-12346','Uy tín tạo nên thương hiệu','/uploads/avatars/doctor-4-20260515175433.png',1,0.000000000000000000000000000000);
+INSERT INTO `doctors` VALUES (2,10,5,'GP-12345','Khám tai mũi họng','/uploads/avatars/doctor-2-20260515175050.jpg',1,0.000000000000000000000000000000),(3,15,1,'GP-54321','Chuyên về các bệnh nội khoa','/uploads/avatars/doctor-3-20260511110618.jpg',1,0.000000000000000000000000000000),(4,17,6,'GP-12346','Uy tín tạo nên thương hiệu','/uploads/avatars/doctor-4-20260515175433.png',1,0.000000000000000000000000000000),(5,21,4,'GP-12347','Uy Tín Tạo Lên Thương Hiệu','/uploads/avatars/doctor-5-20260524175307.jpg',1,0.000000000000000000000000000000);
 /*!40000 ALTER TABLE `doctors` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -211,6 +219,37 @@ INSERT INTO `medications` VALUES (1,'Panadol','haha','Thuốc hạ sốt',1,0.00
 UNLOCK TABLES;
 
 --
+-- Table structure for table `notifications`
+--
+
+DROP TABLE IF EXISTS `notifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `notifications` (
+  `Id` int NOT NULL AUTO_INCREMENT,
+  `UserId` int DEFAULT NULL,
+  `Role` longtext,
+  `Title` longtext NOT NULL,
+  `Message` longtext NOT NULL,
+  `IsRead` tinyint(1) NOT NULL,
+  `CreatedAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `Link` longtext,
+  PRIMARY KEY (`Id`),
+  KEY `IX_Notifications_UserId_IsRead` (`UserId`,`IsRead`),
+  CONSTRAINT `FK_Notifications_Users_UserId` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notifications`
+--
+
+LOCK TABLES `notifications` WRITE;
+/*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
+/*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `patients`
 --
 
@@ -228,7 +267,7 @@ CREATE TABLE `patients` (
   PRIMARY KEY (`Id`),
   UNIQUE KEY `IX_Patients_UserId` (`UserId`),
   CONSTRAINT `FK_Patients_Users_UserId` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -237,7 +276,7 @@ CREATE TABLE `patients` (
 
 LOCK TABLES `patients` WRITE;
 /*!40000 ALTER TABLE `patients` DISABLE KEYS */;
-INSERT INTO `patients` VALUES (1,7,'2007-06-17','Nữ','Sài Gòn',NULL,'Anh 5 - 0987654321'),(2,8,'2003-06-16','Nam','Gia Lai',NULL,'Anh 2 - 0987654321'),(3,9,'2003-05-22','Nam','Bình Định',NULL,'Anh 2 - 0984357454'),(4,11,'2005-06-24','Nam','Quy Nhơn',NULL,'Anh 3 - 09876555443'),(5,12,'2004-03-04','Nữ','Bình Định',NULL,'Chị 2 - 0987867454'),(6,13,'2003-05-17','Nam','Quận 1',NULL,'Ba - 0988677544'),(7,14,'2004-08-12','Nam','TP. Hồ Chí Minh',NULL,'Chị 3 - 0123445556'),(8,16,'2005-06-05','Nam','Gia Lai',NULL,'Anh 2 - 0987654321'),(9,18,'2004-05-17','Nam','TP. Hồ Chí Minh',NULL,'Anh 5 - 0987654321'),(10,19,NULL,NULL,NULL,NULL,NULL),(11,20,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `patients` VALUES (1,7,'2007-06-17','Nữ','Sài Gòn',NULL,'Anh 5 - 0987654321'),(2,8,'2003-06-16','Nam','Gia Lai',NULL,'Anh 2 - 0987654321'),(3,9,'2003-05-22','Nam','Bình Định',NULL,'Anh 2 - 0984357454'),(4,11,'2005-06-24','Nam','Quy Nhơn',NULL,'Anh 3 - 09876555443'),(5,12,'2004-03-04','Nữ','Bình Định',NULL,'Chị 2 - 0987867454'),(6,13,'2003-05-17','Nam','Quận 1',NULL,'Ba - 0988677544'),(7,14,'2004-08-12','Nam','TP. Hồ Chí Minh',NULL,'Chị 3 - 0123445556'),(8,16,'2005-06-05','Nam','Gia Lai',NULL,'Anh 2 - 0987654321'),(9,18,'2004-05-17','Nam','TP. Hồ Chí Minh',NULL,'Anh 5 - 0987654321'),(10,19,NULL,NULL,NULL,NULL,NULL),(11,20,NULL,NULL,NULL,NULL,NULL),(12,22,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `patients` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -422,7 +461,7 @@ CREATE TABLE `users` (
   `CreatedAt` datetime(6) NOT NULL,
   PRIMARY KEY (`Id`),
   UNIQUE KEY `IX_Users_Email` (`Email`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -431,7 +470,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'string','user@example.com','$2a$12$gy/Cv8WoLAy5Op3F28Q9GOdOp2jQ0WS6wvwQwusEDg6eQehQOsB0S','string','Patient',1,'2026-05-07 12:19:29.041070'),(5,'Admin','admin@gmail.com','$2a$12$NuNJS8kKosGcJJbhCViIFeRkp8wBYvhJIQMvFbGD4ryvBaTR1U.X6','0987654321','Admin',1,'2026-05-07 14:51:39.594877'),(6,'khoaanh','anhkhoa@gmail.com','$2a$12$Cz/tgZw4IL6XU/yjVzZoK.QJ24SxdPGyU2cyrJZ1c14/v4bYpCw1K','0123456789','Patient',1,'2026-05-07 15:28:52.489903'),(7,'taotenkhoa','benhnhan@gmail.com','$2a$12$bs1R7UYuUk5VycIM4fn4OeIE3TpGFPruJ5lxXVkz.h.kr/sVvP4xe','0123456789','Patient',1,'2026-05-08 01:12:55.719525'),(8,'HoangLich','hoanglich@gmail.com','$2a$12$/cu01CcRQyzYHebphzHoKuPGQdBUWF18h5.DqRV.8YNbPfJYt1SZe','099887766','Patient',1,'2026-05-08 04:14:24.727859'),(9,'Quy Nhơn','quynhon@gmail.com','$2a$12$xowgms.cOdKePJ69Mc0av.HtUERHFSPM8rE9dtwzwA1xSCj3pt24C','+84357937045','Patient',1,'2026-05-09 14:23:44.274488'),(10,'Vũ Sơn Lâm','doctor@gmail.com','$2a$12$DeguiOfARv6tvqieTC/k/.1lAvVZ/H3muZu53M3djDyZcJ0wrNjV6','0123456789','Doctor',1,'2026-05-09 15:03:57.382210'),(11,'105-119 Khoa Lê Anh','anhkhoale2406@gmail.com','$2a$12$LdVXd.AdvN/GL3zHI9GI3ueo559PM0k4I3m7G1hilwl5SVArCwYWS','06655443322','Patient',1,'2026-05-09 15:53:08.030326'),(12,'Anh Khoa','levanthanhcathiep@gmail.com','$2a$12$LgY.TEGECiQWagcv63PYfOZvRVjAUXjMDiIhe8E363i8lLz99mpxe','03579753135','Patient',1,'2026-05-10 03:18:19.443508'),(13,'Lịch Bùi Hoàng','lichhoang505@gmail.com','$2a$12$InLybiZEYheQDcpmX1XmTOT5x.CTTlWygeaaEd7N5xSrcsLDAQJOK','','Patient',1,'2026-05-10 03:36:03.475271'),(14,'Anh Khoa Lê','anhkhoa24605@gmail.com','$2a$12$DH7vyectlUYXo8zVe4z17.2dzmLGfw4Ma8f7kV0uMGyvzONDJKFhO','06543678923','Patient',1,'2026-05-10 11:41:53.042724'),(15,'Nguyễn Hữu Tài','doctor1@gmail.com','$2a$12$jxnIoN2W22rmbMDtq3hJBuJVz1SmRX6eB9Wq7PMVmKpJKJTAV9sDC','0987654321','Doctor',1,'2026-05-11 03:51:54.973111'),(16,'phuc van','vphuc11052005@gmail.com','$2a$12$9qHZ/uD8Ak8rfUS7dnI6UeAH0hZipnrFR/Rxwn6Jq5IHScrJFhTg.','','Patient',1,'2026-05-13 06:47:35.196352'),(17,'Nguyễn Thị Loan','doctor4@gmail.com','$2a$12$vHUCKgCmf9.zHPrxZauiu.bkVncLjnYz/egIlGqR2wcvJq7oeQ3iS','03579753135','Doctor',1,'2026-05-15 10:54:33.377886'),(18,'SoundCloud Music','vo2449199@gmail.com','$2a$12$k0N72k7genpr1TNjzEsP.OUiQVwOddzPPlSwgOxa9tEWT1vwoIDB6','','Patient',1,'2026-05-15 14:32:44.381863'),(19,'Mai Thanh Tu','tu4651170077@st.qnu.edu.vn','$2a$12$sZrxr6DRDeF2hcBDksU9OODgKNacOisbBRO0YW4aW6CESe2NF09gG','','Patient',1,'2026-05-19 06:14:22.233981'),(20,'Kieuluy88 Ds','dslekieu88@gmail.com','$2a$12$IiCSoUtIK7W41mwbpL0WXuSWvsrulYjE0eax5YufEuJrIunPZemIi','','Patient',1,'2026-05-22 11:23:34.481526');
+INSERT INTO `users` VALUES (1,'string','user@example.com','$2a$12$gy/Cv8WoLAy5Op3F28Q9GOdOp2jQ0WS6wvwQwusEDg6eQehQOsB0S','string','Patient',1,'2026-05-07 12:19:29.041070'),(5,'Admin','admin@gmail.com','$2a$12$NuNJS8kKosGcJJbhCViIFeRkp8wBYvhJIQMvFbGD4ryvBaTR1U.X6','0987654321','Admin',1,'2026-05-07 14:51:39.594877'),(6,'khoaanh','anhkhoa@gmail.com','$2a$12$Cz/tgZw4IL6XU/yjVzZoK.QJ24SxdPGyU2cyrJZ1c14/v4bYpCw1K','0123456789','Patient',1,'2026-05-07 15:28:52.489903'),(7,'taotenkhoa','benhnhan@gmail.com','$2a$12$bs1R7UYuUk5VycIM4fn4OeIE3TpGFPruJ5lxXVkz.h.kr/sVvP4xe','0123456789','Patient',1,'2026-05-08 01:12:55.719525'),(8,'HoangLich','hoanglich@gmail.com','$2a$12$/cu01CcRQyzYHebphzHoKuPGQdBUWF18h5.DqRV.8YNbPfJYt1SZe','099887766','Patient',1,'2026-05-08 04:14:24.727859'),(9,'Quy Nhơn','quynhon@gmail.com','$2a$12$xowgms.cOdKePJ69Mc0av.HtUERHFSPM8rE9dtwzwA1xSCj3pt24C','+84357937045','Patient',1,'2026-05-09 14:23:44.274488'),(10,'Vũ Sơn Lâm','doctor@gmail.com','$2a$12$DeguiOfARv6tvqieTC/k/.1lAvVZ/H3muZu53M3djDyZcJ0wrNjV6','0123456789','Doctor',1,'2026-05-09 15:03:57.382210'),(11,'105-119 Khoa Lê Anh','anhkhoale2406@gmail.com','$2a$12$LdVXd.AdvN/GL3zHI9GI3ueo559PM0k4I3m7G1hilwl5SVArCwYWS','06655443322','Patient',1,'2026-05-09 15:53:08.030326'),(12,'Anh Khoa','levanthanhcathiep@gmail.com','$2a$12$LgY.TEGECiQWagcv63PYfOZvRVjAUXjMDiIhe8E363i8lLz99mpxe','03579753135','Patient',1,'2026-05-10 03:18:19.443508'),(13,'Lịch Bùi Hoàng','lichhoang505@gmail.com','$2a$12$InLybiZEYheQDcpmX1XmTOT5x.CTTlWygeaaEd7N5xSrcsLDAQJOK','','Patient',1,'2026-05-10 03:36:03.475271'),(14,'Anh Khoa Lê','anhkhoa24605@gmail.com','$2a$12$DH7vyectlUYXo8zVe4z17.2dzmLGfw4Ma8f7kV0uMGyvzONDJKFhO','06543678923','Patient',1,'2026-05-10 11:41:53.042724'),(15,'Nguyễn Hữu Tài','doctor1@gmail.com','$2a$12$jxnIoN2W22rmbMDtq3hJBuJVz1SmRX6eB9Wq7PMVmKpJKJTAV9sDC','0987654321','Doctor',1,'2026-05-11 03:51:54.973111'),(16,'phuc van','vphuc11052005@gmail.com','$2a$12$9qHZ/uD8Ak8rfUS7dnI6UeAH0hZipnrFR/Rxwn6Jq5IHScrJFhTg.','','Patient',1,'2026-05-13 06:47:35.196352'),(17,'Nguyễn Thị Loan','doctor4@gmail.com','$2a$12$vHUCKgCmf9.zHPrxZauiu.bkVncLjnYz/egIlGqR2wcvJq7oeQ3iS','03579753135','Doctor',1,'2026-05-15 10:54:33.377886'),(18,'SoundCloud Music','vo2449199@gmail.com','$2a$12$k0N72k7genpr1TNjzEsP.OUiQVwOddzPPlSwgOxa9tEWT1vwoIDB6','','Patient',1,'2026-05-15 14:32:44.381863'),(19,'Mai Thanh Tu','tu4651170077@st.qnu.edu.vn','$2a$12$sZrxr6DRDeF2hcBDksU9OODgKNacOisbBRO0YW4aW6CESe2NF09gG','','Patient',1,'2026-05-19 06:14:22.233981'),(20,'Kieuluy88 Ds','dslekieu88@gmail.com','$2a$12$IiCSoUtIK7W41mwbpL0WXuSWvsrulYjE0eax5YufEuJrIunPZemIi','','Patient',1,'2026-05-22 11:23:34.481526'),(21,'Trần Văn Bình','doctor2@gmail.com','$2a$12$4Ob4qzkWcNQgdvOoqCEsvuUGktjFaPH15zltBNU.NOovnBLFlS.Ma','0910231333','Doctor',1,'2026-05-24 10:53:07.119502'),(22,'105-146-Bùi Hoàng Lịch','hoanglich505@gmail.com','$2a$12$blalgYpQZpaG.DpRrLu/FeVHdZ8PLNfE2pj7BbnlQTYU8yKbWxoDC','','Patient',1,'2026-05-24 10:53:42.653597');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -470,6 +509,7 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'clinic_management'
 --
+SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -480,4 +520,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-23 11:01:24
+-- Dump completed on 2026-05-24 17:57:59
