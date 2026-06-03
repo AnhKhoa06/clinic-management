@@ -132,13 +132,13 @@ public class PaymentController : Controller
             var successMsg = Uri.EscapeDataString("Thanh toán thành công!");
 
             if (success)
-                return Redirect($"http://localhost:5194/Payment/MyPayments?toast=success&msg={successMsg}");
+                return Redirect($"{Request.Scheme}://{Request.Host}/Payment/MyPayments?toast=success&msg={successMsg}");
             else
-                return Redirect($"http://localhost:5194/Payment/MyPayments?toast=error&msg={Uri.EscapeDataString(message)}");
+                return Redirect($"{Request.Scheme}://{Request.Host}/Payment/MyPayments?toast=error&msg={Uri.EscapeDataString(message)}");
         }
         catch (Exception ex)
         {
-            return Redirect($"http://localhost:5194/Payment/MyPayments?toast=error&msg={Uri.EscapeDataString(ex.Message)}");
+            return Redirect($"{Request.Scheme}://{Request.Host}/Payment/MyPayments?toast=error&msg={Uri.EscapeDataString(ex.Message)}");
         }
     }
 }
