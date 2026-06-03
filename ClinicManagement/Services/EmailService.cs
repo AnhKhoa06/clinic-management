@@ -145,7 +145,7 @@ public class EmailService
             };
 
             using var smtp = new SmtpClient();
-            await smtp.ConnectAsync(host, port, SecureSocketOptions.StartTls);
+            await smtp.ConnectAsync(host, port, SecureSocketOptions.SslOnConnect);
             await smtp.AuthenticateAsync(username, password);
             await smtp.SendAsync(message);
             await smtp.DisconnectAsync(true);
