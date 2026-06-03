@@ -23,7 +23,6 @@ public class EmailService
         decimal amount,
         string method)
     {
-        Console.WriteLine($"[EmailService] Bắt đầu gửi mail tới {toEmail}");
         try
         {
             var host     = _config["Email:Host"]!;
@@ -146,15 +145,15 @@ public class EmailService
             };
 
             using var smtp = new SmtpClient();
-            await smtp.ConnectAsync(host, port, SecureSocketOptions.SslOnConnect);
+            await smtp.ConnectAsync(host, port, SecureSocketOptions.StartTls);
             await smtp.AuthenticateAsync(username, password);
             await smtp.SendAsync(message);
             await smtp.DisconnectAsync(true);
-            Console.WriteLine($"[EmailService] Gửi mail thành công tới {toEmail}"); // thêm vào đây
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[EmailService] FAILED: {ex.GetType().Name} | {ex.Message} | {ex.InnerException?.Message}");
+            Console.WriteLine($"[EmailService] Gửi mail thất bại: {ex.Message}");
+            // Fail silently — không ảnh hưởng thanh toán
         }
     }
 }
