@@ -153,8 +153,7 @@ public class EmailService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[EmailService] Gửi mail thất bại: {ex.GetType().Name} | {ex.Message} | {ex.InnerException?.Message}");
-            // bỏ throw
+            Console.WriteLine($"[EmailService] FAILED: {ex.GetType().Name} | {ex.Message} | {ex.InnerException?.Message}");
         }
     }
 }
