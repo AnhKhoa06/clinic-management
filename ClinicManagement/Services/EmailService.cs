@@ -23,6 +23,7 @@ public class EmailService
         decimal amount,
         string method)
     {
+        Console.WriteLine($"[EmailService] Bắt đầu gửi mail tới {toEmail}");
         try
         {
             var host     = _config["Email:Host"]!;
