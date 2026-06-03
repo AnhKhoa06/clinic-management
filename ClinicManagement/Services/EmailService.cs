@@ -152,8 +152,8 @@ public class EmailService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[EmailService] Gửi mail thất bại: {ex.Message}");
-            // Fail silently — không ảnh hưởng thanh toán
+            Console.WriteLine($"[EmailService] Gửi mail thất bại: {ex.GetType().Name} | {ex.Message} | {ex.InnerException?.Message}");
+            throw; // tạm thời throw để thấy lỗi
         }
     }
 }
