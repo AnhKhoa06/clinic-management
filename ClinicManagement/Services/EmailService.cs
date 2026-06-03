@@ -150,6 +150,7 @@ public class EmailService
             await smtp.AuthenticateAsync(username, password);
             await smtp.SendAsync(message);
             await smtp.DisconnectAsync(true);
+            Console.WriteLine($"[EmailService] Gửi mail thành công tới {toEmail}"); // thêm vào đây
         }
         catch (Exception ex)
         {
