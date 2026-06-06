@@ -14,30 +14,30 @@ public class EmailService
         _config = config;
         _http = httpFactory.CreateClient();
     }
+
     public async Task SendPaymentSuccessAsync(
         string toEmail, string patientName, string invoiceCode,
         string doctorName, string slotDate, decimal amount, string method)
     {
         try
         {
-            var apiKey = _config["Resend:ApiKey"] ?? _config["Resend__ApiKey"] ?? "";
-            Console.WriteLine($"[EmailService] ApiKey length: {apiKey.Length}, gửi tới: {toEmail}");
+            var apiKey = _config["Brevo:ApiKey"] ?? _config["Brevo__ApiKey"] ?? "";
+            Console.WriteLine($"[EmailService] Gửi tới {toEmail}, key length: {apiKey.Length}");
 
             var payload = new
             {
-                from = "Phòng Khám <onboarding@resend.dev>",  // dùng domain mặc định của Resend
-                to = new[] { toEmail },
+                sender = new { email = "anhkhoale2406@gmail.com", name = "Phòng Khám" },
+                to = new[] { new { email = toEmail, name = patientName } },
                 subject = $"Xác nhận thanh toán thành công – {invoiceCode}",
-                html = BuildEmailHtml(patientName, invoiceCode, doctorName, slotDate, amount, method)
+                htmlContent = BuildEmailHtml(patientName, invoiceCode, doctorName, slotDate, amount, method)
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.resend.com/emails");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.brevo.com/v3/smtp/email");
+            request.Headers.Add("api-key", apiKey);
             request.Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
 
             var response = await _http.SendAsync(request);
             var body = await response.Content.ReadAsStringAsync();
-
             Console.WriteLine($"[EmailService] Status: {response.StatusCode}, Body: {body}");
         }
         catch (Exception ex)
