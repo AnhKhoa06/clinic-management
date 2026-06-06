@@ -56,16 +56,18 @@
             <span data-vi="Lưu lượng bệnh nhân" data-en="Patient Flow">Lưu lượng bệnh nhân</span>
         </div>
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
-            <p style="font-size:12px; color:var(--text-secondary); margin:0;"
-            data-vi="7 ngày gần nhất" data-en="Last 7 days">7 ngày gần nhất</p>
+            <p style="font-size:12px; color:var(--text-secondary); margin:0;" data-vi="7 ngày gần nhất"
+               data-en="Last 7 days">7 ngày gần nhất</p>
             <div style="display:flex; gap:16px;">
                 <span style="font-size:12px; color:var(--text-secondary);">
-                    <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#1a5cbf; margin-right:5px;"></span>
+                    <span
+                    style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#1a5cbf; margin-right:5px;"></span>
                     <span data-vi="Tổng" data-en="Total">Tổng</span>:
                     <strong style="color:var(--text-primary);">@ViewBag.ChartTotalSum</strong>
                 </span>
                 <span style="font-size:12px; color:var(--text-secondary);">
-                    <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#22c55e; margin-right:5px;"></span>
+                    <span
+                    style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#22c55e; margin-right:5px;"></span>
                     <span data-vi="Hoàn thành" data-en="Completed">Hoàn thành</span>:
                     <strong style="color:var(--text-primary);">@ViewBag.ChartCompletedSum</strong>
                 </span>
@@ -84,7 +86,8 @@
                 <span data-vi="Lịch hẹn hôm nay" data-en="Today's Appointments">Lịch hẹn hôm nay</span>
             </div>
             @{
-                var todayApts = ViewBag.TodayAppointments as List<ClinicManagement.DTOs.Appointment.AppointmentResponseDto> ?? new();
+                var todayApts = ViewBag.TodayAppointments as List<ClinicManagement.DTOs.Appointment.AppointmentResponseDto> ??
+        new();
             }
             @if (!todayApts.Any())
             {
@@ -98,7 +101,8 @@
                 <div style="display:flex; flex-direction:column; gap:8px;">
                     @foreach (var apt in todayApts)
                     {
-                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--setting-card-bg); border-radius:8px;">
+                        <div
+                            style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--setting-card-bg); border-radius:8px;">
                             <div style="font-size:13px; font-weight:600; color:var(--accent); min-width:45px;">
                                 @apt.SlotTime.ToString("HH:mm")
                             </div>
@@ -157,14 +161,17 @@
                 <div style="display:flex; flex-direction:column; gap:10px;">
                     @foreach (var doc in topDoctors)
                     {
-                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--setting-card-bg); border-radius:8px;">
+                        <div
+                            style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--setting-card-bg); border-radius:8px;">
                             @if (!string.IsNullOrEmpty(doc.AvatarUrl))
                             {
-                                <img src="@doc.AvatarUrl" style="width:36px; height:36px; border-radius:50%; object-fit:cover; flex-shrink:0;" />
+                                <img src="@doc.AvatarUrl"
+                                     style="width:36px; height:36px; border-radius:50%; object-fit:cover; flex-shrink:0;" />
                             }
                             else
                             {
-                                <div style="width:36px; height:36px; border-radius:50%; background:var(--accent-light); display:flex; align-items:center; justify-content:center; font-weight:600; color:var(--accent); flex-shrink:0;">
+                                <div
+                                    style="width:36px; height:36px; border-radius:50%; background:var(--accent-light); display:flex; align-items:center; justify-content:center; font-weight:600; color:var(--accent); flex-shrink:0;">
                                     @doc.FullName[0]
                                 </div>
                             }
@@ -221,169 +228,171 @@
     </div>
 
     @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-    <script>
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        const gridColor  = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)';
-        const labelColor = isDark ? '#6b7280' : '#9ca3af';
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+        <script>
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)';
+            const labelColor = isDark ? '#6b7280' : '#9ca3af';
 
-        const ctx = document.getElementById('patientFlowChart').getContext('2d');
+            const ctx = document.getElementById('patientFlowChart').getContext('2d');
 
-        const gradientBlue = ctx.createLinearGradient(0, 0, 0, 220);
-        gradientBlue.addColorStop(0, 'rgba(26,92,191,0.18)');
-        gradientBlue.addColorStop(1, 'rgba(26,92,191,0)');
+            const gradientBlue = ctx.createLinearGradient(0, 0, 0, 220);
+            gradientBlue.addColorStop(0, 'rgba(26,92,191,0.18)');
+            gradientBlue.addColorStop(1, 'rgba(26,92,191,0)');
 
-        const gradientGreen = ctx.createLinearGradient(0, 0, 0, 220);
-        gradientGreen.addColorStop(0, 'rgba(34,197,94,0.15)');
-        gradientGreen.addColorStop(1, 'rgba(34,197,94,0)');
+            const gradientGreen = ctx.createLinearGradient(0, 0, 0, 220);
+            gradientGreen.addColorStop(0, 'rgba(34,197,94,0.15)');
+            gradientGreen.addColorStop(1, 'rgba(34,197,94,0)');
 
-        new Chart(ctx, {
+            new Chart(ctx, {
             type: 'line',
             data: {
-                labels: @Html.Raw(ViewBag.ChartLabels),
-                datasets: [
-                    {
-                        label: 'Tổng lịch hẹn',
-                        data: @Html.Raw(ViewBag.ChartTotal),
-                        borderColor: '#1a5cbf',
-                        backgroundColor: gradientBlue,
-                        borderWidth: 2.5,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#1a5cbf',
-                        pointBorderWidth: 2,
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        pointHoverBackgroundColor: '#1a5cbf',
-                        tension: 0.4,
-                        fill: true
-                    },
-                    {
-                        label: 'Đã hoàn thành',
-                        data: @Html.Raw(ViewBag.ChartCompleted),
-                        borderColor: '#22c55e',
-                        backgroundColor: gradientGreen,
-                        borderWidth: 2.5,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#22c55e',
-                        pointBorderWidth: 2,
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        pointHoverBackgroundColor: '#22c55e',
-                        tension: 0.4,
-                        fill: true
-                    }
-                ]
+            labels: @Html.Raw(ViewBag.ChartLabels),
+            datasets: [
+            {
+            label: 'Tổng lịch hẹn',
+            data: @Html.Raw(ViewBag.ChartTotal),
+            borderColor: '#1a5cbf',
+            backgroundColor: gradientBlue,
+            borderWidth: 2.5,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: '#1a5cbf',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            pointHoverBackgroundColor: '#1a5cbf',
+            tension: 0.4,
+            fill: true
+            },
+            {
+            label: 'Đã hoàn thành',
+            data: @Html.Raw(ViewBag.ChartCompleted),
+            borderColor: '#22c55e',
+            backgroundColor: gradientGreen,
+            borderWidth: 2.5,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: '#22c55e',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            pointHoverBackgroundColor: '#22c55e',
+            tension: 0.4,
+            fill: true
+            }
+            ]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    mode: 'index',
-                    intersect: false
-                },
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        align: 'center',
-                        labels: {
-                            color: isDark ? '#9ca3af' : '#6b7280',
-                            font: { size: 12, family: 'Inter, sans-serif' },
-                            boxWidth: 10,
-                            boxHeight: 10,
-                            borderRadius: 3,
-                            usePointStyle: true,
-                            pointStyle: 'circle',
-                            padding: 20
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: isDark ? '#1e2d45' : '#fff',
-                        titleColor: isDark ? '#f3f4f6' : '#111827',
-                        bodyColor: isDark ? '#9ca3af' : '#6b7280',
-                        borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)',
-                        borderWidth: 1,
-                        padding: 12,
-                        cornerRadius: 10,
-                        titleFont: { size: 13, weight: '600', family: 'Inter, sans-serif' },
-                        bodyFont: { size: 12, family: 'Inter, sans-serif' },
-                        callbacks: {
-                            title: (items) => `${items[0].label}`,
-                            label: (item) => `  ${item.dataset.label}: ${item.parsed.y} lịch hẹn`
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            color: gridColor,
-                            drawBorder: false
-                        },
-                        ticks: {
-                            color: labelColor,
-                            font: { size: 12, family: 'Inter, sans-serif' },
-                            padding: 8
-                        },
-                        border: { display: false }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: gridColor,
-                            drawBorder: false
-                        },
-                        ticks: {
-                            color: labelColor,
-                            font: { size: 12, family: 'Inter, sans-serif' },
-                            stepSize: 1,
-                            padding: 8
-                        },
-                        border: { display: false }
-                    }
-                }
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+            mode: 'index',
+            intersect: false
+            },
+            plugins: {
+            legend: {
+            position: 'top',
+            align: 'center',
+            labels: {
+            color: isDark ? '#9ca3af' : '#6b7280',
+            font: { size: 12, family: 'Inter, sans-serif' },
+            boxWidth: 10,
+            boxHeight: 10,
+            borderRadius: 3,
+            usePointStyle: true,
+            pointStyle: 'circle',
+            padding: 20
             }
-        });
+            },
+            tooltip: {
+            backgroundColor: isDark ? '#1e2d45' : '#fff',
+            titleColor: isDark ? '#f3f4f6' : '#111827',
+            bodyColor: isDark ? '#9ca3af' : '#6b7280',
+            borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)',
+            borderWidth: 1,
+            padding: 12,
+            cornerRadius: 10,
+            titleFont: { size: 13, weight: '600', family: 'Inter, sans-serif' },
+            bodyFont: { size: 12, family: 'Inter, sans-serif' },
+            callbacks: {
+            title: (items) => `${items[0].label}`,
+            label: (item) => `  ${item.dataset.label}: ${item.parsed.y} lịch hẹn`
+            }
+            }
+            },
+            scales: {
+            x: {
+            grid: {
+            color: gridColor,
+            drawBorder: false
+            },
+            ticks: {
+            color: labelColor,
+            font: { size: 12, family: 'Inter, sans-serif' },
+            padding: 8
+            },
+            border: { display: false }
+            },
+            y: {
+            beginAtZero: true,
+            grid: {
+            color: gridColor,
+            drawBorder: false
+            },
+            ticks: {
+            color: labelColor,
+            font: { size: 12, family: 'Inter, sans-serif' },
+            stepSize: 1,
+            padding: 8
+            },
+            border: { display: false }
+            }
+            }
+            }
+            });
 
-        // COUNT-UP ANIMATION
-        function countUp(el, target, duration = 1200, suffix = '') {
+            // COUNT-UP ANIMATION
+            function countUp(el, target, duration = 1200, suffix = '') {
             const isDecimal = String(target).includes('.');
             const start = performance.now();
 
             requestAnimationFrame(function step(now) {
-                const elapsed = now - start;
-                const progress = Math.min(elapsed / duration, 1);
-                const ease = 1 - Math.pow(1 - progress, 4);
-                const value = ease * target;
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 4);
+            const value = ease * target;
 
-                if (isDecimal) {
-                    el.textContent = value.toFixed(1) + suffix;
-                } else {
-                    el.textContent = Math.floor(value).toLocaleString('en-US') + suffix;
-                }
+            if (isDecimal) {
+            el.textContent = value.toFixed(1) + suffix;
+            } else {
+            el.textContent = Math.floor(value).toLocaleString('en-US') + suffix;
+            }
 
-                if (progress < 1) requestAnimationFrame(step);
-                else el.textContent = isDecimal
-                    ? target.toFixed(1) + suffix
-                    : target.toLocaleString('en-US') + suffix;
+            if (progress < 1) requestAnimationFrame(step);
+            else el.textContent = isDecimal
+            ? target.toFixed(1) + suffix
+            : target.toLocaleString('en-US') + suffix;
             });
-        }
+            }
 
-        document.querySelectorAll('.dash-card-value').forEach(el => {
+            document.querySelectorAll('.dash-card-value').forEach(el => {
             const text = el.textContent.trim();
             const hasVnd = text.includes('₫');
             const raw = text.replace(/[^\d.]/g, '');
             const target = parseFloat(raw);
             if (!isNaN(target) && target > 0) {
-                countUp(el, target, 1200, hasVnd ? ' ₫' : '');
+            countUp(el, target, 1200, hasVnd ? ' ₫' : '');
             }
-        });
-    </script>
+            });
+        </script>
     }
 }
 
 @if (User.IsInRole("Doctor"))
 {
-    var todayApts = ViewBag.DoctorTodayAppointments as List<ClinicManagement.DTOs.Appointment.AppointmentResponseDto> ?? new();
-    var upcomingApts = ViewBag.DoctorUpcomingAppointments as List<ClinicManagement.DTOs.Appointment.AppointmentResponseDto> ?? new();
+    var todayApts = ViewBag.DoctorTodayAppointments as List<ClinicManagement.DTOs.Appointment.AppointmentResponseDto> ??
+new();
+    var upcomingApts = ViewBag.DoctorUpcomingAppointments as List<ClinicManagement.DTOs.Appointment.AppointmentResponseDto>
+?? new();
 
     <!-- Stat Cards -->
     <div class="stats-grid">
@@ -412,7 +421,7 @@
             <div class="dash-card-header">
                 <div class="dash-card-icon green"><i class="ti ti-clipboard-text"></i></div>
                 <span class="dash-card-badge green">
-                    <i class="ti ti-circle-check"></i> 
+                    <i class="ti ti-circle-check"></i>
                     <span data-vi="Hoàn thành" data-en="Done">Hoàn thành</span>
                 </span>
             </div>
@@ -424,7 +433,7 @@
             <div class="dash-card-header">
                 <div class="dash-card-icon purple"><i class="ti ti-star-filled"></i></div>
                 <span class="dash-card-badge purple">
-                    <i class="ti ti-star"></i> 
+                    <i class="ti ti-star"></i>
                     <span data-vi="Đánh giá" data-en="Rating">Đánh giá</span>
                 </span>
             </div>
@@ -453,7 +462,8 @@
                 <div style="display:flex; flex-direction:column; gap:10px;">
                     @foreach (var apt in todayApts)
                     {
-                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-secondary); border-radius:8px;">
+                        <div
+                            style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-secondary); border-radius:8px;">
                             <div style="font-size:13px; font-weight:600; color:var(--accent); min-width:45px;">
                                 @apt.SlotTime.ToString("HH:mm")
                             </div>
@@ -498,316 +508,328 @@
             {
                 <div class="empty-state" style="padding:20px 0;">
                     <i class="ti ti-calendar-off"></i>
-                    <p data-vi="Không có lịch hẹn trong tuần." data-en="No appointments this week.">Không có lịch hẹn trong tuần.</p>
-                </div>
-            }
+                    <p data-vi="Không có lịch hẹn trong tuần." data-en="No appointments this week.">Không có lịch hẹn trong
+                        tuần.</p>
+                    </div>
+                }
             else
-            {
-                <div style="display:flex; flex-direction:column; gap:10px;">
-                    @foreach (var apt in upcomingApts)
-                    {
-                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-secondary); border-radius:8px;">
-                            <div style="text-align:center; min-width:40px;">
-                                <div style="font-size:16px; font-weight:600; color:var(--accent);">@apt.SlotDate.Day</div>
-                                <div style="font-size:11px; color:var(--text-secondary);">@apt.SlotDate.ToString("MMM")</div>
+                {
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        @foreach (var apt in upcomingApts)
+                        {
+                            <div
+                                style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-secondary); border-radius:8px;">
+                                <div style="text-align:center; min-width:40px;">
+                                    <div style="font-size:16px; font-weight:600; color:var(--accent);">@apt.SlotDate.Day</div>
+                                    <div style="font-size:11px; color:var(--text-secondary);">@apt.SlotDate.ToString("MMM")</div>
+                                </div>
+                                <div style="flex:1;">
+                                    <div style="font-size:13px; font-weight:500;">@apt.PatientName</div>
+                                    <div style="font-size:12px; color:var(--text-secondary);">@apt.SlotTime.ToString("HH:mm")</div>
+                                </div>
+                                @if (apt.Status == "Pending")
+                                {
+                                    <span class="status status-pending" style="font-size:11px;">
+                                        <span class="status-dot"></span>Chờ
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="status status-done" style="font-size:11px;">
+                                        <span class="status-dot"></span>Xác nhận
+                                    </span>
+                                }
                             </div>
-                            <div style="flex:1;">
-                                <div style="font-size:13px; font-weight:500;">@apt.PatientName</div>
-                                <div style="font-size:12px; color:var(--text-secondary);">@apt.SlotTime.ToString("HH:mm")</div>
-                            </div>
-                            @if (apt.Status == "Pending")
-                            {
-                                <span class="status status-pending" style="font-size:11px;">
-                                    <span class="status-dot"></span>Chờ
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="status status-done" style="font-size:11px;">
-                                    <span class="status-dot"></span>Xác nhận
-                                </span>
-                            }
-                        </div>
-                    }
-                </div>
-            }
+                        }
+                    </div>
+                }
+            </div>
+
         </div>
 
-    </div>
-
-    <!-- Quick Access -->
-    <span class="section-label" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
-    <div class="quick-grid-4">
-        <a asp-controller="Appointment" asp-action="Index" class="card quick-card">
-            <div class="stat-icon amber"><i class="ti ti-calendar-check"></i></div>
-            <div class="quick-card-body">
-                <span class="quick-card-label" data-vi="Lịch hẹn" data-en="Appointments">Lịch hẹn</span>
-                <span class="quick-card-sub" data-vi="Xem lịch hẹn" data-en="View appointments">Xem lịch hẹn</span>
-            </div>
-            <i class="ti ti-chevron-right quick-card-arrow"></i>
-        </a>
-        <a asp-controller="MedicalRecord" asp-action="Index" class="card quick-card">
-            <div class="stat-icon blue"><i class="ti ti-clipboard-text"></i></div>
-            <div class="quick-card-body">
-                <span class="quick-card-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
-                <span class="quick-card-sub" data-vi="Xem hồ sơ" data-en="View records">Xem hồ sơ</span>
-            </div>
-            <i class="ti ti-chevron-right quick-card-arrow"></i>
-        </a>
-        <a asp-controller="WorkingSchedule" asp-action="Index" class="card quick-card">
-            <div class="stat-icon teal"><i class="ti ti-clock"></i></div>
-            <div class="quick-card-body">
-                <span class="quick-card-label" data-vi="Lịch làm việc" data-en="Schedule">Lịch làm việc</span>
-                <span class="quick-card-sub" data-vi="Quản lý lịch" data-en="Manage schedule">Quản lý lịch</span>
-            </div>
-            <i class="ti ti-chevron-right quick-card-arrow"></i>
-        </a>
-        <a asp-controller="Payment" asp-action="Index" class="card quick-card">
-            <div class="stat-icon red"><i class="ti ti-receipt"></i></div>
-            <div class="quick-card-body">
-                <span class="quick-card-label" data-vi="Hóa đơn" data-en="Invoices">Hóa đơn</span>
-                <span class="quick-card-sub" data-vi="Xem hóa đơn" data-en="View invoices">Xem hóa đơn</span>
-            </div>
-            <i class="ti ti-chevron-right quick-card-arrow"></i>
-        </a>
-    </div>
+        <!-- Quick Access -->
+        <span class="section-label" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
+        <div class="quick-grid-4">
+            <a asp-controller="Appointment" asp-action="Index" class="card quick-card">
+                <div class="stat-icon amber"><i class="ti ti-calendar-check"></i></div>
+                <div class="quick-card-body">
+                    <span class="quick-card-label" data-vi="Lịch hẹn" data-en="Appointments">Lịch hẹn</span>
+                    <span class="quick-card-sub" data-vi="Xem lịch hẹn" data-en="View appointments">Xem lịch hẹn</span>
+                </div>
+                <i class="ti ti-chevron-right quick-card-arrow"></i>
+            </a>
+            <a asp-controller="MedicalRecord" asp-action="Index" class="card quick-card">
+                <div class="stat-icon blue"><i class="ti ti-clipboard-text"></i></div>
+                <div class="quick-card-body">
+                    <span class="quick-card-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
+                    <span class="quick-card-sub" data-vi="Xem hồ sơ" data-en="View records">Xem hồ sơ</span>
+                </div>
+                <i class="ti ti-chevron-right quick-card-arrow"></i>
+            </a>
+            <a asp-controller="WorkingSchedule" asp-action="Index" class="card quick-card">
+                <div class="stat-icon teal"><i class="ti ti-clock"></i></div>
+                <div class="quick-card-body">
+                    <span class="quick-card-label" data-vi="Lịch làm việc" data-en="Schedule">Lịch làm việc</span>
+                    <span class="quick-card-sub" data-vi="Quản lý lịch" data-en="Manage schedule">Quản lý lịch</span>
+                </div>
+                <i class="ti ti-chevron-right quick-card-arrow"></i>
+            </a>
+            <a asp-controller="Payment" asp-action="Index" class="card quick-card">
+                <div class="stat-icon red"><i class="ti ti-receipt"></i></div>
+                <div class="quick-card-body">
+                    <span class="quick-card-label" data-vi="Hóa đơn" data-en="Invoices">Hóa đơn</span>
+                    <span class="quick-card-sub" data-vi="Xem hóa đơn" data-en="View invoices">Xem hóa đơn</span>
+                </div>
+                <i class="ti ti-chevron-right quick-card-arrow"></i>
+            </a>
+        </div>
         @section Scripts {
-        <script>
-            function countUp(el, target, duration = 1200, suffix = '') {
+            <script>
+                function countUp(el, target, duration = 1200, suffix = '') {
                 const isDecimal = String(target).includes('.');
                 const start = performance.now();
 
                 requestAnimationFrame(function step(now) {
-                    const elapsed = now - start;
-                    const progress = Math.min(elapsed / duration, 1);
-                    const ease = 1 - Math.pow(1 - progress, 4);
-                    const value = ease * target;
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = 1 - Math.pow(1 - progress, 4);
+                const value = ease * target;
 
-                    if (isDecimal) {
-                        el.textContent = value.toFixed(1) + suffix;
-                    } else {
-                        el.textContent = Math.floor(value).toLocaleString('en-US') + suffix;
-                    }
+                if (isDecimal) {
+                el.textContent = value.toFixed(1) + suffix;
+                } else {
+                el.textContent = Math.floor(value).toLocaleString('en-US') + suffix;
+                }
 
-                    if (progress < 1) requestAnimationFrame(step);
-                    else el.textContent = isDecimal
-                        ? target.toFixed(1) + suffix
-                        : target.toLocaleString('en-US') + suffix;
+                if (progress < 1) requestAnimationFrame(step);
+                else el.textContent = isDecimal
+                ? target.toFixed(1) + suffix
+                : target.toLocaleString('en-US') + suffix;
                 });
-            }
+                }
 
-            document.querySelectorAll('.dash-card-value').forEach(el => {
+                document.querySelectorAll('.dash-card-value').forEach(el => {
                 const raw = el.textContent.trim().replace(/[^\d.]/g, '');
                 const target = parseFloat(raw);
                 if (!isNaN(target) && target > 0) {
-                    countUp(el, target, 1200);
+                countUp(el, target, 1200);
                 }
-            });
-        </script>
+                });
+            </script>
         }
-}
+    }
 
-@if (User.IsInRole("Patient"))
-{
-    <div style="margin-bottom:20px;">
-        <div style="font-size:13px; color:var(--text-secondary); margin-bottom:4px;">
-            @{
-                var hour = DateTime.Now.Hour;
-                var greeting = hour < 12 ? "Chào buổi sáng" : hour < 18 ? "Chào buổi chiều" : "Chào buổi tối";
-                var greetingEn = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
-            }
-            <span data-vi="@greeting" data-en="@greetingEn">@greeting</span>
-        </div>
-        <div style="font-size:22px; font-weight:600; color:var(--text-primary);">
-            @User.Identity?.Name
-        </div>
-        <div style="font-size:13px; color:var(--text-secondary); margin-top:4px;">
-            <span data-vi="Hôm nay là" data-en="Today is">Hôm nay là</span>
-            @DateTime.Now.ToString("dddd, dd/MM/yyyy")
-        </div>
-    </div>
-    <p class="welcome-sub"
-       data-vi="Chào mừng bạn quay trở lại hệ thống phòng khám."
-       data-en="Welcome back to the clinic system.">
-        Chào mừng bạn quay trở lại hệ thống phòng khám.
-    </p>
-
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
-
-        <!-- Lịch hẹn sắp tới -->
-        <div class="card" style="padding:20px;">
-            <div class="settings-section-title" style="margin-bottom:16px;">
-                <i class="ti ti-calendar-check"></i>
-                <span data-vi="Lịch hẹn sắp tới" data-en="Upcoming Appointments">Lịch hẹn sắp tới</span>
+    @if (User.IsInRole("Patient"))
+    {
+        <div style="margin-bottom:20px;">
+            <div style="font-size:13px; color:var(--text-secondary); margin-bottom:4px;">
+                @{
+                    var hour = DateTime.Now.Hour;
+                    var greeting = hour < 12 ? "Chào buổi sáng" : hour < 18 ? "Chào buổi chiều" : "Chào buổi tối";
+                    var greetingEn = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+                }
+                <span data-vi="@greeting" data-en="@greetingEn">@greeting</span>
             </div>
-            @{
-                var upcomingApts = ViewBag.UpcomingAppointments as List<ClinicManagement.DTOs.Appointment.AppointmentResponseDto> ?? new();
-            }
-            @if (!upcomingApts.Any())
-            {
-                <div class="empty-state" style="padding:20px 0;">
-                    <i class="ti ti-calendar-off"></i>
-                    <p data-vi="Không có lịch hẹn sắp tới." data-en="No upcoming appointments.">Không có lịch hẹn sắp tới.</p>
+            <div style="font-size:22px; font-weight:600; color:var(--text-primary);">
+                @User.Identity?.Name
+            </div>
+            <div style="font-size:13px; color:var(--text-secondary); margin-top:4px;">
+                <span data-vi="Hôm nay là" data-en="Today is">Hôm nay là</span>
+                @DateTime.Now.ToString("dddd, dd/MM/yyyy")
+            </div>
+        </div>
+        <p class="welcome-sub" data-vi="Chào mừng bạn quay trở lại hệ thống phòng khám."
+           data-en="Welcome back to the clinic system.">
+            Chào mừng bạn quay trở lại hệ thống phòng khám.
+        </p>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+
+            <!-- Lịch hẹn sắp tới -->
+            <div class="card" style="padding:20px;">
+                <div class="settings-section-title" style="margin-bottom:16px;">
+                    <i class="ti ti-calendar-check"></i>
+                    <span data-vi="Lịch hẹn sắp tới" data-en="Upcoming Appointments">Lịch hẹn sắp tới</span>
                 </div>
-            }
-            else
-            {
-                <div style="display:flex; flex-direction:column; gap:10px;">
-                    @foreach (var apt in upcomingApts)
-                    {
-                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-secondary); border-radius:8px;">
-                            <div style="text-align:center; min-width:40px;">
-                                <div style="font-size:16px; font-weight:600; color:var(--accent);">@apt.SlotDate.Day</div>
-                                <div style="font-size:11px; color:var(--text-secondary);">@apt.SlotDate.ToString("MMM")</div>
-                            </div>
-                            <div style="flex:1;">
-                                <div style="font-size:13px; font-weight:500;">@apt.DoctorName</div>
-                                <div style="font-size:12px; color:var(--text-secondary);">@apt.SpecialtyName · @apt.SlotTime.ToString("HH:mm")</div>
-                            </div>
-                            @if (apt.Status == "Pending")
-                            {
-                                <span class="status status-pending" style="font-size:11px;">
-                                    <span class="status-dot"></span>
-                                    <span data-vi="Chờ xác nhận" data-en="Pending">Chờ xác nhận</span>
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="status status-done" style="font-size:11px;">
-                                    <span class="status-dot"></span>
-                                    <span data-vi="Đã xác nhận" data-en="Confirmed">Đã xác nhận</span>
-                                </span>
+                @{
+                    var upcomingApts = ViewBag.UpcomingAppointments as
+            List<ClinicManagement.DTOs.Appointment.AppointmentResponseDto> ?? new();
+                }
+                @if (!upcomingApts.Any())
+                {
+                    <div class="empty-state" style="padding:20px 0;">
+                        <i class="ti ti-calendar-off"></i>
+                        <p data-vi="Không có lịch hẹn sắp tới." data-en="No upcoming appointments.">Không có lịch hẹn sắp tới.</p>
+                    </div>
+                }
+                else
+                {
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        @foreach (var apt in upcomingApts)
+                        {
+                            <div
+                                style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-secondary); border-radius:8px;">
+                                <div style="text-align:center; min-width:40px;">
+                                    <div style="font-size:16px; font-weight:600; color:var(--accent);">@apt.SlotDate.Day</div>
+                                    <div style="font-size:11px; color:var(--text-secondary);">@apt.SlotDate.ToString("MMM")</div>
+                                </div>
+                                <div style="flex:1;">
+                                    <div style="font-size:13px; font-weight:500;">@apt.DoctorName</div>
+                                    <div style="font-size:12px; color:var(--text-secondary);">@apt.SpecialtyName ·
+                                        @apt.SlotTime.ToString("HH:mm")</div>
+                                    </div>
+                                    @if (apt.Status == "Pending")
+                                    {
+                                        <span class="status status-pending" style="font-size:11px;">
+                                            <span class="status-dot"></span>
+                                            <span data-vi="Chờ xác nhận" data-en="Pending">Chờ xác nhận</span>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status status-done" style="font-size:11px;">
+                                            <span class="status-dot"></span>
+                                            <span data-vi="Đã xác nhận" data-en="Confirmed">Đã xác nhận</span>
+                                        </span>
+                                    }
+                                </div>
                             }
                         </div>
+                        <a asp-controller="Appointment" asp-action="MyAppointments"
+                           style="display:block; text-align:center; font-size:13px; color:var(--accent); margin-top:12px;"
+                           data-vi="Xem tất cả →" data-en="View all →">Xem tất cả →</a>
                     }
                 </div>
-                <a asp-controller="Appointment" asp-action="MyAppointments"
-                   style="display:block; text-align:center; font-size:13px; color:var(--accent); margin-top:12px;"
-                   data-vi="Xem tất cả →" data-en="View all →">Xem tất cả →</a>
-            }
-        </div>
 
-        <!-- Hóa đơn chưa thanh toán -->
-        <div class="card" style="padding:20px;">
-            <div class="settings-section-title" style="margin-bottom:16px;">
-                <i class="ti ti-receipt-off" style="color:#ef4444;"></i>
-                <span data-vi="Hóa đơn chưa thanh toán" data-en="Unpaid Invoices">Hóa đơn chưa thanh toán</span>
-            </div>
-            @{
-                var unpaidPayments = ViewBag.UnpaidPayments as List<ClinicManagement.DTOs.Payment.PaymentResponseDto> ?? new();
-            }
-            @if (!unpaidPayments.Any())
-            {
-                <div class="empty-state" style="padding:20px 0;">
-                    <i class="ti ti-circle-check" style="color:#10b981;"></i>
-                    <p data-vi="Không có hóa đơn chưa thanh toán." data-en="No unpaid invoices.">Không có hóa đơn chưa thanh toán.</p>
-                </div>
-            }
-            else
-            {
-                <div style="display:flex; flex-direction:column; gap:10px;">
-                    @foreach (var p in unpaidPayments)
+                <!-- Hóa đơn chưa thanh toán -->
+                <div class="card" style="padding:20px;">
+                    <div class="settings-section-title" style="margin-bottom:16px;">
+                        <i class="ti ti-receipt-off" style="color:#ef4444;"></i>
+                        <span data-vi="Hóa đơn chưa thanh toán" data-en="Unpaid Invoices">Hóa đơn chưa thanh toán</span>
+                    </div>
+                    @{
+                        var unpaidPayments = ViewBag.UnpaidPayments as List<ClinicManagement.DTOs.Payment.PaymentResponseDto> ?? new();
+                    }
+                    @if (!unpaidPayments.Any())
                     {
-                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-secondary); border-radius:8px;">
-                            <div style="flex:1;">
-                                <div style="font-size:13px; font-weight:500;">@p.InvoiceCode</div>
-                                <div style="font-size:12px; color:var(--text-secondary);">@p.SlotDate.ToString("dd/MM/yyyy") · @p.DoctorName</div>
+                        <div class="empty-state" style="padding:20px 0;">
+                            <i class="ti ti-circle-check" style="color:#10b981;"></i>
+                            <p data-vi="Không có hóa đơn chưa thanh toán." data-en="No unpaid invoices.">Không có hóa đơn chưa thanh
+                                toán.</p>
                             </div>
-                            <div style="font-size:13px; font-weight:600; color:#ef4444;">
-                                @p.Amount.ToString("N0") ₫
-                            </div>
-                            @if (p.Method == "Cash")
-                            {
-                                <span style="font-size:11px; color:var(--text-secondary);">
-                                    <i class="ti ti-building"></i>
-                                    <span data-vi="Ra quầy TT" data-en="Pay at counter">Ra quầy TT</span>
-                                </span>
+                        }
+            else
+                        {
+                            <div style="display:flex; flex-direction:column; gap:10px;">
+                                @foreach (var p in unpaidPayments)
+                                {
+                                    <div
+                                        style="display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-secondary); border-radius:8px;">
+                                        <div style="flex:1;">
+                                            <div style="font-size:13px; font-weight:500;">@p.InvoiceCode</div>
+                                            <div style="font-size:12px; color:var(--text-secondary);">@p.SlotDate.ToString("dd/MM/yyyy") ·
+                                                @p.DoctorName</div>
+                                            </div>
+                                            <div style="font-size:13px; font-weight:600; color:#ef4444;">
+                                                @p.Amount.ToString("N0") ₫
+                                            </div>
+                                            @if (p.Method == "Cash")
+                                            {
+                                                <span style="font-size:11px; color:var(--text-secondary);">
+                                                    <i class="ti ti-building"></i>
+                                                    <span data-vi="Ra quầy TT" data-en="Pay at counter">Ra quầy TT</span>
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <a asp-controller="Payment" asp-action="PayOnline" asp-route-id="@p.Id" class="btn btn-primary"
+                                                   style="font-size:11px; padding:4px 8px; height:auto;">
+                                                    <span data-vi="Thanh toán" data-en="Pay">Thanh toán</span>
+                                                </a>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                                <a asp-controller="Payment" asp-action="MyPayments"
+                                   style="display:block; text-align:center; font-size:13px; color:var(--accent); margin-top:12px;"
+                                   data-vi="Xem tất cả →" data-en="View all →">Xem tất cả →</a>
                             }
-                            else
+                        </div>
+
+                        <!-- Lịch tái khám -->
+                        <div class="card" style="padding:20px; grid-column:1 / -1;">
+                            <div class="settings-section-title" style="margin-bottom:16px;">
+                                <i class="ti ti-calendar-repeat" style="color:#f59e0b;"></i>
+                                <span data-vi="Lịch tái khám sắp tới" data-en="Upcoming Follow-ups">Lịch tái khám sắp tới</span>
+                            </div>
+                            @{
+                                var followUps = ViewBag.UpcomingFollowUps as List<ClinicManagement.DTOs.MedicalRecord.MedicalRecordResponseDto>
+                        ?? new();
+                            }
+                            @if (!followUps.Any())
                             {
-                                <a asp-controller="Payment" asp-action="PayOnline" asp-route-id="@p.Id"
-                                   class="btn btn-primary" style="font-size:11px; padding:4px 8px; height:auto;">
-                                    <span data-vi="Thanh toán" data-en="Pay">Thanh toán</span>
+                                <div class="empty-state" style="padding:10px 0;">
+                                    <i class="ti ti-calendar-off"></i>
+                                    <p data-vi="Không có lịch tái khám sắp tới." data-en="No upcoming follow-ups.">Không có lịch tái khám sắp
+                                        tới.</p>
+                                    </div>
+                                }
+            else
+                                {
+                                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                                        @foreach (var mr in followUps)
+                                        {
+                                            <div
+                                                style="flex:1; min-width:200px; padding:12px; background:var(--bg-secondary); border-radius:8px; border-left:3px solid #f59e0b;">
+                                                <div style="font-size:13px; font-weight:600; color:#f59e0b;">
+                                                    @mr.FollowUpDate!.Value.ToString("dd/MM/yyyy")
+                                                </div>
+                                                <div style="font-size:13px; font-weight:500; margin-top:4px;">@mr.DoctorName</div>
+                                                <div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">@(mr.Diagnosis ?? "—")</div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+
+                        </div>
+
+                        <!-- Quick Access -->
+                        <span class="section-label" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
+                        <div class="quick-grid-4">
+                            <a asp-controller="Appointment" asp-action="Create" class="card quick-card">
+                                <div class="stat-icon blue"><i class="ti ti-calendar-plus"></i></div>
+                                <div class="quick-card-body">
+                                    <span class="quick-card-label" data-vi="Đặt lịch khám" data-en="Book Appointment">Đặt lịch khám</span>
+                                    <span class="quick-card-sub" data-vi="Chọn bác sĩ & giờ khám" data-en="Choose doctor & time">Chọn bác sĩ &
+                                        giờ khám</span>
+                                    </div>
+                                    <i class="ti ti-chevron-right quick-card-arrow"></i>
                                 </a>
+                                <a asp-controller="Appointment" asp-action="MyAppointments" class="card quick-card">
+                                    <div class="stat-icon teal"><i class="ti ti-calendar-check"></i></div>
+                                    <div class="quick-card-body">
+                                        <span class="quick-card-label" data-vi="Lịch hẹn của tôi" data-en="My Appointments">Lịch hẹn của tôi</span>
+                                        <span class="quick-card-sub" data-vi="Xem & quản lý lịch" data-en="View & manage">Xem & quản lý lịch</span>
+                                    </div>
+                                    <i class="ti ti-chevron-right quick-card-arrow"></i>
+                                </a>
+                                <a asp-controller="MedicalRecord" asp-action="MyRecords" class="card quick-card">
+                                    <div class="stat-icon amber"><i class="ti ti-clipboard-text"></i></div>
+                                    <div class="quick-card-body">
+                                        <span class="quick-card-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
+                                        <span class="quick-card-sub" data-vi="Xem lịch sử khám" data-en="View history">Xem lịch sử khám</span>
+                                    </div>
+                                    <i class="ti ti-chevron-right quick-card-arrow"></i>
+                                </a>
+                                <a asp-controller="Doctor" asp-action="Browse" class="card quick-card">
+                                    <div class="stat-icon red"><i class="ti ti-stethoscope"></i></div>
+                                    <div class="quick-card-body">
+                                        <span class="quick-card-label" data-vi="Tìm bác sĩ" data-en="Find Doctor">Tìm bác sĩ</span>
+                                        <span class="quick-card-sub" data-vi="Tìm theo chuyên khoa" data-en="Search by specialty">Tìm theo chuyên
+                                            khoa</span>
+                                        </div>
+                                        <i class="ti ti-chevron-right quick-card-arrow"></i>
+                                    </a>
+                                </div>
                             }
-                        </div>
-                    }
-                </div>
-                <a asp-controller="Payment" asp-action="MyPayments"
-                   style="display:block; text-align:center; font-size:13px; color:var(--accent); margin-top:12px;"
-                   data-vi="Xem tất cả →" data-en="View all →">Xem tất cả →</a>
-            }
-        </div>
-
-        <!-- Lịch tái khám -->
-        <div class="card" style="padding:20px; grid-column:1 / -1;">
-            <div class="settings-section-title" style="margin-bottom:16px;">
-                <i class="ti ti-calendar-repeat" style="color:#f59e0b;"></i>
-                <span data-vi="Lịch tái khám sắp tới" data-en="Upcoming Follow-ups">Lịch tái khám sắp tới</span>
-            </div>
-            @{
-                var followUps = ViewBag.UpcomingFollowUps as List<ClinicManagement.DTOs.MedicalRecord.MedicalRecordResponseDto> ?? new();
-            }
-            @if (!followUps.Any())
-            {
-                <div class="empty-state" style="padding:10px 0;">
-                    <i class="ti ti-calendar-off"></i>
-                    <p data-vi="Không có lịch tái khám sắp tới." data-en="No upcoming follow-ups.">Không có lịch tái khám sắp tới.</p>
-                </div>
-            }
-            else
-            {
-                <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                    @foreach (var mr in followUps)
-                    {
-                        <div style="flex:1; min-width:200px; padding:12px; background:var(--bg-secondary); border-radius:8px; border-left:3px solid #f59e0b;">
-                            <div style="font-size:13px; font-weight:600; color:#f59e0b;">
-                                @mr.FollowUpDate!.Value.ToString("dd/MM/yyyy")
-                            </div>
-                            <div style="font-size:13px; font-weight:500; margin-top:4px;">@mr.DoctorName</div>
-                            <div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">@(mr.Diagnosis ?? "—")</div>
-                        </div>
-                    }
-                </div>
-            }
-        </div>
-
-    </div>
-
-    <!-- Quick Access -->
-    <span class="section-label" data-vi="TRUY CẬP NHANH" data-en="QUICK ACCESS">TRUY CẬP NHANH</span>
-    <div class="quick-grid-4">
-        <a asp-controller="Appointment" asp-action="Create" class="card quick-card">
-            <div class="stat-icon blue"><i class="ti ti-calendar-plus"></i></div>
-            <div class="quick-card-body">
-                <span class="quick-card-label" data-vi="Đặt lịch khám" data-en="Book Appointment">Đặt lịch khám</span>
-                <span class="quick-card-sub" data-vi="Chọn bác sĩ & giờ khám" data-en="Choose doctor & time">Chọn bác sĩ & giờ khám</span>
-            </div>
-            <i class="ti ti-chevron-right quick-card-arrow"></i>
-        </a>
-        <a asp-controller="Appointment" asp-action="MyAppointments" class="card quick-card">
-            <div class="stat-icon teal"><i class="ti ti-calendar-check"></i></div>
-            <div class="quick-card-body">
-                <span class="quick-card-label" data-vi="Lịch hẹn của tôi" data-en="My Appointments">Lịch hẹn của tôi</span>
-                <span class="quick-card-sub" data-vi="Xem & quản lý lịch" data-en="View & manage">Xem & quản lý lịch</span>
-            </div>
-            <i class="ti ti-chevron-right quick-card-arrow"></i>
-        </a>
-        <a asp-controller="MedicalRecord" asp-action="MyRecords" class="card quick-card">
-            <div class="stat-icon amber"><i class="ti ti-clipboard-text"></i></div>
-            <div class="quick-card-body">
-                <span class="quick-card-label" data-vi="Hồ sơ bệnh án" data-en="Medical Records">Hồ sơ bệnh án</span>
-                <span class="quick-card-sub" data-vi="Xem lịch sử khám" data-en="View history">Xem lịch sử khám</span>
-            </div>
-            <i class="ti ti-chevron-right quick-card-arrow"></i>
-        </a>
-        <a asp-controller="Doctor" asp-action="Browse" class="card quick-card">
-            <div class="stat-icon red"><i class="ti ti-stethoscope"></i></div>
-            <div class="quick-card-body">
-                <span class="quick-card-label" data-vi="Tìm bác sĩ" data-en="Find Doctor">Tìm bác sĩ</span>
-                <span class="quick-card-sub" data-vi="Tìm theo chuyên khoa" data-en="Search by specialty">Tìm theo chuyên khoa</span>
-            </div>
-            <i class="ti ti-chevron-right quick-card-arrow"></i>
-        </a>
-    </div>
-}

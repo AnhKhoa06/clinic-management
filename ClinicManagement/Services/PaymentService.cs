@@ -212,15 +212,15 @@ public class PaymentService
         await _db.SaveChangesAsync();
 
         // Gửi email thông báo
-        await _emailService.SendPaymentSuccessAsync(
-            toEmail:     payment.Appointment.Patient.User.Email,
-            patientName: payment.Appointment.Patient.User.FullName,
-            invoiceCode: payment.InvoiceCode,
-            doctorName:  payment.Appointment.Doctor.User.FullName,
-            slotDate:    payment.Appointment.AppointmentSlot.SlotDate.ToString("dd/MM/yyyy"),
-            amount:      payment.Amount,
-            method:      "Chuyển khoản (VNPay)"
-        );
+        // await _emailService.SendPaymentSuccessAsync(
+        //     toEmail:     payment.Appointment.Patient.User.Email,
+        //     patientName: payment.Appointment.Patient.User.FullName,
+        //     invoiceCode: payment.InvoiceCode,
+        //     doctorName:  payment.Appointment.Doctor.User.FullName,
+        //     slotDate:    payment.Appointment.AppointmentSlot.SlotDate.ToString("dd/MM/yyyy"),
+        //     amount:      payment.Amount,
+        //     method:      "Chuyển khoản (VNPay)"
+        // );
 
         try
         {
