@@ -1,17 +1,16 @@
-using Resend;
-using Microsoft.Extensions.Configuration;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 
 namespace ClinicManagement.Services;
 
 public class EmailService
 {
     private readonly IConfiguration _config;
-    private readonly HttpClient _httpClient;
 
-    public EmailService(IConfiguration config, IHttpClientFactory httpClientFactory)
+    public EmailService(IConfiguration config)
     {
         _config = config;
-        _httpClient = httpClientFactory.CreateClient();
     }
 
     public async Task SendPaymentSuccessAsync(
@@ -25,38 +24,33 @@ public class EmailService
     {
         try
         {
-            // THAY BẰNG
-            var apiKey = _config["Resend:ApiKey"] ?? _config["Resend__ApiKey"] ?? "";
-            Console.WriteLine($"[EmailService] ApiKey length: {apiKey.Length}");
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                Console.WriteLine("[EmailService] Không tìm thấy Resend API key!");
-                return;
-            }
+            var host     = _config["Email:Host"]!;
+            var port     = int.Parse(_config["Email:Port"]!);
+            var username = _config["Email:Username"]!;
+            var password = _config["Email:Password"]!;
             var fromName = _config["Email:FromName"] ?? "Phòng Khám";
 
-            _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+            Console.WriteLine($"[EmailService] Đang gửi tới {toEmail} qua {host}:{port}");
 
-            var body = new
-            {
-                from = $"{fromName} <onboarding@resend.dev>",
-                to = new[] { toEmail },
-                subject = $"Xác nhận thanh toán thành công – {invoiceCode}",
-                html = BuildEmailHtml(patientName, invoiceCode, doctorName, slotDate, amount, method)
-            };
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(fromName, username));
+            message.To.Add(new MailboxAddress(patientName, toEmail));
+            message.Subject = $"Xác nhận thanh toán thành công – {invoiceCode}";
+            message.Body = new TextPart("html") { Text = BuildEmailHtml(patientName, invoiceCode, doctorName, slotDate, amount, method) };
 
-            var response = await _httpClient.PostAsJsonAsync("https://api.resend.com/emails", body);
-            var content = await response.Content.ReadAsStringAsync();
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync(host, port, SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync(username, password);
+            await smtp.SendAsync(message);
+            await smtp.DisconnectAsync(true);
 
-            if (!response.IsSuccessStatusCode)
-                Console.WriteLine($"[EmailService] Lỗi Resend: {response.StatusCode} - {content}");
-            else
-                Console.WriteLine($"[EmailService] Gửi mail thành công tới {toEmail}");
+            Console.WriteLine($"[EmailService] Gửi mail thành công tới {toEmail}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[EmailService] Exception: {ex.Message}");
+            Console.WriteLine($"[EmailService] Lỗi: {ex.GetType().Name}: {ex.Message}");
+            if (ex.InnerException != null)
+                Console.WriteLine($"[EmailService] Inner: {ex.InnerException.Message}");
         }
     }
 
