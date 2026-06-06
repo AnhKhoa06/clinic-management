@@ -2,11 +2,65 @@
 @{
     ViewData["Title"] = "Lịch hẹn";
     var statusList = ViewBag.StatusList as List<string> ?? new();
+    var currentStatus = ViewBag.Status as string;
+    var currentDate = ViewBag.Date as string;
+    var returnUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}";
+    var currentStatusLabel = currentStatus switch
+    {
+        "Pending" => "Chờ xác nhận",
+        "Confirmed" => "Đã xác nhận",
+        "Completed" => "Hoàn thành",
+        "Cancelled" => "Đã huỷ",
+        _ => string.Empty
+    };
 }
 
 <div class="page-header">
     <h1 data-vi="Quản lý lịch hẹn" data-en="Appointment Management">Quản lý lịch hẹn</h1>
 </div>
+
+<div class="stats-grid" style="grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));">
+    <div class="card stat-card">
+        <div class="stat-icon blue"><i class="ti ti-calendar-stats"></i></div>
+        <div class="stat-value">@ViewBag.TotalCount</div>
+        <div class="stat-label">Tổng lịch hẹn</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-icon amber"><i class="ti ti-clock-hour-3"></i></div>
+        <div class="stat-value">@ViewBag.PendingCount</div>
+        <div class="stat-label">Chờ xác nhận</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-icon teal"><i class="ti ti-badge-check"></i></div>
+        <div class="stat-value">@ViewBag.ConfirmedCount</div>
+        <div class="stat-label">Đã xác nhận</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-icon blue"><i class="ti ti-circle-check"></i></div>
+        <div class="stat-value">@ViewBag.CompletedCount</div>
+        <div class="stat-label">Hoàn thành</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-icon red"><i class="ti ti-circle-x"></i></div>
+        <div class="stat-value">@ViewBag.CancelledCount</div>
+        <div class="stat-label">Đã huỷ</div>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(currentStatusLabel) || !string.IsNullOrWhiteSpace(currentDate))
+{
+    <div class="mb-16" style="font-size:13px; color:var(--text-secondary); display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+        <span>Đang lọc:</span>
+        @if (!string.IsNullOrWhiteSpace(currentStatusLabel))
+        {
+            <span class="badge badge-blue">@currentStatusLabel</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(currentDate) && DateOnly.TryParse(currentDate, out var selectedDate))
+        {
+            <span class="badge badge-green">@selectedDate.ToString("dd/MM/yyyy")</span>
+        }
+    </div>
+}
 
 <!-- Filter status -->
 <div class="search-bar" style="margin-bottom:16px;">
@@ -42,11 +96,18 @@
         <i class="ti ti-search"></i>
         <span data-vi="Tìm" data-en="Search">Tìm</span>
     </button>
-    @if (!string.IsNullOrEmpty(ViewBag.Date as string))
+    @if (!string.IsNullOrEmpty(currentDate))
     {
         <a asp-action="Index" asp-route-status="@ViewBag.Status" class="btn btn-outline">
             <i class="ti ti-x"></i>
             <span data-vi="Xóa ngày" data-en="Clear">Xóa ngày</span>
+        </a>
+    }
+    @if (!string.IsNullOrEmpty(currentStatus) || !string.IsNullOrEmpty(currentDate))
+    {
+        <a asp-action="Index" class="btn btn-outline">
+            <i class="ti ti-refresh"></i>
+            <span data-vi="Bỏ lọc" data-en="Reset">Bỏ lọc</span>
         </a>
     }
 </form>
@@ -86,7 +147,7 @@
                 <tr>
                     <td>
                         <div class="table-user">
-                            <div class="table-avatar">@item.PatientName[0]</div>
+                            <div class="table-avatar">@(string.IsNullOrWhiteSpace(item.PatientName) ? "?" : item.PatientName[0].ToString().ToUpper())</div>
                             <div>
                                 <div class="table-user-name">@item.PatientName</div>
                                 <div class="table-user-email">@item.SpecialtyName</div>
@@ -130,6 +191,7 @@
                             @if (item.Status == "Pending")
                             {
                                 <form asp-action="Confirm" asp-route-id="@item.Id" method="post">
+                                    <input type="hidden" name="returnUrl" value="@returnUrl" />
                                     <button type="submit" class="icon-btn" title="Xác nhận">
                                         <i class="ti ti-check"></i>
                                     </button>
@@ -138,6 +200,7 @@
                             @if (item.Status == "Confirmed")
                             {
                                 <form asp-action="Complete" asp-route-id="@item.Id" method="post">
+                                    <input type="hidden" name="returnUrl" value="@returnUrl" />
                                     <button type="submit" class="icon-btn" title="Hoàn thành">
                                         <i class="ti ti-circle-check"></i>
                                     </button>
@@ -145,12 +208,12 @@
                             }
                             @if (item.Status != "Cancelled" && item.Status != "Completed")
                             {
-                                <a asp-action="Cancel" asp-route-id="@item.Id" class="icon-btn danger" title="Huỷ">
+                                <a asp-action="Cancel" asp-route-id="@item.Id" asp-route-returnUrl="@returnUrl" class="icon-btn danger" title="Huỷ">
                                     <i class="ti ti-x"></i>
                                 </a>
                             }
 
-                            <a asp-action="Detail" asp-route-id="@item.Id" class="icon-btn" title="Xem chi tiết">
+                            <a asp-action="Detail" asp-route-id="@item.Id" asp-route-returnUrl="@returnUrl" class="icon-btn" title="Xem chi tiết">
                                 <i class="ti ti-eye"></i>
                             </a>
 
@@ -158,6 +221,7 @@
                             {
                                 <form asp-action="Delete" asp-route-id="@item.Id" method="post"
                                     onsubmit="return confirm('Bạn có chắc muốn xóa lịch hẹn này không?')">
+                                    <input type="hidden" name="returnUrl" value="@returnUrl" />
                                     <button type="submit" class="icon-btn danger" title="Xóa">
                                         <i class="ti ti-trash"></i>
                                     </button>

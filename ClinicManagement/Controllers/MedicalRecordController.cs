@@ -28,7 +28,7 @@ public class MedicalRecordController : Controller
 
     // GET /MedicalRecord — Admin + Doctor xem tất cả
     [Authorize(Roles = "Admin,Doctor")]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? returnUrl = null)
     {
         List<MedicalRecordResponseDto> result;
 
@@ -44,15 +44,17 @@ public class MedicalRecordController : Controller
             result = await _service.GetByDoctorIdAsync(doctor.Id);
         }
 
+        ViewBag.ReturnUrl = returnUrl;
         return View(result);
     }
 
     // GET /MedicalRecord/Detail/5 — Admin + Doctor xem chi tiết
     [Authorize(Roles = "Admin,Doctor")]
-    public async Task<IActionResult> Detail(int id)
+    public async Task<IActionResult> Detail(int id, string? returnUrl = null)
     {
         var (success, _, data) = await _service.GetByIdAsync(id);
         if (!success) return NotFound();
+        ViewBag.ReturnUrl = returnUrl;
         return View(data);
     }
 
@@ -121,7 +123,7 @@ public class MedicalRecordController : Controller
 
     // GET /MedicalRecord/Edit/5
     [Authorize(Roles = "Admin,Doctor")]
-    public async Task<IActionResult> Edit(int id)
+    public async Task<IActionResult> Edit(int id, string? returnUrl = null)
     {
         var (success, _, data) = await _service.GetByIdAsync(id);
         if (!success) return NotFound();
@@ -136,19 +138,21 @@ public class MedicalRecordController : Controller
 
         ViewBag.Id = id;   
         ViewBag.Record = data;
+        ViewBag.ReturnUrl = returnUrl;
         return View(dto);
     }
 
     // POST /MedicalRecord/Edit/5
     [Authorize(Roles = "Admin,Doctor")]
     [HttpPost]
-    public async Task<IActionResult> Edit(int id, MedicalRecordUpdateDto dto)
+    public async Task<IActionResult> Edit(int id, MedicalRecordUpdateDto dto, string? returnUrl = null)
     {
         if (!ModelState.IsValid)
         {
             var (_, _, data) = await _service.GetByIdAsync(id);
             ViewBag.Id = id;   
             ViewBag.Record = data;
+            ViewBag.ReturnUrl = returnUrl;
             return View(dto);
         }
 
@@ -157,20 +161,27 @@ public class MedicalRecordController : Controller
         {
             ModelState.AddModelError("", message);
             ViewBag.Id = id;   
+            ViewBag.ReturnUrl = returnUrl;
             return View(dto);
         }
 
         TempData["Success"] = message;
-        return RedirectToAction(nameof(Detail), new { id });
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            return LocalRedirect(returnUrl);
+
+        return RedirectToAction(nameof(Detail), new { id, returnUrl });
     }
 
     // POST /MedicalRecord/Delete/5
-    [Authorize(Roles = "Admin,Doctor")]
+    [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, string? returnUrl = null)
     {
         var (success, message) = await _service.DeleteAsync(id);
         TempData[success ? "Success" : "Error"] = message;
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            return LocalRedirect(returnUrl);
+
         return RedirectToAction(nameof(Index));
     }
 }

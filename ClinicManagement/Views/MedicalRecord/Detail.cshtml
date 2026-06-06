@@ -1,27 +1,33 @@
 @model ClinicManagement.DTOs.MedicalRecord.MedicalRecordResponseDto
 @{
     ViewData["Title"] = "Chi tiết hồ sơ bệnh án";
+    var returnUrl = ViewBag.ReturnUrl as string;
+    var backUrl = string.IsNullOrWhiteSpace(returnUrl)
+        ? Url.Action("Index", "MedicalRecord")
+        : returnUrl;
+    var currentUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}";
 }
 
 <div class="page-header">
     <div class="d-flex align-center gap-8">
-        <a asp-action="Index" class="btn btn-outline" style="padding:8px 10px">
+        <a href="@backUrl" class="btn btn-outline" style="padding:8px 10px">
             <i class="ti ti-arrow-left"></i>
         </a>
         <h1>Hồ sơ bệnh án #@Model.Id</h1>
     </div>
     <div class="d-flex align-center gap-8">
-        @if (User.IsInRole("Doctor"))
+        @if (User.IsInRole("Admin") || User.IsInRole("Doctor"))
         {
-            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline"
+            <a asp-action="Edit" asp-route-id="@Model.Id" asp-route-returnUrl="@currentUrl" class="btn btn-outline"
                style="height:38px; display:flex; align-items:center; gap:6px;">
                 <i class="ti ti-edit"></i> Chỉnh sửa
             </a>
         }
-        @if (User.IsInRole("Admin") || User.IsInRole("Doctor"))
+        @if (User.IsInRole("Admin"))
         {
             <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
                   onsubmit="return confirm('Bạn có chắc muốn xóa hồ sơ này không?')">
+                <input type="hidden" name="returnUrl" value="@backUrl" />
                 <button type="submit" class="btn" style="height:38px; background:#fee2e2; color:#ef4444; border:none; display:flex; align-items:center; gap:6px;">
                     <i class="ti ti-trash"></i> Xóa
                 </button>

@@ -31,6 +31,10 @@ public class AppointmentController : Controller
     public async Task<IActionResult> Index(string? status, DateOnly? date)
     {
         List<AppointmentResponseDto> result;
+        var allowedStatuses = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "Pending", "Confirmed", "Completed", "Cancelled"
+        };
 
         if (User.IsInRole("Doctor"))
         {
@@ -44,15 +48,26 @@ public class AppointmentController : Controller
             result = await _appointmentService.GetAllAsync();
         }
 
-        if (!string.IsNullOrEmpty(status))
+        if (!string.IsNullOrWhiteSpace(status) && allowedStatuses.Contains(status))
             result = result.Where(a => a.Status == status).ToList();
 
         if (date.HasValue)
             result = result.Where(a => a.SlotDate == date.Value).ToList();
 
+        result = result
+            .OrderByDescending(a => a.SlotDate)
+            .ThenByDescending(a => a.SlotTime)
+            .ThenByDescending(a => a.CreatedAt)
+            .ToList();
+
         ViewBag.Status = status;
         ViewBag.Date = date?.ToString("yyyy-MM-dd");
         ViewBag.StatusList = new List<string> { "Pending", "Confirmed", "Completed", "Cancelled" };
+        ViewBag.TotalCount = result.Count;
+        ViewBag.PendingCount = result.Count(a => a.Status == "Pending");
+        ViewBag.ConfirmedCount = result.Count(a => a.Status == "Confirmed");
+        ViewBag.CompletedCount = result.Count(a => a.Status == "Completed");
+        ViewBag.CancelledCount = result.Count(a => a.Status == "Cancelled");
         return View(result);
     }
 
@@ -117,52 +132,55 @@ public class AppointmentController : Controller
     // POST /Appointment/Confirm/5
     [Authorize(Roles = "Admin,Doctor")]
     [HttpPost]
-    public async Task<IActionResult> Confirm(int id)
+    public async Task<IActionResult> Confirm(int id, string? returnUrl = null)
     {
         var (success, message, _) = await _appointmentService.ConfirmAsync(id);
         if (!success) TempData["Error"] = message;
         else TempData["Success"] = message;
-        return RedirectToAction(nameof(Index));
+        return RedirectBackOrIndex(returnUrl);
     }
 
     // POST /Appointment/Complete/5
     [Authorize(Roles = "Admin,Doctor")]
     [HttpPost]
-    public async Task<IActionResult> Complete(int id)
+    public async Task<IActionResult> Complete(int id, string? returnUrl = null)
     {
         var (success, message, _) = await _appointmentService.CompleteAsync(id);
         if (!success) TempData["Error"] = message;
         else TempData["Success"] = message;
-        return RedirectToAction(nameof(Index));
+        return RedirectBackOrIndex(returnUrl);
     }
 
     // GET /Appointment/Cancel/5
-    public async Task<IActionResult> Cancel(int id)
+    public async Task<IActionResult> Cancel(int id, string? returnUrl = null)
     {
         var (success, _, data) = await _appointmentService.GetByIdAsync(id);
         if (!success) return NotFound();
+        ViewBag.ReturnUrl = returnUrl;
         return View(data);
     }
 
     [Authorize(Roles = "Admin,Doctor")]
-    public async Task<IActionResult> Detail(int id)
+    public async Task<IActionResult> Detail(int id, string? returnUrl = null)
     {
         var (success, _, data) = await _appointmentService.GetByIdAsync(id);
         if (!success) return NotFound();
+        ViewBag.ReturnUrl = returnUrl;
         return View(data);
     }
 
     // POST /Appointment/Cancel/5
     [HttpPost]
-    public async Task<IActionResult> CancelConfirm(int id, AppointmentCancelDto dto)
+    public async Task<IActionResult> CancelConfirm(int id, AppointmentCancelDto dto, string? returnUrl = null)
     {
         var (success, message, _) = await _appointmentService.CancelAsync(id, dto);
         if (!success) TempData["Error"] = message;
         else TempData["Success"] = message;
 
-        return User.IsInRole("Patient")
-            ? RedirectToAction(nameof(MyAppointments))
-            : RedirectToAction(nameof(Index));
+        if (User.IsInRole("Patient"))
+            return RedirectToAction(nameof(MyAppointments));
+
+        return RedirectBackOrIndex(returnUrl);
     }
 
     // GET /Appointment/GetSlots?doctorId=1&date=2026-05-15 — AJAX
@@ -184,10 +202,18 @@ public class AppointmentController : Controller
     // POST /Appointment/Delete/5
     [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, string? returnUrl = null)
     {
         var (success, message) = await _appointmentService.DeleteAsync(id);
         TempData[success ? "Success" : "Error"] = message;
+        return RedirectBackOrIndex(returnUrl);
+    }
+
+    private IActionResult RedirectBackOrIndex(string? returnUrl)
+    {
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            return LocalRedirect(returnUrl);
+
         return RedirectToAction(nameof(Index));
     }
 }

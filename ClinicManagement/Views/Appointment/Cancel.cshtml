@@ -1,11 +1,15 @@
 @model ClinicManagement.DTOs.Appointment.AppointmentResponseDto
 @{
     ViewData["Title"] = "Huỷ lịch hẹn";
+    var returnUrl = ViewBag.ReturnUrl as string;
+    var backUrl = string.IsNullOrWhiteSpace(returnUrl)
+        ? Url.Action("Index", "Appointment")
+        : returnUrl;
 }
 
 <div class="page-header">
     <div class="d-flex align-center gap-8">
-        <a onclick="history.back()" class="btn btn-outline" style="padding:8px 10px; cursor:pointer">
+        <a href="@backUrl" class="btn btn-outline" style="padding:8px 10px; cursor:pointer">
             <i class="ti ti-arrow-left"></i>
         </a>
         <h1 data-vi="Huỷ lịch hẹn" data-en="Cancel Appointment">Huỷ lịch hẹn</h1>
@@ -40,6 +44,7 @@
     </div>
 
     <form asp-action="CancelConfirm" asp-route-id="@Model.Id" method="post">
+        <input type="hidden" name="returnUrl" value="@backUrl" />
         <div class="form-group">
             <label class="form-label">
                 <span data-vi="Lý do huỷ" data-en="Cancel Reason">Lý do huỷ</span>
