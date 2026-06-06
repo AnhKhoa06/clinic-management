@@ -90,7 +90,9 @@ builder.Services.AddVnpayClient(config =>
     config.CallbackUrl = vnpayConfig["CallbackUrl"]!;
 });
 
+// THAY BẰNG
 //email
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<EmailService>();
 
 //payment repository để check xem lịch hẹn đã có hóa đơn chưa khi tạo hồ sơ bệnh án
