@@ -1292,158 +1292,122 @@ textarea.form-control {
   font-size: 12px;
   color: var(--text-muted);
 
+}
 /* =============================================
-   MEDICAL RECORDS
+   MEDICAL RECORD DETAIL — POLISHED
    ============================================= */
-.medical-record-hero {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 20px;
-  margin-bottom: 16px;
-  border-radius: 18px;
-  background:
-    linear-gradient(135deg, rgba(26, 92, 191, 0.12), transparent 42%),
-    linear-gradient(180deg, var(--card-bg), var(--card-bg));
-  border: 1px solid var(--card-border);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
-}
-.medical-record-hero-title {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-}
-.medical-record-hero-title h1 {
-  font-size: 22px;
-  line-height: 1.2;
-}
-.medical-record-hero-subtitle {
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-.medical-record-hero-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+
+.page-header {
+    margin-bottom: 28px;
 }
 
-.medical-record-summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 14px;
-  margin-bottom: 16px;
-}
-.medical-record-summary-card {
-  padding: 18px 20px;
-}
-.medical-record-summary-label {
-  margin-top: 10px;
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-.medical-record-summary-value {
-  margin-top: 6px;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-primary);
-  line-height: 1.2;
-  word-break: break-word;
+.page-header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
 }
 
-.medical-record-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+/* Card chung cho trang Detail */
+.card[style*="padding:20px"] {
+    padding: 24px !important;
+    border-radius: 16px;
 }
-.medical-record-card {
-  padding: 20px;
-  border-radius: 18px;
+
+/* Section Title */
+.settings-section-title {
+    font-size: 15.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
-.medical-record-section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
+
+.settings-section-title i {
+    font-size: 18px;
+    color: var(--accent);
 }
-.medical-record-section-title i {
-  color: var(--accent);
-  font-size: 17px;
+
+/* Thông tin flex */
+.card > div[style*="flex-direction:column"] {
+    gap: 14px !important;
+    font-size: 14px;
 }
-.medical-record-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  font-size: 13px;
+
+.card > div[style*="flex-direction:column"] > div {
+    padding: 2px 0;
 }
-.medical-record-field {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 14px;
+
+/* Kết quả khám */
+.card[style*="grid-column:1 / -1"] {
+    padding: 26px !important;
 }
-.medical-record-field-label {
-  color: var(--text-secondary);
-  flex-shrink: 0;
+
+.card[style*="grid-column:1 / -1"] > div[style*="grid-template-columns:1fr 1fr 1fr"] {
+    gap: 24px !important;
+    font-size: 14px;
 }
-.medical-record-field-value {
-  text-align: right;
-  font-weight: 500;
-  color: var(--text-primary);
-  word-break: break-word;
+
+.card[style*="grid-column:1 / -1"] p {
+    margin-top: 8px;
+    line-height: 1.65;
+    color: var(--text-primary);
 }
-.medical-record-field-value.muted {
-  color: var(--text-secondary);
-  font-weight: 400;
+
+/* Bảng đơn thuốc - cải thiện đẹp hơn */
+.medical-record-prescription-wrap,
+.card table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
 }
-.medical-record-bubble {
-  background: var(--accent-light);
-  border: 1px solid rgba(26, 92, 191, 0.12);
-  border-radius: 14px;
-  padding: 14px 16px;
+
+.card table thead th {
+    background: var(--accent-light);
+    padding: 14px 16px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--accent);
+    text-align: left;
+    border-bottom: 1px solid var(--table-border);
 }
-.medical-record-note {
-  margin: 6px 0 0;
-  font-weight: 500;
-  line-height: 1.7;
-  color: var(--text-primary);
-  white-space: pre-line;
+
+.card table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--table-border);
+    font-size: 13.5px;
 }
-.medical-record-prescription-wrap {
-  overflow: hidden;
-  border-radius: 14px;
-  border: 1px solid var(--card-border);
+
+.card table tbody tr:last-child td {
+    border-bottom: none;
 }
-.medical-record-prescription-wrap table {
-  margin: 0;
+
+.card table tbody tr:hover {
+    background: var(--accent-light);
 }
-.medical-record-prescription-wrap thead th {
-  background: var(--accent-light);
+
+/* Highlight thành tiền */
+.card table td[style*="color:var(--accent)"] {
+    font-weight: 600;
+    color: var(--accent) !important;
 }
-.medical-record-prescription-empty {
-  padding: 34px 20px;
-  margin-top: 6px;
-}
-.medical-record-edit-card {
-  max-width: 760px;
-  padding: 26px;
-  border-radius: 18px;
-  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
-}
-.card.form-card.medical-record-edit-card {
-  max-width: 760px;
-}
-.medical-record-edit-help {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-top: 8px;
-}
+
+/* Responsive nhỏ */
+@media (max-width: 992px) {
+    .card[style*="grid-template-columns:1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .card[style*="grid-template-columns:1fr 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
 }
 .table-actions {
   display: flex;
