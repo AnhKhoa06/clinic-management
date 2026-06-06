@@ -157,10 +157,12 @@ public class EmailService
             await smtp.SendAsync(message);
             await smtp.DisconnectAsync(true);
         }
+        // THAY BẰNG
         catch (Exception ex)
         {
-            Console.WriteLine($"[EmailService] Gửi mail thất bại: {ex.Message}");
-            // Fail silently — không ảnh hưởng thanh toán
+            Console.WriteLine($"[EmailService] Gửi mail thất bại: {ex.GetType().Name}: {ex.Message}");
+            if (ex.InnerException != null)
+                Console.WriteLine($"[EmailService] Inner: {ex.InnerException.Message}");
         }
     }
 }
