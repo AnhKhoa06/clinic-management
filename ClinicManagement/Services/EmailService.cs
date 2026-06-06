@@ -25,7 +25,14 @@ public class EmailService
     {
         try
         {
-            var apiKey = _config["Resend:ApiKey"]!;
+            // THAY BẰNG
+            var apiKey = _config["Resend:ApiKey"] ?? _config["Resend__ApiKey"] ?? "";
+            Console.WriteLine($"[EmailService] ApiKey length: {apiKey.Length}");
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                Console.WriteLine("[EmailService] Không tìm thấy Resend API key!");
+                return;
+            }
             var fromName = _config["Email:FromName"] ?? "Phòng Khám";
 
             _httpClient.DefaultRequestHeaders.Clear();
