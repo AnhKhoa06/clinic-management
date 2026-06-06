@@ -1,11 +1,15 @@
 @model ClinicManagement.DTOs.Appointment.AppointmentResponseDto
 @{
     ViewData["Title"] = "Chi tiết lịch hẹn";
+    var returnUrl = ViewBag.ReturnUrl as string;
+    var backUrl = string.IsNullOrWhiteSpace(returnUrl)
+        ? Url.Action("Index", "Appointment")
+        : returnUrl;
 }
 
 <div class="page-header">
     <div class="d-flex align-center gap-8">
-        <a asp-action="Index" class="btn btn-outline" style="padding:8px 10px">
+        <a href="@backUrl" class="btn btn-outline" style="padding:8px 10px">
             <i class="ti ti-arrow-left"></i>
         </a>
         <h1>Chi tiết lịch hẹn #@Model.Id</h1>
@@ -14,6 +18,7 @@
         @if (Model.Status == "Pending")
         {
             <form asp-action="Confirm" asp-route-id="@Model.Id" method="post" style="display:flex;">
+                <input type="hidden" name="returnUrl" value="@backUrl" />
                 <button type="submit" class="btn btn-primary" style="height:38px; display:flex; align-items:center; gap:6px;">
                     <i class="ti ti-check"></i> Xác nhận
                 </button>
@@ -22,6 +27,7 @@
         @if (Model.Status == "Confirmed")
         {
             <form asp-action="Complete" asp-route-id="@Model.Id" method="post" style="display:flex;">
+                <input type="hidden" name="returnUrl" value="@backUrl" />
                 <button type="submit" class="btn btn-primary" style="height:38px; display:flex; align-items:center; gap:6px;">
                     <i class="ti ti-circle-check"></i> Hoàn thành
                 </button>
@@ -30,10 +36,22 @@
         @if (Model.Status != "Cancelled" && Model.Status != "Completed")
         {
             <a asp-action="Cancel" asp-route-id="@Model.Id" 
+               asp-route-returnUrl="@backUrl"
                class="btn btn-danger" 
                style="height:38px; display:flex; align-items:center; gap:6px;">
                 <i class="ti ti-x"></i> Huỷ lịch
             </a>
+        }
+
+        @if (User.IsInRole("Admin") && (Model.Status == "Cancelled" || Model.Status == "Completed"))
+        {
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post" style="display:flex;"
+                onsubmit="return confirm('Bạn có chắc muốn xóa lịch hẹn này không?')">
+                <input type="hidden" name="returnUrl" value="@backUrl" />
+                <button type="submit" class="btn btn-danger" style="height:38px; display:flex; align-items:center; gap:6px;">
+                    <i class="ti ti-trash"></i> Xóa
+                </button>
+            </form>
         }
 
         @if (Model.Status == "Completed" && User.IsInRole("Doctor"))

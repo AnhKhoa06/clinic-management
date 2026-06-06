@@ -1291,6 +1291,159 @@ textarea.form-control {
 .table-user-email {
   font-size: 12px;
   color: var(--text-muted);
+
+/* =============================================
+   MEDICAL RECORDS
+   ============================================= */
+.medical-record-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(26, 92, 191, 0.12), transparent 42%),
+    linear-gradient(180deg, var(--card-bg), var(--card-bg));
+  border: 1px solid var(--card-border);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+.medical-record-hero-title {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.medical-record-hero-title h1 {
+  font-size: 22px;
+  line-height: 1.2;
+}
+.medical-record-hero-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.medical-record-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.medical-record-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.medical-record-summary-card {
+  padding: 18px 20px;
+}
+.medical-record-summary-label {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.medical-record-summary-value {
+  margin-top: 6px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.medical-record-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.medical-record-card {
+  padding: 20px;
+  border-radius: 18px;
+}
+.medical-record-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.medical-record-section-title i {
+  color: var(--accent);
+  font-size: 17px;
+}
+.medical-record-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 13px;
+}
+.medical-record-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+.medical-record-field-label {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+.medical-record-field-value {
+  text-align: right;
+  font-weight: 500;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+.medical-record-field-value.muted {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+.medical-record-bubble {
+  background: var(--accent-light);
+  border: 1px solid rgba(26, 92, 191, 0.12);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.medical-record-note {
+  margin: 6px 0 0;
+  font-weight: 500;
+  line-height: 1.7;
+  color: var(--text-primary);
+  white-space: pre-line;
+}
+.medical-record-prescription-wrap {
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid var(--card-border);
+}
+.medical-record-prescription-wrap table {
+  margin: 0;
+}
+.medical-record-prescription-wrap thead th {
+  background: var(--accent-light);
+}
+.medical-record-prescription-empty {
+  padding: 34px 20px;
+  margin-top: 6px;
+}
+.medical-record-edit-card {
+  max-width: 760px;
+  padding: 26px;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
+}
+.card.form-card.medical-record-edit-card {
+  max-width: 760px;
+}
+.medical-record-edit-help {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
 }
 .table-actions {
   display: flex;

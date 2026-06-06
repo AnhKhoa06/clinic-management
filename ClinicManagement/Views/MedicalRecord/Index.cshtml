@@ -1,6 +1,7 @@
 @model List<ClinicManagement.DTOs.MedicalRecord.MedicalRecordResponseDto>
 @{
     ViewData["Title"] = "Hồ sơ bệnh án";
+    var returnUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}";
 }
 
 <div class="page-header">
@@ -37,7 +38,7 @@
                 <tr>
                     <td>
                         <div class="table-user">
-                            <div class="table-avatar">@item.PatientName[0]</div>
+                            <div class="table-avatar">@(string.IsNullOrWhiteSpace(item.PatientName) ? "?" : item.PatientName[0].ToString().ToUpper())</div>
                             <span class="table-user-name">@item.PatientName</span>
                         </div>
                     </td>
@@ -48,20 +49,18 @@
                     <td>
                         @if (item.FollowUpDate != null)
                         {
-                            <span style="color:#f59e0b; font-weight:500;">
-                                @item.FollowUpDate.Value.ToString("dd/MM/yyyy")
-                            </span>
+                            <span class="badge badge-amber">@item.FollowUpDate.Value.ToString("dd/MM/yyyy")</span>
                         }
-                        else { <span>—</span> }
+                        else { <span class="badge badge-blue">Chưa hẹn</span> }
                     </td>
                     <td>
                         <div class="action-btns">
-                            <a asp-action="Detail" asp-route-id="@item.Id" class="icon-btn" title="Xem chi tiết">
+                            <a asp-action="Detail" asp-route-id="@item.Id" asp-route-returnUrl="@returnUrl" class="icon-btn" title="Xem chi tiết">
                                 <i class="ti ti-eye"></i>
                             </a>
                             @if (User.IsInRole("Doctor") || User.IsInRole("Admin"))
                             {
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="icon-btn" title="Chỉnh sửa">
+                                <a asp-action="Edit" asp-route-id="@item.Id" asp-route-returnUrl="@returnUrl" class="icon-btn" title="Chỉnh sửa">
                                     <i class="ti ti-edit"></i>
                                 </a>
                                 @if (!item.HasPayment)
@@ -71,6 +70,16 @@
                                     class="icon-btn" title="Tạo hóa đơn" style="color:var(--accent);">
                                         <i class="ti ti-receipt"></i>
                                     </a>
+                                }
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post"
+                                          onsubmit="return confirm('Bạn có chắc muốn xóa hồ sơ này không?')">
+                                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                        <button type="submit" class="icon-btn danger" title="Xóa">
+                                            <i class="ti ti-trash"></i>
+                                        </button>
+                                    </form>
                                 }
                             }
                         </div>

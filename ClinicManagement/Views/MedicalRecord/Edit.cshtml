@@ -1,18 +1,22 @@
 @model ClinicManagement.DTOs.MedicalRecord.MedicalRecordUpdateDto
 @{
     ViewData["Title"] = "Chỉnh sửa hồ sơ bệnh án";
+    var returnUrl = ViewBag.ReturnUrl as string;
+    var backUrl = string.IsNullOrWhiteSpace(returnUrl)
+        ? Url.Action("Detail", "MedicalRecord", new { id = ViewBag.Id })
+        : returnUrl;
 }
 
 <div class="page-header">
     <div class="d-flex align-center gap-8">
-        <a onclick="history.back()" class="btn btn-outline" style="padding:8px 10px; cursor:pointer">
+        <a href="@backUrl" class="btn btn-outline" style="padding:8px 10px; cursor:pointer">
             <i class="ti ti-arrow-left"></i>
         </a>
         <h1>Chỉnh sửa hồ sơ bệnh án #@ViewBag.Id</h1>
     </div>
 </div>
 
-<div class="card form-card" style="max-width:640px;">
+<div class="card form-card medical-record-edit-card">
     @if (!ViewData.ModelState.IsValid)
     {
         <div class="alert alert-danger">
@@ -27,6 +31,7 @@
     }
 
     <form asp-action="Edit" asp-route-id="@ViewBag.Id" method="post">
+        <input type="hidden" name="returnUrl" value="@returnUrl" />
 
         <div class="form-group">
             <label class="form-label">Triệu chứng</label>
@@ -51,13 +56,16 @@
             <input asp-for="FollowUpDate" type="date" class="form-control"
                    style="max-width:250px;"
                    min="@DateOnly.FromDateTime(DateTime.Today.AddDays(1)).ToString("yyyy-MM-dd")" />
+            <div class="medical-record-edit-help">
+                Để trống nếu chưa hẹn tái khám.
+            </div>
         </div>
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">
                 <i class="ti ti-check"></i> Lưu thay đổi
             </button>
-            <a onclick="history.back()" class="btn btn-outline" style="cursor:pointer">Huỷ</a>
+            <a href="@backUrl" class="btn btn-outline" style="cursor:pointer">Huỷ</a>
         </div>
     </form>
 </div>
