@@ -1,6 +1,9 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 
 namespace ClinicManagement.Services;
 
@@ -19,15 +22,27 @@ public class EmailService
         string toEmail, string patientName, string invoiceCode,
         string doctorName, string slotDate, decimal amount, string method)
     {
+        //CÁCH 1: DÙNG KHI DEPLOY LÊN RAILWAY (Resend HTTP API)
+        await SendViaResend(toEmail, patientName, invoiceCode, doctorName, slotDate, amount, method);
+
+        //CÁCH 2: DÙNG KHI CHẠY LOCAL (Gmail SMTP)
+        // await SendViaGmail(toEmail, patientName, invoiceCode, doctorName, slotDate, amount, method);
+    }
+
+    // ─── CÁCH 1: Resend HTTP API (Railway) ───────────────────────
+    private async Task SendViaResend(
+        string toEmail, string patientName, string invoiceCode,
+        string doctorName, string slotDate, decimal amount, string method)
+    {
         try
         {
             var apiKey = _config["Resend:ApiKey"] ?? _config["Resend__ApiKey"] ?? "";
-            Console.WriteLine($"[EmailService] Gửi tới {toEmail}, key length: {apiKey.Length}");
+            Console.WriteLine($"[EmailService-Resend] Gửi tới anhkhoale2406@gmail.com, key length: {apiKey.Length}");
 
             var payload = new
             {
                 from = "Phòng Khám <onboarding@resend.dev>",
-                to = new[] { "anhkhoale2406@gmail.com" },
+                to = new[] { "anhkhoale2406@gmail.com" }, // gửi về email admin
                 subject = $"[{patientName}] Xác nhận thanh toán – {invoiceCode}",
                 html = BuildEmailHtml(patientName, invoiceCode, doctorName, slotDate, amount, method)
             };
@@ -38,14 +53,55 @@ public class EmailService
 
             var response = await _http.SendAsync(request);
             var body = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"[EmailService] Status: {response.StatusCode}, Body: {body}");
+            Console.WriteLine($"[EmailService-Resend] Status: {response.StatusCode}, Body: {body}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[EmailService] Lỗi: {ex.Message}");
+            Console.WriteLine($"[EmailService-Resend] Lỗi: {ex.Message}");
         }
     }
 
+    // ─── CÁCH 2: Gmail SMTP (Local) ──────────────────────────────
+    // private async Task SendViaGmail(
+    //     string toEmail, string patientName, string invoiceCode,
+    //     string doctorName, string slotDate, decimal amount, string method)
+    // {
+    //     try
+    //     {
+    //         var host     = _config["Email:Host"]!;
+    //         var port     = int.Parse(_config["Email:Port"]!);
+    //         var username = _config["Email:Username"]!;
+    //         var password = _config["Email:Password"]!;
+    //         var fromName = _config["Email:FromName"] ?? "Phòng Khám";
+
+    //         Console.WriteLine($"[EmailService-Gmail] Đang gửi tới {toEmail}");
+
+    //         var message = new MimeMessage();
+    //         message.From.Add(new MailboxAddress(fromName, username));
+    //         message.To.Add(new MailboxAddress(patientName, toEmail));
+    //         message.Subject = $"Xác nhận thanh toán thành công – {invoiceCode}";
+    //         message.Body = new TextPart("html")
+    //         {
+    //             Text = BuildEmailHtml(patientName, invoiceCode, doctorName, slotDate, amount, method)
+    //         };
+
+    //         using var smtp = new SmtpClient();
+    //         await smtp.ConnectAsync(host, port, SecureSocketOptions.StartTls);
+    //         await smtp.AuthenticateAsync(username, password);
+    //         await smtp.SendAsync(message);
+    //         await smtp.DisconnectAsync(true);
+
+    //         Console.WriteLine($"[EmailService-Gmail] Gửi thành công tới {toEmail}");
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Console.WriteLine($"[EmailService-Gmail] Lỗi: {ex.Message}");
+    //         if (ex.InnerException != null)
+    //             Console.WriteLine($"[EmailService-Gmail] Inner: {ex.InnerException.Message}");
+    //     }
+    // }
+
+    // ─── HTML Template ───────────────────────────────────────────
     private static string BuildEmailHtml(string patientName, string invoiceCode, string doctorName, string slotDate, decimal amount, string method)
     {
         return $"""
