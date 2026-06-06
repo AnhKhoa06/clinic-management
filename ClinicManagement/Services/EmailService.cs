@@ -21,19 +21,19 @@ public class EmailService
     {
         try
         {
-            var apiKey = _config["Brevo:ApiKey"] ?? _config["Brevo__ApiKey"] ?? "";
+            var apiKey = _config["Resend:ApiKey"] ?? _config["Resend__ApiKey"] ?? "";
             Console.WriteLine($"[EmailService] Gửi tới {toEmail}, key length: {apiKey.Length}");
 
             var payload = new
             {
-                sender = new { email = "anhkhoale2406@gmail.com", name = "Phòng Khám" },
-                to = new[] { new { email = toEmail, name = patientName } },
-                subject = $"Xác nhận thanh toán thành công – {invoiceCode}",
-                htmlContent = BuildEmailHtml(patientName, invoiceCode, doctorName, slotDate, amount, method)
+                from = "Phòng Khám <onboarding@resend.dev>",
+                to = new[] { "anhkhoale2406@gmail.com" },
+                subject = $"[{patientName}] Xác nhận thanh toán – {invoiceCode}",
+                html = BuildEmailHtml(patientName, invoiceCode, doctorName, slotDate, amount, method)
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.brevo.com/v3/smtp/email");
-            request.Headers.Add("api-key", apiKey);
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.resend.com/emails");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
             request.Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
 
             var response = await _http.SendAsync(request);
