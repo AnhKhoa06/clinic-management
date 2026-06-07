@@ -2974,3 +2974,64 @@ textarea.form-control {
   .page-header .btn { font-size: 12px; padding: 6px 12px; }
 }
 }
+/* =============================================
+   SPECIALTY PAGE — RESPONSIVE MOBILE
+   ============================================= */
+
+@media (max-width: 768px) {
+  /* Ẩn cột Mô tả và Ngày tạo */
+  .specialty-table th:nth-child(3),
+  .specialty-table td:nth-child(3),
+  .specialty-table th:nth-child(4),
+  .specialty-table td:nth-child(4) {
+    display: none;
+  }
+
+  /* Table scroll ngang */
+  .table-card {
+    overflow-x: auto;
+  }
+
+  /* Thu nhỏ padding */
+  tbody td, thead th {
+    padding: 10px 10px !important;
+  }
+
+  /* Tên chuyên khoa */
+  .td-name { font-size: 13px; }
+  .td-id { font-size: 12px; color: var(--text-secondary); }
+
+  /* Action buttons */
+  .action-btns { gap: 4px; }
+  .icon-btn {
+    width: 26px;
+    height: 26px;
+  }
+  .icon-btn i { font-size: 12px; }
+
+  /* Page header */
+  .page-header h1 { font-size: 17px; }
+  .page-header .btn {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  /* Table header */
+  .table-header {
+    padding: 12px 14px;
+  }
+  .table-title { font-size: 13px; }
+}
+
+@media (max-width: 480px) {
+  /* Ẩn thêm cột # */
+  .specialty-table th:nth-child(1),
+  .specialty-table td:nth-child(1) {
+    display: none;
+  }
+
+  /* Page header */
+  .page-header h1 { font-size: 15px; }
+  .page-header .btn span { display: none; }
+  .page-header .btn i { font-size: 16px; }
+}
