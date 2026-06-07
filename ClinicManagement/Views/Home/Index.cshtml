@@ -621,6 +621,7 @@ new();
 
     @if (User.IsInRole("Patient"))
     {
+<<<<<<< Updated upstream
         <div style="margin-bottom:20px;">
             <div style="font-size:13px; color:var(--text-secondary); margin-bottom:4px;">
                 @{
@@ -651,6 +652,42 @@ new();
                     <i class="ti ti-calendar-check"></i>
                     <span data-vi="Lịch hẹn sắp tới" data-en="Upcoming Appointments">Lịch hẹn sắp tới</span>
                 </div>
+=======
+        var hour = DateTime.Now.Hour;
+        var greeting = hour < 12 ? "Chào buổi sáng" : hour < 18 ? "Chào buổi chiều" : "Chào buổi tối";
+
+        <!-- Patient Welcome Card -->
+        <div class="card"
+             style="padding:28px; margin-bottom:24px; background: linear-gradient(135deg, var(--accent-light), var(--card-bg)); border:1px solid var(--accent);">
+            <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px;">
+                <div class="patient-avatar" style="width:56px; height:56px; font-size:22px;">
+                    @User.Identity?.Name?.Substring(0,1).ToUpper()
+                </div>
+                <div>
+                    <div style="font-size:14px; color:var(--accent); font-weight:500;">@greeting</div>
+                    <h1 style="font-size:24px; font-weight:700; margin:4px 0 2px 0; color:var(--text-primary);">
+                        @User.Identity?.Name
+                    </h1>
+                    <div style="font-size:13.5px; color:var(--text-secondary);">
+                        Hôm nay là @DateTime.Now.ToString("dddd, dd/MM/yyyy")
+                    </div>
+                </div>
+            </div>
+
+            <p style="font-size:14.5px; color:var(--text-secondary); line-height:1.6; margin:0;">
+                Chào mừng bạn quay trở lại hệ thống phòng khám.
+            </p>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+
+            <!-- Lịch hẹn sắp tới -->
+            <div class="card" style="padding:20px;">
+                <div class="settings-section-title" style="margin-bottom:16px;">
+                    <i class="ti ti-calendar-check"></i>
+                    <span data-vi="Lịch hẹn sắp tới" data-en="Upcoming Appointments">Lịch hẹn sắp tới</span>
+                </div>
+>>>>>>> Stashed changes
                 @{
                     var upcomingApts = ViewBag.UpcomingAppointments as
             List<ClinicManagement.DTOs.Appointment.AppointmentResponseDto> ?? new();

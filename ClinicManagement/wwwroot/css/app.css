@@ -2448,3 +2448,18 @@ textarea.form-control {
     grid-template-columns: 1fr;
   }
 }
+/* Patient Welcome Card */
+.patient-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 22px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(26, 92, 191, 0.2);
+}
