@@ -247,4 +247,14 @@ public class DoctorController : Controller
         TempData["Success"] = "Cập nhật ảnh đại diện thành công.";
         return RedirectToAction(nameof(Edit), new { id });
     }
+
+    // POST /Doctor/Delete/5
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var (success, message) = await _service.DeleteAsync(id);
+        TempData[success ? "Success" : "Error"] = message;
+        return RedirectToAction(nameof(Index));
+    }
 }

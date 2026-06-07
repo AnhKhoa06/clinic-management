@@ -157,4 +157,20 @@ public class DoctorService
             ? Math.Round(d.Reviews.Average(r => r.Rating), 1)
             : 0
     };
+
+    public async Task<(bool, string)> DeleteAsync(int id)
+    {
+        var doctor = await _doctorRepo.GetByIdAsync(id);
+        if (doctor == null)
+            return (false, "Không tìm thấy bác sĩ.");
+
+        if (doctor.Appointments.Any())
+            return (false, "Không thể xóa vì bác sĩ đã có lịch hẹn.");
+
+        if (doctor.MedicalRecords.Any())
+            return (false, "Không thể xóa vì bác sĩ đã có hồ sơ bệnh án.");
+
+        await _doctorRepo.DeleteAsync(doctor);
+        return (true, "Xóa bác sĩ thành công.");
+    }
 }

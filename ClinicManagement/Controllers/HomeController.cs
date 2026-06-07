@@ -34,10 +34,10 @@ public class HomeController : Controller
     {
         if (User.IsInRole("Admin"))
         {
-            var doctors      = await _doctorService.GetAllAsync();
-            var patients     = await _patientService.GetAllAsync();
-            var appointments = await _appointmentService.GetAllAsync();
-            var payments     = await _paymentService.GetAllAsync();
+            var doctors      = await _doctorService.GetAllAsync();//danh sách bác sĩ
+            var patients     = await _patientService.GetAllAsync();// danh sách bệnh nhân
+            var appointments = await _appointmentService.GetAllAsync();// tất cả lịch hẹn
+            var payments     = await _paymentService.GetAllAsync();//tất cả hóa đơn
 
             // 4 stat cards
             ViewBag.DoctorCount      = doctors.Count;

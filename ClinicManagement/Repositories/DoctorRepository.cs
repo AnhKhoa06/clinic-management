@@ -76,4 +76,10 @@ public class DoctorRepository
             .Include(d => d.Reviews)
             .FirstOrDefaultAsync(d => d.UserId == userId);
     }
+
+    public async Task DeleteAsync(Doctor doctor)
+    {
+        _context.Doctors.Remove(doctor);
+        await _context.SaveChangesAsync();
+    }
 }

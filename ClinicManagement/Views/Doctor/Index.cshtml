@@ -91,6 +91,12 @@
                                     <i class="ti @(item.IsActive ? "ti-toggle-right" : "ti-toggle-left")"></i>
                                 </button>
                             </form>
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline"
+                                onsubmit="return confirm('Xác nhận xóa bác sĩ @item.FullName?')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                    <i class="ti ti-trash"></i>
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>
