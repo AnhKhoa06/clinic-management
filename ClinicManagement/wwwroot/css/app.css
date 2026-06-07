@@ -3035,3 +3035,74 @@ textarea.form-control {
   .page-header .btn span { display: none; }
   .page-header .btn i { font-size: 16px; }
 }
+/* =============================================
+   PAYMENT PAGE — RESPONSIVE MOBILE
+   ============================================= */
+
+@media (max-width: 768px) {
+  /* Ẩn cột Bác sĩ và Ngày khám */
+  .payment-table th:nth-child(3),
+  .payment-table td:nth-child(3),
+  .payment-table th:nth-child(4),
+  .payment-table td:nth-child(4) {
+    display: none;
+  }
+
+  /* Table scroll ngang */
+  .table-card {
+    overflow-x: auto;
+  }
+
+  /* Thu nhỏ padding */
+  tbody td, thead th {
+    padding: 10px 10px !important;
+  }
+
+  /* Mã hóa đơn */
+  .td-name { font-size: 12px; }
+
+  /* Số tiền */
+  .fw-500 { font-size: 13px; }
+
+  /* Select phương thức */
+  .payment-table select.form-control {
+    font-size: 11px !important;
+    padding: 3px 6px !important;
+    max-width: 100px;
+  }
+
+  /* Status badge */
+  .status { font-size: 10px; padding: 2px 7px; }
+  .status-dot { width: 5px; height: 5px; }
+
+  /* Action buttons */
+  .action-btns { gap: 4px; }
+  .icon-btn {
+    width: 26px;
+    height: 26px;
+  }
+  .icon-btn i { font-size: 12px; }
+
+  /* Page header */
+  .page-header h1 { font-size: 17px; }
+}
+
+@media (max-width: 480px) {
+  /* Ẩn thêm cột Phương thức */
+  .payment-table th:nth-child(6),
+  .payment-table td:nth-child(6) {
+    display: none;
+  }
+
+  /* Ẩn thêm cột Bệnh nhân, chỉ giữ Mã HĐ + Số tiền + Trạng thái + Thao tác */
+  .payment-table th:nth-child(2),
+  .payment-table td:nth-child(2) {
+    display: none;
+  }
+
+  /* Mã hóa đơn nhỏ hơn */
+  .td-name { font-size: 11px; }
+
+  /* Page header */
+  .page-header h1 { font-size: 15px; }
+}
