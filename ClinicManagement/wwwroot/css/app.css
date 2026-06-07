@@ -3106,3 +3106,70 @@ textarea.form-control {
   /* Page header */
   .page-header h1 { font-size: 15px; }
 }
+/* =============================================
+   MEDICAL RECORD PAGE — RESPONSIVE MOBILE
+   ============================================= */
+
+@media (max-width: 768px) {
+  /* Ẩn cột Triệu chứng và Chẩn đoán */
+  .medical-table th:nth-child(4),
+  .medical-table td:nth-child(4),
+  .medical-table th:nth-child(5),
+  .medical-table td:nth-child(5) {
+    display: none;
+  }
+
+  /* Table scroll ngang */
+  .table-card {
+    overflow-x: auto;
+  }
+
+  /* Thu nhỏ padding */
+  tbody td, thead th {
+    padding: 10px 10px !important;
+  }
+
+  /* Avatar */
+  .table-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  .table-user-name { font-size: 13px; }
+  .td-name { font-size: 13px; }
+
+  /* Badge tái khám */
+  .badge-amber, .badge-blue {
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+
+  /* Action buttons */
+  .action-btns { gap: 4px; }
+  .icon-btn {
+    width: 26px;
+    height: 26px;
+  }
+  .icon-btn i { font-size: 12px; }
+
+  /* Page header */
+  .page-header h1 { font-size: 17px; }
+  .page-header h1 i { font-size: 17px; }
+}
+
+@media (max-width: 480px) {
+  /* Ẩn thêm cột Bác sĩ và Tái khám */
+  .medical-table th:nth-child(2),
+  .medical-table td:nth-child(2),
+  .medical-table th:nth-child(6),
+  .medical-table td:nth-child(6) {
+    display: none;
+  }
+
+  /* Chỉ giữ Bệnh nhân + Ngày khám + Thao tác */
+  .table-user-name { font-size: 12px; }
+
+  /* Page header */
+  .page-header h1 { font-size: 15px; }
+}
