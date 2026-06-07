@@ -170,7 +170,12 @@ public class DoctorService
         if (doctor.MedicalRecords.Any())
             return (false, "Không thể xóa vì bác sĩ đã có hồ sơ bệnh án.");
 
+        // Xóa User luôn
+        var user = await _authRepo.GetUserByIdAsync(doctor.UserId);
         await _doctorRepo.DeleteAsync(doctor);
+        if (user != null)
+            await _authRepo.DeleteUserAsync(user);
+
         return (true, "Xóa bác sĩ thành công.");
     }
 }

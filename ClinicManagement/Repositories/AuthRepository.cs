@@ -77,4 +77,10 @@ public class AuthRepository
         tokens.ForEach(t => t.IsRevoked = true);
         await _context.SaveChangesAsync();
     }
+
+    public async Task DeleteUserAsync(User user)
+    {
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+    }
 }
