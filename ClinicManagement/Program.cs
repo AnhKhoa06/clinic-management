@@ -98,6 +98,8 @@ builder.Services.AddScoped<EmailService>();
 //payment repository để check xem lịch hẹn đã có hóa đơn chưa khi tạo hồ sơ bệnh án
 builder.Services.AddScoped<PaymentRepository>();
 
+// cloudinary
+builder.Services.AddSingleton<CloudinaryService>();
 
 var app = builder.Build();
 

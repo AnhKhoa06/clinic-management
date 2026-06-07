@@ -9,11 +9,16 @@ public class DoctorController : Controller
 {
     private readonly DoctorService _service;
     private readonly SpecialtyService _specialtyService;
+    private readonly CloudinaryService _cloudinaryService;
 
-    public DoctorController(DoctorService service, SpecialtyService specialtyService)
+    public DoctorController(
+        DoctorService service,
+        SpecialtyService specialtyService,
+        CloudinaryService cloudinaryService)
     {
         _service = service;
         _specialtyService = specialtyService;
+        _cloudinaryService = cloudinaryService;
     }
 
     // GET /Doctor
@@ -51,30 +56,23 @@ public class DoctorController : Controller
             return View(dto);
         }
 
-        // Upload avatar nếu có
         if (avatar != null && avatar.Length > 0 && created != null)
         {
             var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp" };
             if (allowedTypes.Contains(avatar.ContentType))
             {
-                var ext = Path.GetExtension(avatar.FileName);
-                var fileName = $"doctor-{created.Id}-{DateTime.Now:yyyyMMddHHmmss}{ext}";
-                // THAY BẰNG
-                var uploadDir = Path.Combine("wwwroot", "uploads", "avatars");
-                if (!Directory.Exists(uploadDir))
-                    Directory.CreateDirectory(uploadDir);
-                var filePath = Path.Combine(uploadDir, fileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                    await avatar.CopyToAsync(stream);
-
-                var updateDto = new DoctorUpdateDto
+                var avatarUrl = await _cloudinaryService.UploadAvatarAsync(avatar, $"doctor-{created.Id}");
+                if (avatarUrl != null)
                 {
-                    SpecialtyId = created.SpecialtyId,
-                    LicenseNumber = created.LicenseNumber,
-                    Bio = created.Bio,
-                    AvatarUrl = $"/uploads/avatars/{fileName}"
-                };
-                await _service.UpdateAsync(created.Id, updateDto);
+                    var updateDto = new DoctorUpdateDto
+                    {
+                        SpecialtyId = created.SpecialtyId,
+                        LicenseNumber = created.LicenseNumber,
+                        Bio = created.Bio,
+                        AvatarUrl = avatarUrl
+                    };
+                    await _service.UpdateAsync(created.Id, updateDto);
+                }
             }
         }
 
@@ -132,18 +130,9 @@ public class DoctorController : Controller
                 return View(dto);
             }
 
-            var ext = Path.GetExtension(avatar.FileName);
-            var fileName = $"doctor-{id}-{DateTime.Now:yyyyMMddHHmmss}{ext}";
-            // THAY BẰNG
-            var uploadDir = Path.Combine("wwwroot", "uploads", "avatars");
-            if (!Directory.Exists(uploadDir))
-                Directory.CreateDirectory(uploadDir);
-            var filePath = Path.Combine(uploadDir, fileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-                await avatar.CopyToAsync(stream);
-
-            dto.AvatarUrl = $"/uploads/avatars/{fileName}";
+            var avatarUrl = await _cloudinaryService.UploadAvatarAsync(avatar, $"doctor-{id}");
+            if (avatarUrl != null)
+                dto.AvatarUrl = avatarUrl;
         }
 
         var (success, message, _) = await _service.UpdateAsync(id, dto);
@@ -229,17 +218,13 @@ public class DoctorController : Controller
             return RedirectToAction(nameof(Edit), new { id });
         }
 
-        var ext = Path.GetExtension(avatar.FileName);
-        var fileName = $"doctor-{id}-{DateTime.Now:yyyyMMddHHmmss}{ext}";
-        var uploadDir = Path.Combine("wwwroot", "uploads", "avatars");
-        if (!Directory.Exists(uploadDir))
-            Directory.CreateDirectory(uploadDir);
-        var filePath = Path.Combine(uploadDir, fileName);
-
-        using (var stream = new FileStream(filePath, FileMode.Create))
-            await avatar.CopyToAsync(stream);
-
-        var avatarUrl = $"/uploads/avatars/{fileName}";
+        // THAY BẰNG
+        var avatarUrl = await _cloudinaryService.UploadAvatarAsync(avatar, $"doctor-{id}");
+        if (avatarUrl == null)
+        {
+            TempData["Error"] = "Upload ảnh thất bại.";
+            return RedirectToAction(nameof(Edit), new { id });
+        }
 
         // Cập nhật AvatarUrl vào DB
         var (success, _, data) = await _service.GetByIdAsync(id);
