@@ -59,7 +59,11 @@ public class DoctorController : Controller
             {
                 var ext = Path.GetExtension(avatar.FileName);
                 var fileName = $"doctor-{created.Id}-{DateTime.Now:yyyyMMddHHmmss}{ext}";
-                var filePath = Path.Combine("wwwroot", "uploads", "avatars", fileName);
+                // THAY BẰNG
+                var uploadDir = Path.Combine("wwwroot", "uploads", "avatars");
+                if (!Directory.Exists(uploadDir))
+                    Directory.CreateDirectory(uploadDir);
+                var filePath = Path.Combine(uploadDir, fileName);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                     await avatar.CopyToAsync(stream);
 
@@ -130,7 +134,11 @@ public class DoctorController : Controller
 
             var ext = Path.GetExtension(avatar.FileName);
             var fileName = $"doctor-{id}-{DateTime.Now:yyyyMMddHHmmss}{ext}";
-            var filePath = Path.Combine("wwwroot", "uploads", "avatars", fileName);
+            // THAY BẰNG
+            var uploadDir = Path.Combine("wwwroot", "uploads", "avatars");
+            if (!Directory.Exists(uploadDir))
+                Directory.CreateDirectory(uploadDir);
+            var filePath = Path.Combine(uploadDir, fileName);
 
             using (var stream = new FileStream(filePath, FileMode.Create))
                 await avatar.CopyToAsync(stream);
@@ -223,7 +231,10 @@ public class DoctorController : Controller
 
         var ext = Path.GetExtension(avatar.FileName);
         var fileName = $"doctor-{id}-{DateTime.Now:yyyyMMddHHmmss}{ext}";
-        var filePath = Path.Combine("wwwroot", "uploads", "avatars", fileName);
+        var uploadDir = Path.Combine("wwwroot", "uploads", "avatars");
+        if (!Directory.Exists(uploadDir))
+            Directory.CreateDirectory(uploadDir);
+        var filePath = Path.Combine(uploadDir, fileName);
 
         using (var stream = new FileStream(filePath, FileMode.Create))
             await avatar.CopyToAsync(stream);
