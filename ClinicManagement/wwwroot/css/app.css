@@ -2585,3 +2585,392 @@ textarea.form-control {
   flex-shrink: 0;
   box-shadow: 0 4px 12px rgba(26, 92, 191, 0.2);
 }
+/* =============================================
+   PATIENT MANAGEMENT — RESPONSIVE MOBILE
+   ============================================= */
+
+/* Search bar full width trên mobile */
+@media (max-width: 768px) {
+  /* Search bar */
+  form[method="get"] {
+    max-width: 100% !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Ẩn cột Tuổi, Giới tính, Liên hệ khẩn trên mobile nhỏ */
+  .patient-table th:nth-child(2),
+  .patient-table td:nth-child(2),
+  .patient-table th:nth-child(3),
+  .patient-table td:nth-child(3),
+  .patient-table th:nth-child(4),
+  .patient-table td:nth-child(4) {
+    display: none;
+  }
+
+  /* Table scroll ngang */
+  .card {
+    overflow-x: auto;
+  }
+
+  /* Thu nhỏ padding cell */
+  tbody td,
+  thead th {
+    padding: 10px 12px !important;
+  }
+
+  /* Avatar nhỏ hơn */
+  .table-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  .table-user-name {
+    font-size: 13px;
+  }
+
+  .table-user-email {
+    font-size: 11px;
+  }
+
+  /* Action buttons nhỏ hơn */
+  .icon-btn {
+    width: 26px;
+    height: 26px;
+  }
+
+  .icon-btn i {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Chỉ hiện cột Bệnh nhân và Thao tác */
+  .patient-table th:nth-child(2),
+  .patient-table td:nth-child(2),
+  .patient-table th:nth-child(3),
+  .patient-table td:nth-child(3),
+  .patient-table th:nth-child(4),
+  .patient-table td:nth-child(4) {
+    display: none;
+  }
+
+  /* Page header gọn hơn */
+  .page-header h1 {
+    font-size: 15px;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+  /* =============================================
+   SETTINGS PAGE — RESPONSIVE MOBILE
+   ============================================= */
+
+@media (max-width: 768px) {
+  /* Card full width */
+  .settings-panel .card {
+    max-width: 100% !important;
+    padding: 20px 16px !important;
+  }
+
+  /* Tabs cuộn ngang nếu quá dài */
+  .settings-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .settings-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .settings-tab {
+    white-space: nowrap;
+    padding: 10px 14px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  /* Form row 1 cột */
+  .settings-panel .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 0;
+  }
+
+  /* Form actions */
+  .settings-panel .form-actions {
+    margin-top: 16px;
+  }
+
+  .settings-panel .form-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Theme grid 1 cột */
+  .settings-panel .theme-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+
+  .theme-card {
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    gap: 14px !important;
+    padding: 14px 16px !important;
+    text-align: left !important;
+  }
+
+  .theme-card i {
+    font-size: 22px !important;
+    flex-shrink: 0;
+  }
+
+  .theme-card-name {
+    font-size: 13px !important;
+  }
+
+  .theme-card-desc {
+    font-size: 11px !important;
+    text-align: left !important;
+  }
+
+  .theme-check {
+    margin-top: 0 !important;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* Section title nhỏ hơn */
+  .settings-section-title {
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+
+  /* Input padding */
+  .settings-panel .form-control {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  /* Nút đổi mật khẩu full width */
+  .settings-section .btn-outline {
+    width: 100%;
+    justify-content: center;
+  }
+  }
+
+@media (max-width: 480px) {
+  .settings-panel .card {
+    padding: 16px 12px !important;
+    border-radius: 10px;
+  }
+
+  .settings-tab span {
+    display: none;
+  }
+
+  .settings-tab i {
+    font-size: 18px;
+  }
+
+  .settings-tab {
+    padding: 10px 16px;
+  }
+  }
+  /* =============================================
+   APPOINTMENT PAGE — RESPONSIVE MOBILE
+   ============================================= */
+
+@media (max-width: 768px) {
+  /* Stats grid 2 cột */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
+  }
+
+  /* Filter status buttons cuộn ngang */
+  .search-bar {
+    display: flex;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px;
+    padding-bottom: 4px;
+  }
+  .search-bar::-webkit-scrollbar { display: none; }
+  .search-bar .btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  /* Form tìm ngày */
+  form[method="get"] {
+    flex-wrap: wrap;
+  }
+  form[method="get"] input[type="date"] {
+    max-width: 100% !important;
+    flex: 1;
+    min-width: 140px;
+  }
+  form[method="get"] .btn {
+    font-size: 12px;
+    padding: 7px 12px;
+  }
+
+  /* Ẩn cột Bác sĩ và Giờ khám */
+  .appointment-table th:nth-child(2),
+  .appointment-table td:nth-child(2),
+  .appointment-table th:nth-child(4),
+  .appointment-table td:nth-child(4) {
+    display: none;
+  }
+
+  /* Table scroll ngang */
+  .table-card {
+    overflow-x: auto;
+  }
+
+  /* Thu nhỏ padding */
+  tbody td, thead th {
+    padding: 10px 10px !important;
+  }
+
+  /* Avatar nhỏ */
+  .table-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .table-user-name { font-size: 12px; }
+  .table-user-email { font-size: 10px; }
+
+  /* Status badge nhỏ */
+  .status {
+    font-size: 10px;
+    padding: 2px 7px;
+  }
+
+  /* Action buttons nhỏ */
+  .action-btns { gap: 4px; }
+  .icon-btn {
+    width: 26px;
+    height: 26px;
+  }
+  .icon-btn i { font-size: 12px; }
+
+  /* Stat card nhỏ */
+  .stat-value { font-size: 20px; }
+  .stat-label { font-size: 11px; }
+  .stat-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 10px;
+  }
+  .stat-icon i { font-size: 16px; }
+}
+
+@media (max-width: 480px) {
+  /* Stats grid 2 cột */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Ẩn thêm cột Ngày khám, chỉ giữ Bệnh nhân + Trạng thái + Thao tác */
+  .appointment-table th:nth-child(3),
+  .appointment-table td:nth-child(3) {
+    display: none;
+  }
+
+  /* Ngày lọc trong badge nhỏ hơn */
+  .badge { font-size: 10px; }
+}
+/* =============================================
+   MEDICATION PAGE — RESPONSIVE MOBILE
+   ============================================= */
+
+@media (max-width: 768px) {
+  /* Search + filter full width */
+  form[method="get"] {
+    flex-direction: column;
+    gap: 8px;
+  }
+  form[method="get"] > div {
+    min-width: unset !important;
+    width: 100%;
+  }
+  form[method="get"] select.form-control {
+    width: 100% !important;
+  }
+  form[method="get"] .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Ẩn cột Mô tả */
+  .medication-table th:nth-child(3),
+  .medication-table td:nth-child(3) {
+    display: none;
+  }
+
+  /* Table scroll ngang */
+  .card {
+    overflow-x: auto;
+  }
+
+  /* Thu nhỏ padding */
+  tbody td, thead th {
+    padding: 10px 10px !important;
+  }
+
+  /* Icon thuốc nhỏ hơn */
+  .stat-icon.red {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .stat-icon.red i {
+    font-size: 13px !important;
+  }
+
+  /* Tên thuốc */
+  .fw-500 { font-size: 13px; }
+
+  /* Badge */
+  .badge { font-size: 11px; padding: 2px 8px; }
+
+  /* Action buttons */
+  .action-btns { gap: 4px; }
+  .icon-btn { width: 26px; height: 26px; }
+  .icon-btn i { font-size: 12px; }
+
+  /* Pagination */
+  div[style*="justify-content:space-between"] {
+    flex-direction: column !important;
+    gap: 10px;
+    align-items: center !important;
+  }
+
+  div[style*="display:flex; gap:6px"] {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Ẩn thêm cột Đơn vị */
+  .medication-table th:nth-child(2),
+  .medication-table td:nth-child(2) {
+    display: none;
+  }
+
+  /* Page header */
+  .page-header h1 { font-size: 16px; }
+  .page-header .btn { font-size: 12px; padding: 6px 12px; }
+}
+}
