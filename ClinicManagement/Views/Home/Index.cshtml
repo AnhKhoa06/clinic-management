@@ -621,38 +621,6 @@ new();
 
     @if (User.IsInRole("Patient"))
     {
-<<<<<<< Updated upstream
-        <div style="margin-bottom:20px;">
-            <div style="font-size:13px; color:var(--text-secondary); margin-bottom:4px;">
-                @{
-                    var hour = DateTime.Now.Hour;
-                    var greeting = hour < 12 ? "Chào buổi sáng" : hour < 18 ? "Chào buổi chiều" : "Chào buổi tối";
-                    var greetingEn = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
-                }
-                <span data-vi="@greeting" data-en="@greetingEn">@greeting</span>
-            </div>
-            <div style="font-size:22px; font-weight:600; color:var(--text-primary);">
-                @User.Identity?.Name
-            </div>
-            <div style="font-size:13px; color:var(--text-secondary); margin-top:4px;">
-                <span data-vi="Hôm nay là" data-en="Today is">Hôm nay là</span>
-                @DateTime.Now.ToString("dddd, dd/MM/yyyy")
-            </div>
-        </div>
-        <p class="welcome-sub" data-vi="Chào mừng bạn quay trở lại hệ thống phòng khám."
-           data-en="Welcome back to the clinic system.">
-            Chào mừng bạn quay trở lại hệ thống phòng khám.
-        </p>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
-
-            <!-- Lịch hẹn sắp tới -->
-            <div class="card" style="padding:20px;">
-                <div class="settings-section-title" style="margin-bottom:16px;">
-                    <i class="ti ti-calendar-check"></i>
-                    <span data-vi="Lịch hẹn sắp tới" data-en="Upcoming Appointments">Lịch hẹn sắp tới</span>
-                </div>
-=======
         var hour = DateTime.Now.Hour;
         var greeting = hour < 12 ? "Chào buổi sáng" : hour < 18 ? "Chào buổi chiều" : "Chào buổi tối";
 
@@ -687,7 +655,6 @@ new();
                     <i class="ti ti-calendar-check"></i>
                     <span data-vi="Lịch hẹn sắp tới" data-en="Upcoming Appointments">Lịch hẹn sắp tới</span>
                 </div>
->>>>>>> Stashed changes
                 @{
                     var upcomingApts = ViewBag.UpcomingAppointments as
             List<ClinicManagement.DTOs.Appointment.AppointmentResponseDto> ?? new();
