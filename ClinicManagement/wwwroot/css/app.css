@@ -1291,123 +1291,123 @@ textarea.form-control {
 .table-user-email {
   font-size: 12px;
   color: var(--text-muted);
-
 }
 /* =============================================
    MEDICAL RECORD DETAIL — POLISHED
    ============================================= */
 
 .page-header {
-    margin-bottom: 28px;
+  margin-bottom: 28px;
 }
 
 .page-header h1 {
-    font-size: 22px;
-    font-weight: 600;
-    margin: 0;
-    color: var(--text-primary);
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
 }
 
 /* Card chung cho trang Detail */
 .card[style*="padding:20px"] {
-    padding: 24px !important;
-    border-radius: 16px;
+  padding: 24px !important;
+  border-radius: 16px;
 }
 
 /* Section Title */
 .settings-section-title {
-    font-size: 15.5px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 18px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--card-border);
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .settings-section-title i {
-    font-size: 18px;
-    color: var(--accent);
+  font-size: 18px;
+  color: var(--accent);
 }
 
 /* Thông tin flex */
 .card > div[style*="flex-direction:column"] {
-    gap: 14px !important;
-    font-size: 14px;
+  gap: 14px !important;
+  font-size: 14px;
 }
 
 .card > div[style*="flex-direction:column"] > div {
-    padding: 2px 0;
+  padding: 2px 0;
 }
 
 /* Kết quả khám */
 .card[style*="grid-column:1 / -1"] {
-    padding: 26px !important;
+  padding: 26px !important;
 }
 
-.card[style*="grid-column:1 / -1"] > div[style*="grid-template-columns:1fr 1fr 1fr"] {
-    gap: 24px !important;
-    font-size: 14px;
+.card[style*="grid-column:1 / -1"]
+  > div[style*="grid-template-columns:1fr 1fr 1fr"] {
+  gap: 24px !important;
+  font-size: 14px;
 }
 
 .card[style*="grid-column:1 / -1"] p {
-    margin-top: 8px;
-    line-height: 1.65;
-    color: var(--text-primary);
+  margin-top: 8px;
+  line-height: 1.65;
+  color: var(--text-primary);
 }
 
 /* Bảng đơn thuốc - cải thiện đẹp hơn */
 .medical-record-prescription-wrap,
 .card table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 8px;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid var(--card-border);
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
 }
 
 .card table thead th {
-    background: var(--accent-light);
-    padding: 14px 16px;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--accent);
-    text-align: left;
-    border-bottom: 1px solid var(--table-border);
+  background: var(--accent-light);
+  padding: 14px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+  text-align: left;
+  border-bottom: 1px solid var(--table-border);
 }
 
 .card table tbody td {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--table-border);
-    font-size: 13.5px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--table-border);
+  font-size: 13.5px;
 }
 
 .card table tbody tr:last-child td {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .card table tbody tr:hover {
-    background: var(--accent-light);
+  background: var(--accent-light);
 }
 
 /* Highlight thành tiền */
 .card table td[style*="color:var(--accent)"] {
-    font-weight: 600;
-    color: var(--accent) !important;
+  font-weight: 600;
+  color: var(--accent) !important;
 }
 
 /* Responsive nhỏ */
 @media (max-width: 992px) {
-    .card[style*="grid-template-columns:1fr 1fr"] {
-        grid-template-columns: 1fr !important;
-    }
-    
-    .card[style*="grid-template-columns:1fr 1fr 1fr"] {
-        grid-template-columns: 1fr !important;
-    }
+  .card[style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .card[style*="grid-template-columns:1fr 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
 }
 .table-actions {
   display: flex;
@@ -2313,107 +2313,107 @@ textarea.form-control {
 
 /* Card wrapper */
 .edit-card {
-    max-width: 620px;
-    background: #ffffff;
-    border: 0.5px solid #e0ddd6;
-    border-radius: 12px;
-    padding: 1.75rem;
+  max-width: 620px;
+  background: #ffffff;
+  border: 0.5px solid #e0ddd6;
+  border-radius: 12px;
+  padding: 1.75rem;
 }
 
 /* Badge bệnh nhân */
 .patient-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: #f7f6f2;
-    border: 0.5px solid #e0ddd6;
-    border-radius: 999px;
-    padding: 5px 14px 5px 5px;
-    margin-bottom: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #f7f6f2;
+  border: 0.5px solid #e0ddd6;
+  border-radius: 999px;
+  padding: 5px 14px 5px 5px;
+  margin-bottom: 1.5rem;
 }
 
 .patient-avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: #e6f1fb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 500;
-    color: #185fa5;
-    flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #e6f1fb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: #185fa5;
+  flex-shrink: 0;
 }
 
 .patient-badge-info {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.3;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
 }
 
 .patient-badge-name {
-    font-size: 13px;
-    font-weight: 500;
-    color: #1a1916;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a1916;
 }
 
 .patient-badge-id {
-    font-size: 12px;
-    color: #888780;
+  font-size: 12px;
+  color: #888780;
 }
 
 /* Section label */
 .edit-section-label {
-    font-size: 11px;
-    font-weight: 500;
-    color: #888780;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 1rem;
-    padding-bottom: 8px;
-    border-bottom: 0.5px solid #e0ddd6;
+  font-size: 11px;
+  font-weight: 500;
+  color: #888780;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+  padding-bottom: 8px;
+  border-bottom: 0.5px solid #e0ddd6;
 }
 
 /* Divider giữa các section */
 .edit-divider {
-    height: 0.5px;
-    background: #e0ddd6;
-    margin: 1.25rem 0;
+  height: 0.5px;
+  background: #e0ddd6;
+  margin: 1.25rem 0;
 }
 
 /* Form hint dưới input */
 .form-hint {
-    font-size: 12px;
-    color: #aaa9a2;
-    margin-top: 2px;
+  font-size: 12px;
+  color: #aaa9a2;
+  margin-top: 2px;
 }
 
 /* Lỗi validation từng field */
 .field-error {
-    font-size: 12px;
-    color: #e24b4a;
-    margin-top: 2px;
-    display: block;
+  font-size: 12px;
+  color: #e24b4a;
+  margin-top: 2px;
+  display: block;
 }
 
 /* Nút icon quay lại */
 .btn.btn-icon {
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  flex-shrink: 0;
 }
 
 /* Form focus state */
 .edit-card .form-control:focus {
-    border-color: #378add;
-    box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.12);
-    outline: none;
+  border-color: #378add;
+  box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.12);
+  outline: none;
 }
 
 /* ---------- RESPONSIVE ---------- */
@@ -2422,10 +2422,50 @@ textarea.form-control {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.hamburger-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 22px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  margin-right: 6px;
+}
+.hamburger-btn:hover {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 99;
+}
+.sidebar-overlay.active {
+  display: block;
+}
+
 @media (max-width: 768px) {
-  .sidebar {
-    width: 60px;
+  .hamburger-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+
+  .sidebar {
+    width: 250px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
   .sidebar .logo-text,
   .sidebar .logo-sub,
   .nav-section-label,
@@ -2433,33 +2473,115 @@ textarea.form-control {
   .user-name,
   .user-role,
   .btn-logout span {
-    display: none;
+    display: block;
   }
   .nav-item {
-    justify-content: center;
+    justify-content: flex-start;
   }
+
   .main-content {
-    margin-left: 60px;
+    margin-left: 0;
   }
+
   .form-row {
     grid-template-columns: 1fr;
   }
   .theme-grid {
     grid-template-columns: 1fr;
   }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .quick-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  div[style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .page-body {
+    padding: 16px 14px;
+  }
+
+  .topbar {
+    padding: 0 14px;
+  }
+
+  .badge-role {
+    display: none;
+  }
+
+  .dash-card-value {
+    font-size: 22px;
+  }
+  .dash-card-value.sm {
+    font-size: 16px;
+  }
+
+  .quick-card {
+    padding: 12px 14px;
+  }
+  .quick-card .stat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+  .quick-card-label {
+    font-size: 13px;
+  }
+  .quick-card-sub {
+    display: none;
+  }
+
+  .notif-panel {
+    right: 8px;
+    left: 8px;
+    width: auto;
+  }
+
+  .toast-container {
+    right: 12px;
+    left: 12px;
+    bottom: 16px;
+  }
+  .toast {
+    min-width: unset;
+    max-width: unset;
+    width: 100%;
+  }
 }
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .quick-grid-4 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dash-card {
+    padding: 12px 14px;
+  }
+}
+
 /* Patient Welcome Card */
 .patient-avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 22px;
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(26, 92, 191, 0.2);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 22px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(26, 92, 191, 0.2);
 }

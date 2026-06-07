@@ -249,6 +249,9 @@
         <!-- Topbar -->
         <header class="topbar">
             <div class="topbar-left">
+                <button class="hamburger-btn" id="hamburgerBtn">
+                    <i class="ti ti-menu-2"></i>
+                </button>
                 <span class="topbar-title">@(ViewData["Title"] ?? "Trang chủ")</span>
             </div>
             <div class="topbar-right">
@@ -295,6 +298,7 @@
             @RenderBody()
         </div>
     </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 </div>
 
 <script>
@@ -353,6 +357,21 @@ window.setTheme = applyTheme;
 ['alert-success','alert-error'].forEach(id => {
     const el = document.getElementById(id);
     if (el) setTimeout(() => el.remove(), 4000);
+});
+
+// ── HAMBURGER SIDEBAR ────────────────────────
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+const sidebar = document.querySelector('.sidebar');
+
+hamburgerBtn?.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    sidebarOverlay.classList.toggle('active');
+});
+
+sidebarOverlay?.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('active');
 });
 </script>
 
