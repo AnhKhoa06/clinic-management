@@ -19,7 +19,7 @@ public class NotificationRepository
             .Where(n => n.UserId == userId)
             .OrderByDescending(n => n.CreatedAt)
             .Take(limit)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<List<Notification>> GetForRoleAsync(string role, int limit = 20)
@@ -28,7 +28,7 @@ public class NotificationRepository
             .Where(n => (n.Role == role) || (n.UserId == null && n.Role == role))
             .OrderByDescending(n => n.CreatedAt)
             .Take(limit)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<int> CountUnreadAsync(int userId, string role)

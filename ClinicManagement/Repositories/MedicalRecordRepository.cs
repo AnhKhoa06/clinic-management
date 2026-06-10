@@ -24,7 +24,7 @@ public class MedicalRecordRepository
     {
         return await BaseQuery()
             .OrderByDescending(mr => mr.CreatedAt)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<MedicalRecord?> GetByIdAsync(int id)
@@ -38,7 +38,7 @@ public class MedicalRecordRepository
         return await BaseQuery()
             .Where(mr => mr.PatientId == patientId)
             .OrderByDescending(mr => mr.CreatedAt)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<bool> ExistsByAppointmentIdAsync(int appointmentId)
@@ -71,7 +71,7 @@ public class MedicalRecordRepository
         return await BaseQuery()
             .Where(mr => mr.DoctorId == doctorId)
             .OrderByDescending(mr => mr.CreatedAt)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<MedicalRecord?> GetByAppointmentIdAsync(int appointmentId)

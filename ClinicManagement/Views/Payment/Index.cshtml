@@ -33,7 +33,8 @@
                     </td>
                 </tr>
             }
-            @foreach (var item in Model)
+
+            @foreach (var item in Model)//duyệt từng hóa đơn
             {
                 <tr>
                     <td class="td-name">@item.InvoiceCode</td>
@@ -45,7 +46,7 @@
                         @if (item.Status == "Unpaid" && User.IsInRole("Admin"))
                         {
                             <form asp-action="SetMethod" method="post" style="display:flex; align-items:center; gap:6px;">
-                                <input type="hidden" name="id" value="@item.Id" />
+                                <input type="hidden" name="id" value="@item.Id" />  @* gửi kèm id hóa đơn *@
                                 <select name="method" class="form-control" style="font-size:12px; padding:4px 8px; height:auto;">
                                     <option value="Cash" selected="@(item.Method == "Cash")">Tiền mặt</option>
                                     <option value="BankTransfer" selected="@(item.Method == "BankTransfer")">Chuyển khoản</option>

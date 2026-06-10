@@ -19,8 +19,8 @@ public class WorkingScheduleRepository
             .Include(ws => ws.Doctor)
                 .ThenInclude(d => d.User)
             .Where(ws => ws.DoctorId == doctorId)
-            .OrderBy(ws => ws.DayOfWeek)
-            .ToListAsync();
+            .OrderBy(ws => ws.DayOfWeek)//Sắp xếp theo thứ trong tuần - thứ 2 lên trên chủ nhật xuống dưới.
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<WorkingSchedule?> GetByIdAsync(int id)
@@ -38,17 +38,17 @@ public class WorkingScheduleRepository
                 .ThenInclude(d => d.User)
             .OrderBy(ws => ws.DoctorId)
             .ThenBy(ws => ws.DayOfWeek)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<bool> ExistsAsync(int doctorId, int dayOfWeek, int? excludeId = null)
     {
         return await _context.WorkingSchedules
-            .AnyAsync(ws => ws.DoctorId == doctorId
+            .AnyAsync(ws => ws.DoctorId == doctorId//Lọc đúng bác sĩ đang tạo lịch
                 && ws.DayOfWeek == dayOfWeek
                 && ws.Id != excludeId
                 && ws.IsActive);
-    }
+    }//AnyAsync — kiểm tra có tồn tại bất kỳ dòng nào thỏa điều kiện không ,trả về true/false
 
     public async Task<WorkingSchedule> CreateAsync(WorkingSchedule schedule)
     {
@@ -73,6 +73,6 @@ public class WorkingScheduleRepository
     {
         return await _context.WorkingSchedules
             .Where(ws => ws.DoctorId == doctorId && ws.IsActive)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 }

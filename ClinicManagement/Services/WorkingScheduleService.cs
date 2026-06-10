@@ -75,6 +75,13 @@ public class WorkingScheduleService
         return (true, "Cập nhật lịch làm việc thành công.", MapToDto(schedule));
     }
 
+    public async Task<WorkingScheduleResponseDto?> GetByIdAsync(int id)
+    {
+        var schedule = await _scheduleRepo.GetByIdAsync(id);
+        if (schedule == null) return null;
+        return MapToDto(schedule);
+    }
+
     public async Task<(bool Success, string Message)> DeleteAsync(int id)
     {
         var schedule = await _scheduleRepo.GetByIdAsync(id);

@@ -57,7 +57,7 @@ public class AppointmentSlotRepository
     {
         var slots = await _context.AppointmentSlots
             .Where(s => s.WorkingScheduleId == scheduleId)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
 
         if (!slots.Any()) return;
 
@@ -88,7 +88,7 @@ public class AppointmentSlotRepository
         var slotIds = await _context.AppointmentSlots
             .Where(s => s.WorkingScheduleId == scheduleId)
             .Select(s => s.Id)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
 
         if (!slotIds.Any()) return false;
 

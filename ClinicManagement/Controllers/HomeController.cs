@@ -40,16 +40,16 @@ public class HomeController : Controller
             var payments     = await _paymentService.GetAllAsync();//tất cả hóa đơn
 
             // 4 stat cards
-            ViewBag.DoctorCount      = doctors.Count;
             ViewBag.PatientCount     = patients.Count;
             ViewBag.AppointmentToday = appointments
                 .Count(a => a.SlotDate == DateOnly.FromDateTime(DateTime.Today)
                         && a.Status != "Cancelled");
+            ViewBag.DoctorCount      = doctors.Count;
             ViewBag.RevenueThisMonth = payments
-                .Where(p => p.Status == "Paid" && p.PaidAt.HasValue
+                .Where(p => p.Status == "Paid" && p.PaidAt.HasValue//ktra k null
                         && p.PaidAt.Value.Month == DateTime.Today.Month
                         && p.PaidAt.Value.Year == DateTime.Today.Year)
-                .Sum(p => p.Amount);
+                .Sum(p => p.Amount);// cộng tổng tiền của những hóa đơn lọt qua điều kiện
 
             // Biểu đồ 7 ngày
             var last7Days = Enumerable.Range(0, 7)
@@ -58,7 +58,7 @@ public class HomeController : Controller
 
             ViewBag.ChartLabels = System.Text.Json.JsonSerializer.Serialize(
                 last7Days.Select(d => d.DayOfWeek switch
-                {
+                {//Select duyệt qua từng ngày trong last7Days, r switch ktra ngày đó là thứ mấy
                     DayOfWeek.Monday    => "T2",
                     DayOfWeek.Tuesday   => "T3",
                     DayOfWeek.Wednesday => "T4",
@@ -66,11 +66,11 @@ public class HomeController : Controller
                     DayOfWeek.Friday    => "T6",
                     DayOfWeek.Saturday  => "T7",
                     _                   => "CN"
-                }).ToList()
+                }).ToList()//kết quả là IEnumerable<string> rồi .ToList()
             );
 
             ViewBag.ChartTotal = System.Text.Json.JsonSerializer.Serialize(
-                last7Days.Select(d => appointments
+                last7Days.Select(d => appointments// == //
                     .Count(a => a.SlotDate == d && a.Status != "Cancelled"))
                 .ToList()
             );
@@ -91,7 +91,7 @@ public class HomeController : Controller
 
             // Lịch hẹn hôm nay
             ViewBag.TodayAppointments = appointments
-                .Where(a => a.SlotDate == DateOnly.FromDateTime(DateTime.Today)
+                .Where(a => a.SlotDate == DateOnly.FromDateTime(DateTime.Today)//hôm nay 
                         && a.Status != "Cancelled")
                 .OrderBy(a => a.SlotTime)
                 .Take(5)
@@ -104,6 +104,8 @@ public class HomeController : Controller
                 .Take(3)
                 .ToList();
         }
+
+        
 
         if (User.IsInRole("Doctor"))
         {

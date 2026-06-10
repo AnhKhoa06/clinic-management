@@ -21,11 +21,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Auth/Login";         // Chưa login → redirect về đây
+        options.LoginPath = "/Auth/Login"; //Chưa login thì redirect về đây
         options.LogoutPath = "/Auth/Logout";
-        options.AccessDeniedPath = "/Auth/AccessDenied"; // Không đủ quyền, sai role → redirect về đây
+        options.AccessDeniedPath = "/Auth/AccessDenied"; //K đủ quyền, sai role thì redirect về đây
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
-        options.SlidingExpiration = true;          // Tự gia hạn nếu còn dùng
+        options.SlidingExpiration = true; // Tự gia hạn nếu còn dùng
     })
     
     .AddGoogle(options =>
@@ -161,12 +161,14 @@ app.UseStaticFiles();  // Cho phép dùng wwwroot (CSS, JS, ảnh)
 app.UseRouting(); //xác định request đi đến controller nào
 
 
-app.UseAuthentication(); //đọc Cookie trong request (từ trình duyệt), xác định user là ai, có hợp 
-// lệ hay ko
+app.UseAuthentication(); //đọc Cookie trong request (từ trình duyệt), xác định user là ai
+//giải mã ra Claims (userId, role, email,...)ASP.NET core sẽ tự động
+//gắn vào User object để dùng trong controller
 
-app.UseAuthorization(); //kiểm tra User.Identity.IsAuthenticated, nếu chưa ... và nếu rồi ...
+app.UseAuthorization(); //đọc User.Role từ Claims đã giải mã sẵn trong User object đó 
+// để kiểm tra role, nếu hợp lệ thì cho vào, ...
 
-// Route mặc định của MVC
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}"

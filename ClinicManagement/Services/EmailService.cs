@@ -37,23 +37,27 @@ public class EmailService
         try
         {
             var apiKey = _config["Resend:ApiKey"] ?? _config["Resend__ApiKey"] ?? "";
-            Console.WriteLine($"[EmailService-Resend] Gửi tới anhkhoale2406@gmail.com, key length: {apiKey.Length}");
-
+            //lấy api key từ config
+        
             var payload = new
             {
                 from = "Phòng Khám <onboarding@resend.dev>",
-                to = new[] { "anhkhoale2406@gmail.com" }, // gửi về email admin
+                to = new[] { "anhkhoale2406@gmail.com" }, // gửi về email đã đăng ký vs resend
+                // to = new[] { toEmail } 
                 subject = $"[{patientName}] Xác nhận thanh toán – {invoiceCode}",
                 html = BuildEmailHtml(patientName, invoiceCode, doctorName, slotDate, amount, method)
             };
 
+            //Tạo http request gửi lên resend
             var request = new HttpRequestMessage(HttpMethod.Post, "https://api.resend.com/emails");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);//gắn
             request.Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+            //gửi kèm nội dung vào body của request
 
-            var response = await _http.SendAsync(request);
+            var response = await _http.SendAsync(request);//đọc - gửi
+
             var body = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"[EmailService-Resend] Status: {response.StatusCode}, Body: {body}");
+            // đọc response body dưới dạng chuỗi string
         }
         catch (Exception ex)
         {

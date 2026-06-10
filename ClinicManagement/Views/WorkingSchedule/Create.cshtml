@@ -122,24 +122,31 @@
 </div>
 
 @section Scripts {
-<script>
+<script>//Lấy giá trị từ form
     function updatePreview() {
         const start    = document.querySelector('[name=StartTime]').value;
         const end      = document.querySelector('[name=EndTime]').value;
         const duration = parseInt(document.querySelector('[name=SlotDurationMinutes]').value);
-        const preview  = document.getElementById('slotPreview');
+        const preview  = document.getElementById('slotPreview');// div hiển thị kết quả
 
-        if (start && end && duration) {
-            const [sh, sm] = start.split(':').map(Number);
-            const [eh, em] = end.split(':').map(Number);
+        if (start && end && duration) {// Tách giờ và phút
+            const [sh, sm] = start.split(':').map(Number);//"08:00" → sh=8, sm=0
+            const [eh, em] = end.split(':').map(Number);//12:00" → eh=12, em=0
+
+            // Tính tổng phút
             const totalMins = (eh * 60 + em) - (sh * 60 + sm);
+
+            //và số slot
             preview.textContent = totalMins > 0
                 ? `${Math.floor(totalMins / duration)} slots`
-                : '⚠ Giờ kết thúc phải sau giờ bắt đầu';
+                : 'Giờ kết thúc phải sau giờ bắt đầu';
+                //totalMins <= 0 → giờ kết thúc sai
         }
     }
 
     ['[name=StartTime]','[name=EndTime]','[name=SlotDurationMinutes]']
         .forEach(sel => document.querySelector(sel).addEventListener('change', updatePreview));
+    // gắn sự kiện 'change' vào cả 3 input
+// Admin thay đổi bất kỳ cái nào → updatePreview() chạy lại ngay
 </script>
 }

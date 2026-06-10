@@ -13,14 +13,15 @@ public class DoctorRepository
         _context = context;
     }
 
+    //sử dụng E.F Core để truy vấn dữ liệu từ database
     public async Task<List<Doctor>> GetAllAsync()
     {
-        return await _context.Doctors
-            .Include(d => d.User)
+        return await _context.Doctors //eager loading / John thêm các bảng
+            .Include(d => d.User)//LINQ 
             .Include(d => d.Specialty)
             .Include(d => d.Reviews)
             .OrderBy(d => d.User.FullName)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<Doctor?> GetByIdAsync(int id)
@@ -40,7 +41,7 @@ public class DoctorRepository
             .Include(d => d.Reviews)
             .Where(d => d.SpecialtyId == specialtyId && d.IsActive)
             .OrderBy(d => d.User.FullName)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<bool> LicenseExistsAsync(string licenseNumber, int? excludeId = null)

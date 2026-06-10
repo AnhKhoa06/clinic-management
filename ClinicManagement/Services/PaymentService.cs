@@ -97,10 +97,11 @@ public class PaymentService
     {
         var payment = await _db.Payments
             .Include(p => p.Appointment).ThenInclude(a => a.Patient).ThenInclude(p => p.User)
+            // lấy email, tên bệnh nhân
             .Include(p => p.Appointment).ThenInclude(a => a.Doctor).ThenInclude(d => d.User)
             .Include(p => p.Appointment).ThenInclude(a => a.AppointmentSlot)
             .FirstOrDefaultAsync(p => p.Id == id);
-
+            //truy vấn bất đồng bộ lấy phần tử đầu tiên thỏa điều kiện
         if (payment == null)
             return (false, "Không tìm thấy hóa đơn.");
 
@@ -108,7 +109,7 @@ public class PaymentService
             return (false, "Hóa đơn này đã được thanh toán.");
 
         payment.Status = "Paid";
-        payment.PaidAt = DateTime.UtcNow;
+        payment.PaidAt = DateTime.UtcNow;// ghi lại thời điểm thanh toán
         await _db.SaveChangesAsync();
 
         // Gửi email thông báo
@@ -256,19 +257,21 @@ public class PaymentService
     public async Task<List<PaymentResponseDto>> GetByDoctorIdAsync(int doctorId)
     {
         var payments = await _db.Payments
-            .Include(p => p.Appointment).ThenInclude(a => a.Patient).ThenInclude(p => p.User)
-            .Include(p => p.Appointment).ThenInclude(a => a.Doctor).ThenInclude(d => d.User)
-            .Include(p => p.Appointment).ThenInclude(a => a.AppointmentSlot)
-            .Where(p => p.Appointment.DoctorId == doctorId)
-            .OrderByDescending(p => p.Id)
+            .Include(p => p.Appointment).ThenInclude(a => a.Patient).ThenInclude(p => p.User)//bệnh nhân
+            .Include(p => p.Appointment).ThenInclude(a => a.Doctor).ThenInclude(d => d.User)//bác sĩ
+            .Include(p => p.Appointment).ThenInclude(a => a.AppointmentSlot)//ngày khám
+            .Where(p => p.Appointment.DoctorId == doctorId)//Where để lọc chỉ lấy hóa đơn thuộc 
+            // về đúng bs đang đn
+            .OrderByDescending(p => p.Id)//mới nhất
             .ToListAsync();
 
         return payments.Select(p => MapToDto(p, p.Appointment)).ToList();
+        //Select(MapToDto) duyệt qua từng payments trong list
     }
 
     public async Task<(bool, string)> SetMethodAsync(int id, string method)
     {
-        var payment = await _db.Payments.FindAsync(id);
+        var payment = await _db.Payments.FindAsync(id);//tìm hóa đơn theo id:
         if (payment == null) return (false, "Không tìm thấy hóa đơn.");
         if (payment.Status == "Paid") return (false, "Hóa đơn đã được thanh toán.");
 

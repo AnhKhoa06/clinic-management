@@ -247,11 +247,11 @@
             new Chart(ctx, {
             type: 'line',
             data: {
-            labels: @Html.Raw(ViewBag.ChartLabels),
+            labels: @Html.Raw(ViewBag.ChartLabels),//nhãn dán T2, T3
             datasets: [
             {
             label: 'Tổng lịch hẹn',
-            data: @Html.Raw(ViewBag.ChartTotal),
+            data: @Html.Raw(ViewBag.ChartTotal),//----//Html.Raw() giữ nguyên chuỗi JSON gốc.
             borderColor: '#1a5cbf',
             backgroundColor: gradientBlue,
             borderWidth: 2.5,
@@ -266,7 +266,7 @@
             },
             {
             label: 'Đã hoàn thành',
-            data: @Html.Raw(ViewBag.ChartCompleted),
+            data: @Html.Raw(ViewBag.ChartCompleted),// --- //Html.Raw() giữ nguyên chuỗi JSON gốc.
             borderColor: '#22c55e',
             backgroundColor: gradientGreen,
             borderWidth: 2.5,

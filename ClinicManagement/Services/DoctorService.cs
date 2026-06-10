@@ -20,8 +20,9 @@ public class DoctorService
     {
         var doctors = await _doctorRepo.GetAllAsync();
         return doctors.Select(MapToDto).ToList();
-    }
-
+    }//.Select(MapToDto) duyệt qua từng Doctor trong list, đưa vào MapToDto
+        //MapToDto tạo object mới DoctorResponseDto — chỉ lấy field cần thiết, 
+        // bỏ qua các field thừa.
     public async Task<(bool Success, string Message, DoctorResponseDto? Data)> GetByIdAsync(int id)
     {
         var doctor = await _doctorRepo.GetByIdAsync(id);
@@ -139,7 +140,7 @@ public class DoctorService
         return MapToDto(doctor);
     }
 
-    private static DoctorResponseDto MapToDto(Doctor d) => new()
+    private static DoctorResponseDto MapToDto(Doctor d) => new()// Hàm MapToDto đóng vtrò ánh xạ dl
     {
         Id = d.Id,
         UserId = d.UserId,

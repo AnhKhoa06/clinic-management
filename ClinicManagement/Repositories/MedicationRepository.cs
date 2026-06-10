@@ -18,7 +18,7 @@ public class MedicationRepository
         return await _context.Medications
             .Where(m => m.IsActive)
             .OrderBy(m => m.Name)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<Medication?> GetByIdAsync(int id)

@@ -18,7 +18,7 @@ public class PatientRepository
         return await _context.Patients
             .Include(p => p.User)
             .OrderBy(p => p.User.FullName)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<Patient?> GetByIdAsync(int id)

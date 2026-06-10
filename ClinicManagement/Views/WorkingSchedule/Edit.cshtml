@@ -1,0 +1,65 @@
+@model ClinicManagement.DTOs.Appointment.WorkingScheduleUpdateDto
+@{
+    ViewData["Title"] = "Sửa lịch làm việc";
+    int? doctorId = ViewBag.DoctorId;
+    bool isDoctor = ViewBag.IsDoctor == true;
+}
+
+<div class="page-header">
+    <div class="d-flex align-center gap-8">
+        <a asp-action="Index" asp-route-doctorId="@doctorId" class="btn btn-outline" style="padding:8px 10px">
+            <i class="ti ti-arrow-left"></i>
+        </a>
+        <h1>Sửa lịch làm việc</h1>
+    </div>
+</div>
+
+<div class="card form-card">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            { <div>@err.ErrorMessage</div> }
+        </div>
+    }
+
+    <form asp-action="Edit" asp-route-id="@ViewContext.RouteData.Values["id"]" method="post">
+        <input type="hidden" name="doctorId" value="@doctorId" />
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Giờ bắt đầu <span class="required">*</span></label>
+                <input asp-for="StartTime" type="time" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Giờ kết thúc <span class="required">*</span></label>
+                <input asp-for="EndTime" type="time" class="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Thời lượng mỗi slot (phút)</label>
+            <select asp-for="SlotDurationMinutes" class="form-control">
+                <option value="15">15 phút</option>
+                <option value="20">20 phút</option>
+                <option value="30">30 phút</option>
+                <option value="45">45 phút</option>
+                <option value="60">60 phút</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Trạng thái</label>
+            <select asp-for="IsActive" class="form-control">
+                <option value="true">Hoạt động</option>
+                <option value="false">Tắt</option>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="ti ti-check"></i> Lưu
+            </button>
+            <a asp-action="Index" asp-route-doctorId="@doctorId" class="btn btn-outline">Huỷ</a>
+        </div>
+    </form>
+</div>

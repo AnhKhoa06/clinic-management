@@ -27,7 +27,7 @@ public class AppointmentRepository
     {
         return await BaseQuery()
             .OrderByDescending(a => a.CreatedAt)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<Appointment?> GetByIdAsync(int id)
@@ -41,7 +41,7 @@ public class AppointmentRepository
         return await BaseQuery()
             .Where(a => a.PatientId == patientId)
             .OrderByDescending(a => a.CreatedAt)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<List<Appointment>> GetByDoctorIdAsync(int doctorId)
@@ -49,7 +49,7 @@ public class AppointmentRepository
         return await BaseQuery()
             .Where(a => a.DoctorId == doctorId)
             .OrderByDescending(a => a.CreatedAt)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<Appointment> CreateAsync(Appointment appointment)

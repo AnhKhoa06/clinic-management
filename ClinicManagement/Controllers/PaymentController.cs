@@ -3,9 +3,9 @@ using ClinicManagement.DTOs.Payment;
 using ClinicManagement.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VNPAY;
-using VNPAY.Models;
-using VNPAY.Models.Enums;
+using VNPAY;//namespace chính
+using VNPAY.Models;//các model như PaymentResult
+using VNPAY.Models.Enums;//enum như BankCode
 using VNPAY.Models.Exceptions;
 
 namespace ClinicManagement.Controllers;
@@ -13,7 +13,8 @@ namespace ClinicManagement.Controllers;
 public class PaymentController : Controller
 {
     private readonly PaymentService _paymentService;
-    private readonly IVnpayClient _vnpayClient;
+    private readonly IVnpayClient _vnpayClient;// interface do thư viện cung cấp, 
+    // inject vào controller qua DI là dùng được luôn
     private readonly DoctorService _doctorService;
     private readonly AppointmentService _appointmentService;
     private readonly MedicalRecordService _medicalRecordService;
@@ -22,7 +23,9 @@ public class PaymentController : Controller
         MedicalRecordService medicalRecordService )
     {
         _paymentService = paymentService;
+        
         _vnpayClient = vnpayClient;
+        
         _doctorService = doctorService;
         _appointmentService = appointmentService;
         _medicalRecordService = medicalRecordService;
@@ -38,8 +41,10 @@ public class PaymentController : Controller
         if (User.IsInRole("Doctor"))
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            //Đọc userId từ Claims đã giải mã 
             var doctor = await _doctorService.GetByUserIdAsync(userId);
             if (doctor == null) return View(new List<PaymentResponseDto>());
+            
             list = await _paymentService.GetByDoctorIdAsync(doctor.Id);
         }
         else
@@ -142,3 +147,9 @@ public class PaymentController : Controller
         }
     }
 }
+
+//Em dùng thư viện VNPAY cài qua NuGet để tích hợp, 
+//thư viện này do cộng đồng phát triển, có sẵn các hàm tạo URL thanh toán 
+//và xử lý callback nên em không cần tự viết logic bảo mật
+ // Chỉ cần inject IVnpayClient vào controller, truyền vào số tiền, 
+ // mã đơn hàng và bank code là tạo được URL redirect sang cổng VNPay

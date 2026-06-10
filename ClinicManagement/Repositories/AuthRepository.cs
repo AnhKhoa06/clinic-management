@@ -13,15 +13,14 @@ public class AuthRepository
         _context = context;
     }
 
-    //_context.Users: Truy cập vào bảng Users trong CSDL thông qua Entity Framework Core Context.
     // FirstOrDefaultAsync(...): Hàm tìm phần tử đầu tiên thỏa mãn điều kiện. 
-    // Nếu k có phần tử nào khớp, nó sẽ trả về null.
-    // u => u.Email == email:Nó duyệt qua từng dòng trong bảng Users, 
-    // tìm dòng nào có trường Email khớp với tham số email truyền vào hàm.
     public async Task<User?> GetUserByEmailAsync(string email)
     {
         return await _context.Users
-            .FirstOrDefaultAsync(u => u.Email == email);//bthuc lambda dùng để ss
+            .FirstOrDefaultAsync(u => u.Email == email);
+        // duyệt từng dòng, tìm Email trong bảng user khớp với email mà ng dugnf nhập vào
+        // tìm thấytrả về User
+        // không thấytrả về null
     }
 
     public async Task<User?> GetUserByIdAsync(int id)

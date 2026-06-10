@@ -18,7 +18,7 @@ public class PaymentRepository
         return await _context.Payments
             .Include(p => p.Appointment)
             .OrderByDescending(p => p.CreatedAt)
-            .ToListAsync();
+            .ToListAsync();//thực thi câu truy vấn bất đồng bộ 
     }
 
     public async Task<Payment?> GetByIdAsync(int id)
