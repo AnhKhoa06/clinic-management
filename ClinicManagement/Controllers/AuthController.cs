@@ -126,7 +126,7 @@ public class AuthController : Controller
             return RedirectToAction("Index", "Home");
 
         return View();
-    }
+    }   
 
     // POST /Auth/Register
     [HttpPost]
