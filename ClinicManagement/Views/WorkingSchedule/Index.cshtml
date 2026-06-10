@@ -138,6 +138,9 @@
                     </td>
                     <td>
                         <div class="action-btns">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="icon-btn" title="Sửa lịch">
+                                <i class="ti ti-edit"></i>
+                            </a>
                             <form asp-action="Delete" asp-route-id="@item.Id" method="post"
                                     onsubmit="return confirm('Xác nhận xoá lịch @item.DayOfWeekName?')">
                                 <input type="hidden" name="doctorId" value="@item.DoctorId" />
