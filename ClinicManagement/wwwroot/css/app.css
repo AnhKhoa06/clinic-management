@@ -2091,6 +2091,151 @@ textarea.form-control {
 }
 
 /* =============================================
+   DOCTOR & PATIENT RESPONSIVE
+   ============================================= */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.profile-card,
+.detail-card,
+.appointment-form-card {
+  width: 100%;
+}
+
+.payment-detail-header,
+.payment-total-row,
+.appointment-status-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .page-header > .d-flex {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .payment-detail-header,
+  .payment-total-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .payment-total-row > div {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .appointment-status-header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .profile-card,
+  .detail-card,
+  .appointment-form-card {
+    max-width: 100% !important;
+    padding: 20px !important;
+  }
+
+  .doctor-profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+  }
+
+  .doctor-profile-specialty {
+    justify-content: center;
+  }
+
+  .patient-profile-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left;
+    gap: 12px !important;
+    margin-bottom: 20px !important;
+    padding-bottom: 16px !important;
+  }
+
+  .patient-profile-header .table-avatar {
+    width: 52px !important;
+    height: 52px !important;
+    font-size: 20px !important;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .detail-card .d-flex.align-center.gap-8,
+  .profile-card .d-flex.align-center.gap-8 {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .detail-card .d-flex.align-center.gap-8 > span:first-child,
+  .profile-card .d-flex.align-center.gap-8 > span:first-child {
+    min-width: 100% !important;
+  }
+
+  .detail-card table,
+  .profile-card table {
+    min-width: 640px;
+  }
+
+  .appointment-form-card .slot-grid {
+    gap: 6px;
+  }
+
+  .appointment-form-card .slot-btn {
+    flex: 1 1 calc(50% - 6px);
+    min-width: 120px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .appointment-form-card .slot-btn {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+
+  .profile-card,
+  .detail-card,
+  .appointment-form-card {
+    padding: 16px !important;
+  }
+
+  .doctor-profile-name {
+    font-size: 18px;
+  }
+
+  .doctor-profile-avatar {
+    width: 68px;
+    height: 68px;
+    font-size: 28px;
+  }
+
+  .detail-value {
+    font-size: 13px;
+    word-break: break-word;
+  }
+}
+
+/* =============================================
    STAR RATING
    ============================================= */
 .star-rating {

@@ -22,7 +22,7 @@
 
 <!-- Trạng thái -->
 <div class="card" style="padding:20px; margin-bottom:16px;">
-    <div style="display:flex; align-items:center; gap:12px;">
+    <div class="appointment-status-header" style="display:flex; align-items:center; gap:12px;">
         <span style="font-size:13px; color:var(--text-secondary);">Trạng thái:</span>
         @switch (Model.Status)
         {
@@ -50,10 +50,10 @@
     </div>
 </div>
 
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+<div class="detail-grid appointment-detail-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
 
     <!-- Thông tin bác sĩ -->
-    <div class="card" style="padding:20px;">
+    <div class="card detail-card appointment-detail-card" style="padding:20px;">
         <div class="settings-section-title" style="margin-bottom:16px;">
             <i class="ti ti-stethoscope"></i>
             <span>Thông tin bác sĩ</span>
@@ -71,7 +71,7 @@
     </div>
 
     <!-- Thông tin lịch hẹn -->
-    <div class="card" style="padding:20px;">
+    <div class="card detail-card appointment-detail-card" style="padding:20px;">
         <div class="settings-section-title" style="margin-bottom:16px;">
             <i class="ti ti-calendar"></i>
             <span>Thông tin lịch hẹn</span>
@@ -93,7 +93,7 @@
     </div>
 
     <!-- Lý do khám & Lý do huỷ -->
-    <div class="card" style="padding:20px; grid-column:1 / -1;">
+    <div class="card detail-card appointment-detail-card" style="padding:20px; grid-column:1 / -1;">
         <div class="settings-section-title" style="margin-bottom:16px;">
             <i class="ti ti-notes"></i>
             <span>Lý do & Ghi chú</span>

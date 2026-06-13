@@ -12,10 +12,10 @@
     </div>
 </div>
 
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+<div class="detail-grid medical-detail-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
 
     <!-- Thông tin khám -->
-    <div class="card" style="padding:20px;">
+    <div class="card detail-card medical-detail-card" style="padding:20px;">
         <div class="settings-section-title" style="margin-bottom:16px;">
             <i class="ti ti-calendar"></i>
             <span>Thông tin khám</span>
@@ -46,7 +46,7 @@
     </div>
 
     <!-- Chẩn đoán -->
-    <div class="card" style="padding:20px;">
+    <div class="card detail-card medical-detail-card" style="padding:20px;">
         <div class="settings-section-title" style="margin-bottom:16px;">
             <i class="ti ti-stethoscope"></i>
             <span>Kết quả khám</span>
@@ -76,7 +76,7 @@
     <!-- Đơn thuốc -->
     @if (Model.Prescriptions.Any())
     {
-        <div class="card" style="padding:20px; grid-column:1 / -1;">
+        <div class="card table-card detail-card medical-detail-card" style="padding:20px; grid-column:1 / -1;">
             <div class="settings-section-title" style="margin-bottom:16px;">
                 <i class="ti ti-pill"></i>
                 <span>Đơn thuốc</span>
@@ -112,7 +112,7 @@
     }
     else
     {
-        <div class="card" style="padding:20px; grid-column:1 / -1;">
+        <div class="card detail-card medical-detail-card" style="padding:20px; grid-column:1 / -1;">
             <div class="settings-section-title" style="margin-bottom:16px;">
                 <i class="ti ti-pill"></i>
                 <span>Đơn thuốc</span>
